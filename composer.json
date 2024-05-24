@@ -1,20 +1,22 @@
 {
-    "name": "vendor/grind-pure-php",
-    "description": "Grinding pure php power",
-    "type": "library",
-    "authors": [
-        {
-            "name": "nayaunglin910",
-            "email": "nayaunglin910@gmail.com"
-        }
-    ],
-    "minimum-stability": "stable",
-    "require": {
-        "spatie/global-ray": "^1.1"
-    },
-    "config": {
-    },
-    "autoload": {
-        "classmap": ["src"]
+  "name": "vendor/grind-pure-php",
+  "description": "Grinding pure php power",
+  "type": "library",
+  "authors": [
+    {
+      "name": "nayaunglin910",
+      "email": "nayaunglin910@gmail.com"
     }
+  ],
+  "minimum-stability": "stable",
+  "require": {
+    "spatie/global-ray": "^1.1",
+    "vlucas/phpdotenv": "^5.6"
+  },
+  "config": {},
+  "autoload": {
+    "psr-4": {
+      "Src\\": "src/"
+    }
+  }
 }

@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Register Page</title>
+    <title>Login Page</title>
 </head>
 
 <body>
@@ -14,15 +14,11 @@
         session_start();
 
         if (isset($_SESSION["errors"])) { // if errror session exits
-            var_dump($_SESSION["errors"]);  
+            var_dump($_SESSION["errors"]);
             unset($_SESSION["errors"]);
         }
         ?>
-        <form action="/register" method="POST">
-            <div>
-                <label for="">Name</label>
-                <input name="name" type="text">
-            </div>
+        <form action="/login" method="POST">
             <div>
                 <label for="">Email</label>
                 <input name="email" type="email">
@@ -31,7 +27,7 @@
                 <label for="">Password</label>
                 <input name="password" type="password">
             </div>
-            <button type="submit">Submit</button>
+            <button type="submit">Login</button>
         </form>
     </div>
 </body>

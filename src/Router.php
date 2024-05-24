@@ -6,7 +6,7 @@ use Src\Controller;
 
 class Router
 {
-    protected $routes = [];
+    public $routes = [];
 
     /**
      * Map get route and controller action
@@ -40,6 +40,19 @@ class Router
     }
 
     /**
+     * Add route name
+     */
+    public function addRouteName($string): Router
+    {
+        $latestRoute = array_key_last($this->routes);
+        $latestDefinedMethod = array_key_last($this->routes[$latestRoute]);
+
+        $this->routes[$latestRoute][$latestDefinedMethod]["name"] = $string;
+
+        return $this;
+    }
+
+    /**
      * Dispatch the current route and apply the mapped
      * method of the controller.
      */
@@ -52,12 +65,20 @@ class Router
             $declaredRequestMethodExists = array_key_exists($_SERVER['REQUEST_METHOD'], $this->routes[$uri]); // the current request method of the route exists
         }
 
-        if ($routeExists && $declaredRequestMethodExists) {
+        if ($routeExists && $declaredRequestMethodExists) { // both the requested route and current method exists
+
+            if (array_key_exists('middleware', $this->routes[$uri][$_SERVER['REQUEST_METHOD']])) { // if middleware exists
+
+                $middleware = $this->routes[$uri][$_SERVER['REQUEST_METHOD']]['middleware'];
+                $middlewareClass = new $middleware();
+
+                $middlewareClass->runSecurityCheck(); // run secrity check for the route
+            }
 
             $controller = $this->routes[$uri][$_SERVER['REQUEST_METHOD']]['controller']; // mapped controller of the current route
             $action = $this->routes[$uri][$_SERVER['REQUEST_METHOD']]['action']; // mapped controller of the current action
-
             $controller = new $controller();
+
             $controller->$action(); // call the method of the controller
         } else {
             $controller = new Controller();

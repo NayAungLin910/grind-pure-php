@@ -2,6 +2,11 @@
 
 namespace Src\Middlewares;
 
-class Middleware {
+use Src\Middlewares\MiddlewareInterface;
 
+class Middleware implements MiddlewareInterface
+{
+    public function runSecurityCheck(): void
+    {
+    }
 }
