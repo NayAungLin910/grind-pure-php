@@ -2,6 +2,7 @@
 
 namespace Src\Validators\User;
 
+use Src\Models\User;
 use Src\Validators\FormValidator;
 
 /**
@@ -22,6 +23,8 @@ class UserValidator extends FormValidator
         $this->checkWhiteSpaceExits($name, $errorKey);
 
         $this->checkStringWithinDefinedLength($name, $errorKey, 6, 20);
+
+        $this->checkPreExistsModel($name, 'name', 'name', User::class);
 
         return $this;
     }

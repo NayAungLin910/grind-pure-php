@@ -96,6 +96,21 @@ class FormValidator
     }
 
     /**
+     * Check if a model with a given parameter and value exists
+     */
+    protected function checkPreExistsModel(string|float|int $value, string $errorKey, string $column, string $model): void
+    {
+        $lastSlashIndex = strrpos($model, "\\");
+        $className = substr($model, $lastSlashIndex + 1);
+
+        $model = $model::selectAll()->where($column, $value)->getSingle();
+
+        if (!empty($model)) {
+            $this->errors[$errorKey][] = [$className . " with the $column, " . '"' . $value . '"' . " already exists"];
+        }
+    }
+
+    /**
      * Show errors using sesssions and redirect to previous page
      */
     public function flashErrors(string $redirect = ''): void

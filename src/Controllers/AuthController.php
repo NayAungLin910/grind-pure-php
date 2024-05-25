@@ -3,6 +3,7 @@
 namespace Src\Controllers;
 
 use Src\Controller;
+use Src\Models\Enums\ModelSQLEnum;
 use Src\Models\User;
 use Src\Router;
 use Src\Validators\User\UserValidator;
@@ -22,7 +23,6 @@ class AuthController extends Controller
      */
     public function postRegister(): void
     {
-
         $name = $_POST['name'];
         $email = $_POST['email'];
         $password = $_POST['password'];
@@ -31,6 +31,7 @@ class AuthController extends Controller
         $userValidator->nameValidate($name, 'name');
         $userValidator->emailValidate($email, 'email');
         $userValidator->passwordValidate($password, 'password');
+
         $userValidator->flashErrors(); // session flash errors
 
         User::create([ // create a new user
@@ -38,9 +39,9 @@ class AuthController extends Controller
             "email" => $email,
             "profile_image" => "/default/images/default_user.jpg",
             "password" => password_hash($password, PASSWORD_DEFAULT)
-        ]); 
-        
-        $this->redirectUsingRouteName('show-register');
+        ]);
+
+        $this->redirectUsingRouteName('show-login');
     }
 
     /**
@@ -62,10 +63,10 @@ class AuthController extends Controller
         $userValidator = new UserValidator();
         $userValidator->emailValidate($email, "email");
         $userValidator->loginPasswordValidate($password, "password");
-
         $userValidator->flashErrors(); // session flash errors
 
-        $user = User::select(['name', 'email'])->getLatestRow();
+        // $user = User::select(['name', 'email'])->getLatestRow();
+
     }
 
     public function registerPost(): void
