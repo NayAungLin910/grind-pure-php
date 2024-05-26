@@ -4,7 +4,17 @@ namespace Src\Models;
 
 class User extends Model
 {
-    public static $table = "users"; // set table name related to the model user
+    public static $table = "users";
+
+    public static $relationships = [
+        "hasMany" => [
+            "courses" => [
+                "table" => "courses",
+                "foreign_id" => "user_id",
+                "class" => Course::class,
+            ],
+        ],
+    ];
 
     public function __construct(
         public int $id = 0,
@@ -12,8 +22,7 @@ class User extends Model
         public string $email = "",
         public string $profile_image = "",
         public string $role = "user",
-        public string $created_at = "",
-        public string|null $updated_at = ""
+        public array $courses = [],
     ) {
         parent::__construct();
     }

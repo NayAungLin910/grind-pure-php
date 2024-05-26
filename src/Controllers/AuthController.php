@@ -3,9 +3,7 @@
 namespace Src\Controllers;
 
 use Src\Controller;
-use Src\Models\Enums\ModelSQLEnum;
 use Src\Models\User;
-use Src\Router;
 use Src\Validators\User\UserValidator;
 
 class AuthController extends Controller
@@ -57,6 +55,19 @@ class AuthController extends Controller
      */
     public function postLogin(): void
     {
+        $users = User::select([
+            "users.id",
+            "users.email",
+            "users.name",
+            "courses.id AS courses_id",
+            "courses.title AS courses_title",
+            "courses.description AS courses_description"
+        ])->with("courses")->getMultiple();
+
+        // $users = User::selectAll()->where("role", "user")->getMultiple();
+
+        dd($users);
+
         $email = $_POST['email'];
         $password = $_POST['password'];
 
@@ -64,8 +75,6 @@ class AuthController extends Controller
         $userValidator->emailValidate($email, "email");
         $userValidator->loginPasswordValidate($password, "password");
         $userValidator->flashErrors(); // session flash errors
-
-        // $user = User::select(['name', 'email'])->getLatestRow();
 
     }
 

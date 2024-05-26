@@ -17,8 +17,14 @@ class Model
 
     public static array $values = [];
 
-    public function __construct()
-    {
+    public static $relationships = []; // relationships with other models following the keywords of laravel eloquent model
+
+    public static array $loadedRelationships = [];
+
+    public function __construct(
+        public string $created_at = "",
+        public string|null $updated_at = ""
+    ) {
     }
 
     /**
@@ -186,6 +192,40 @@ class Model
         return new static;
     }
 
+    /**
+     * Left join query using the given relationship name of the model
+     */
+    public static function with(string $relationModelName): Model
+    {
+        if ($relationModelName == "") throw new Exception("Please, insert the relationship name!");
+
+        if (count(static::$relationships) == 0) throw new Exception("No relationships for the model is defined");
+
+        foreach (static::$relationships as $relationType => $relationName) { // loop relationships defined for the model
+
+            if (!isset(static::$relationships[$relationType])) continue;
+
+            foreach (static::$relationships[$relationType] as $relationName => $relationInfo) { // loop through the relationship types
+
+                if (!isset(static::$relationships[$relationType][$relationName])) continue;
+
+                $relationshipInfo = static::$relationships[$relationType][$relationName];
+
+                $relationTableName = $relationshipInfo["table"];
+
+                $relationForeignColumn = $relationshipInfo["foreign_id"];
+
+                static::$loadedRelationships[$relationName] = $relationInfo;
+
+                if ($relationName == $relationModelName) {
+                    static::$query .= " LEFT JOIN " . $relationTableName . " ON " . static::$table . ".id = $relationTableName.$relationForeignColumn";
+                }
+            }
+        }
+
+        return new static;
+    }
+
 
     /**
      * Get single row as a class
@@ -199,6 +239,35 @@ class Model
         if ($row === null) return $row;
 
         return static::iniModelUsingAssocArray($row);
+    }
+
+    /**
+     * Get multiple rows as models
+     */
+    public static function getMultiple(): array
+    {
+        static::runQuery(); // run the initialized query
+
+        $models = [];
+
+        $index = 0;
+
+        while ($row = static::$result->fetch_assoc()) {
+
+            if (isset($models[$index - 1]->id) && $models[$index - 1]->id == $row["id"]) { // if the model with the same id already exists in array
+
+                $models = static::iniRelationModels($row, $index - 1, $models);
+
+                continue;
+            }
+
+            $models[] =  static::iniModelUsingAssocArray($row);
+
+            $models = static::iniRelationModels($row, $index, $models);
+
+            $index++;
+        }
+        return $models;
     }
 
     /**
@@ -253,14 +322,55 @@ class Model
     }
 
     /**
+     * Initialize relationship models to each of the related model 
+     */
+    private static function iniRelationModels(array $row, int $index, array $models): array
+    {
+        if (count(static::$loadedRelationships) > 0) { // if there is(are) loaded relationships of the model
+
+            foreach (static::$loadedRelationships as $relationName => $relationInfo) { // loop the relationship
+
+                $relationModel = new $relationInfo["class"]; // initialize relation model class
+
+                $modelPropertySetCount = 0;
+
+                foreach ($row as $column => $value) {
+
+                    if (str_contains($column, $relationName) && $value !== null) { // if the column is of the relation model
+
+                        $modelProperty = substr($column, strpos($column, "_") + 1); // get the property to set from the column E.g get "title" from "courses_title"
+
+                        $relationModel->$modelProperty =  $value;
+
+                        $modelPropertySetCount++;
+                    }
+                }
+
+                // if no property of the relation model class is set, returns the existing relation array
+                if ($modelPropertySetCount == 0) return $models;
+
+                $models[$index]->$relationName[] = $relationModel; // append the relation model class to the relation model array property of the model
+
+                return $models;
+            }
+        }
+
+        return $models;
+    }
+
+    /**
      * Initialize model class through associative array
      */
     private static function iniModelUsingAssocArray(array $row): Model
     {
+
         $selfClass = new static;
 
         foreach ($row as $columnName => $value) {
-            if ($columnName === 'password') continue; // if password column detected, skips loop
+
+            // if columnName is password or the property with the same columnName does not exist, skip
+            if ($columnName === 'password' || !isset($selfClass->$columnName)) continue;
+
             $selfClass->$columnName = $value;
         }
 
