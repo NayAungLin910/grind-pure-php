@@ -7,10 +7,11 @@ class Course extends Model
     public static $table = "courses";
 
     public static $relationships = [
-        "belongsTo" => [
+        "belongsTo" => [ // one-to-many reverse relationship
             "user" => [
                 "table" => "users",
-                "foreign_id" => "user_id",
+                "primary_id" => "user_id",
+                "foreign_id" => "id",
                 "class" => User::class,
             ]
         ]
@@ -22,6 +23,7 @@ class Course extends Model
         public string $description = "",
         public string $image = "",
         public int $user_id = 0,
+        public array $user = [],
     ) {
         parent::__construct();
     }

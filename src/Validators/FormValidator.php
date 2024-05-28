@@ -21,6 +21,14 @@ class FormValidator
     }
 
     /**
+     * Set the errors
+     */
+    public function addError(string $errorKey, string $message): void
+    {
+        $this->errors[$errorKey][] = $message;
+    }
+
+    /**
      * Check if string is not an empty string
      */
     protected function checkStringExists(string $value, string $errorKey): void
@@ -127,6 +135,20 @@ class FormValidator
 
             header("Location: " . $redirect); // redirects back 
             die();
+        }
+    }
+
+    /**
+     * Flash previous form data
+     */
+    public function flashPreFormData(array $oldData = [])
+    {
+       
+        if (count($oldData) > 0) { // if errors in valiation exists as well as the data to be flashed
+            
+            session_start();
+
+            $_SESSION["old"] = $oldData; // set previous form data
         }
     }
 }

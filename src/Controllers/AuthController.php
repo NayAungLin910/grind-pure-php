@@ -3,11 +3,17 @@
 namespace Src\Controllers;
 
 use Src\Controller;
+use Src\Models\Course;
 use Src\Models\User;
+use Src\Router;
 use Src\Validators\User\UserValidator;
 
 class AuthController extends Controller
 {
+    public function __construct(private $router = new Router())
+    {
+    }
+
     /**
      * Show register page
      */
@@ -21,6 +27,14 @@ class AuthController extends Controller
      */
     public function postRegister(): void
     {
+        $users = User::select([
+            "users.id",
+            "users.name",
+            "courses.title AS courses_title",
+            "courses.id AS courses_id"
+        ])->with('courses')->where("users.name", "user1")->getSingle();
+        dd($users);
+
         $name = $_POST['name'];
         $email = $_POST['email'];
         $password = $_POST['password'];
@@ -39,7 +53,7 @@ class AuthController extends Controller
             "password" => password_hash($password, PASSWORD_DEFAULT)
         ]);
 
-        $this->redirectUsingRouteName('show-login');
+        $this->router->redirectUsingRouteName('show-login');
     }
 
     /**
@@ -55,27 +69,21 @@ class AuthController extends Controller
      */
     public function postLogin(): void
     {
-        $users = User::select([
-            "users.id",
-            "users.email",
-            "users.name",
-            "courses.id AS courses_id",
-            "courses.title AS courses_title",
-            "courses.description AS courses_description"
-        ])->with("courses")->getMultiple();
-
-        // $users = User::selectAll()->where("role", "user")->getMultiple();
-
-        dd($users);
-
         $email = $_POST['email'];
         $password = $_POST['password'];
 
         $userValidator = new UserValidator();
         $userValidator->emailValidate($email, "email");
         $userValidator->loginPasswordValidate($password, "password");
-        $userValidator->flashErrors(); // session flash errors
+        $userValidator->flashPreFormData([
+            "email" => $email
+        ]);
+        $userValidator->flashErrors();
 
+        User::auth([
+            "email" => $email,
+            "password" => $password,
+        ]);
     }
 
     public function registerPost(): void

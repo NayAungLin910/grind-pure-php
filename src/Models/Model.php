@@ -5,6 +5,7 @@ namespace Src\Models;
 use Exception;
 use Src\DbConnection;
 use Src\Models\Enums\ModelSQLEnum;
+use Symfony\Component\Console\Output\NullOutput;
 
 class Model
 {
@@ -34,7 +35,6 @@ class Model
     public static function create(array $values): void
     {
         static::$query = "INSERT INTO " . static::$table;
-
         static::$values = array_merge(static::$values, $values);
 
         $legnthOfValuesArray = count($values);
@@ -138,7 +138,6 @@ class Model
     public static function where(string $column, string|int|float $value)
     {
         static::$query .= " WHERE $column = ?";
-
         static::$values[] = $value;
 
         return new static;
@@ -150,7 +149,6 @@ class Model
     public static function andWhere(string $column, string|int|float $value)
     {
         static::$query .= " AND $column = ?";
-
         static::$values[] = $value;
 
         return new static;
@@ -162,7 +160,6 @@ class Model
     public static function orWhere(string $column, string|int|float $value)
     {
         static::$query .= " OR $column = ?";
-
         static::$values[] = $value;
 
         return new static;
@@ -174,7 +171,6 @@ class Model
     public static function limit(int $numOfRows): Model
     {
         static::$query .= " LIMIT ?";
-
         static::$values[] = $numOfRows;
 
         return new static;
@@ -186,7 +182,6 @@ class Model
     public static function offset(int $numOfRows): Model
     {
         static::$query .= " OFFSET ?";
-
         static::$values[] = $numOfRows;
 
         return new static;
@@ -195,30 +190,22 @@ class Model
     /**
      * Left join query using the given relationship name of the model
      */
-    public static function with(string $relationModelName): Model
+    public static function with(string $relationNameGiven): Model
     {
-        if ($relationModelName == "") throw new Exception("Please, insert the relationship name!");
-
+        if ($relationNameGiven == "") throw new Exception("Please, insert the relationship name!");
         if (count(static::$relationships) == 0) throw new Exception("No relationships for the model is defined");
 
         foreach (static::$relationships as $relationType => $relationName) { // loop relationships defined for the model
-
-            if (!isset(static::$relationships[$relationType])) continue;
-
             foreach (static::$relationships[$relationType] as $relationName => $relationInfo) { // loop through the relationship types
 
-                if (!isset(static::$relationships[$relationType][$relationName])) continue;
+                $relationNameSame = $relationNameGiven == $relationName;
 
-                $relationshipInfo = static::$relationships[$relationType][$relationName];
+                if (($relationType == "belongsTo" || $relationType == "hasMany") && $relationNameSame) { // if one-to-many relationship type
+                    static::oneToManyQueryConcat($relationType, $relationName, $relationInfo);
+                }
 
-                $relationTableName = $relationshipInfo["table"];
-
-                $relationForeignColumn = $relationshipInfo["foreign_id"];
-
-                static::$loadedRelationships[$relationName] = $relationInfo;
-
-                if ($relationName == $relationModelName) {
-                    static::$query .= " LEFT JOIN " . $relationTableName . " ON " . static::$table . ".id = $relationTableName.$relationForeignColumn";
+                if ($relationType == "belongsToMany" && $relationNameSame) { //if many-to-many relationship type
+                    dd("Ok");
                 }
             }
         }
@@ -226,6 +213,24 @@ class Model
         return new static;
     }
 
+    /**
+     * One-to-many relationship query string concat
+     */
+    public static function oneToManyQueryConcat(string $relationType, string $relationName, array $relationInfo): Model
+    {
+        if (!isset(static::$relationships[$relationType][$relationName])) return new static;
+
+        $relationshipInfo = static::$relationships[$relationType][$relationName];
+        $relationTableName = $relationshipInfo["table"];
+        $relationForeignColumn = $relationshipInfo["foreign_id"];
+        $primaryColumn = $relationshipInfo["primary_id"];
+
+        static::$loadedRelationships[$relationName] = $relationInfo; // add realtion info array to the laoded relationships of the model
+
+        static::$query .= " LEFT JOIN " . $relationTableName . " ON " . static::$table . ".$primaryColumn = $relationTableName.$relationForeignColumn";
+
+        return new static;
+    }
 
     /**
      * Get single row as a class
@@ -234,11 +239,36 @@ class Model
     {
         static::runQuery(); // run the initialized query
 
+        $model = new static;
+        $id = "id";
+
+        while ($row = static::$result->fetch_assoc()) {  // fetch row(s) as an associative array
+
+            if (isset($model->$id) && $model->$id == $row["id"]) {
+
+                $model = static::iniRelationModels($row, $model);
+                continue;
+            }
+            
+            $model = static::iniModelUsingAssocArray($row);
+            $model = static::iniRelationModels($row, $model);
+        };
+
+        return $model;
+    }
+
+    /**
+     * Get single row as an auth model class
+     */
+    public static function getAuth(): Model|null
+    {
+        static::runQuery(); // run the initialized query
+
         $row = static::$result->fetch_assoc(); // fetch row as an associative array
 
         if ($row === null) return $row;
 
-        return static::iniModelUsingAssocArray($row);
+        return static::iniAuthModel($row);
     }
 
     /**
@@ -249,21 +279,18 @@ class Model
         static::runQuery(); // run the initialized query
 
         $models = [];
-
         $index = 0;
 
         while ($row = static::$result->fetch_assoc()) {
 
             if (isset($models[$index - 1]->id) && $models[$index - 1]->id == $row["id"]) { // if the model with the same id already exists in array
 
-                $models = static::iniRelationModels($row, $index - 1, $models);
-
+                $models = static::iniRelationModels($row, $models, $index - 1);
                 continue;
             }
 
             $models[] =  static::iniModelUsingAssocArray($row);
-
-            $models = static::iniRelationModels($row, $index, $models);
+            $models = static::iniRelationModels($row, $models, $index);
 
             $index++;
         }
@@ -288,50 +315,27 @@ class Model
             }
 
             $stmt->bind_param($types, ...array_values(static::$values)); // bind parameters to prepared sql query
-
-
         }
 
         $stmt->execute();
-
         $result = $stmt->get_result();
-
-
         static::$result = $result;
-
-        static::$query = "";
-        static::$values = [];
 
         $stmt->close();
         $dbCon->close();
     }
 
-    /**
-     * Get bind param type string
-     */
-    private static function getBindParamTypeString(string|int|float $value): string
-    {
-        switch (gettype($value)) {
-            case "string":
-                return "s";
-            case "double":
-                return "d";
-            case "integer":
-                return "i";
-        }
-    }
 
     /**
      * Initialize relationship models to each of the related model 
      */
-    private static function iniRelationModels(array $row, int $index, array $models): array
+    private static function iniRelationModels(array $row, array|Model $models, int $index = 0): array|Model
     {
         if (count(static::$loadedRelationships) > 0) { // if there is(are) loaded relationships of the model
 
             foreach (static::$loadedRelationships as $relationName => $relationInfo) { // loop the relationship
 
                 $relationModel = new $relationInfo["class"]; // initialize relation model class
-
                 $modelPropertySetCount = 0;
 
                 foreach ($row as $column => $value) {
@@ -339,17 +343,19 @@ class Model
                     if (str_contains($column, $relationName) && $value !== null) { // if the column is of the relation model
 
                         $modelProperty = substr($column, strpos($column, "_") + 1); // get the property to set from the column E.g get "title" from "courses_title"
-
                         $relationModel->$modelProperty =  $value;
-
                         $modelPropertySetCount++;
                     }
                 }
 
-                // if no property of the relation model class is set, returns the existing relation array
+                // if no property of the relation model class is set, returns the existing models
                 if ($modelPropertySetCount == 0) return $models;
 
-                $models[$index]->$relationName[] = $relationModel; // append the relation model class to the relation model array property of the model
+                if (is_array($models)) {
+                    $models[$index]->$relationName[] = $relationModel; // append the relation model class to the relation model array property of the model
+                } else {
+                    $models->$relationName[] = $relationModel;
+                }
 
                 return $models;
             }
@@ -375,5 +381,35 @@ class Model
         }
 
         return $selfClass;
+    }
+
+    /**
+     * Initialize auth model class for authentication
+     */
+    private static function iniAuthModel(array $row): Model
+    {
+
+        $selfClass = new static;
+
+        foreach ($row as $columnName => $value) {
+            $selfClass->$columnName = $value;
+        }
+
+        return $selfClass;
+    }
+
+    /**
+     * Get bind param type string
+     */
+    private static function getBindParamTypeString(string|int|float $value): string
+    {
+        switch (gettype($value)) {
+            case "string":
+                return "s";
+            case "double":
+                return "d";
+            case "integer":
+                return "i";
+        }
     }
 }

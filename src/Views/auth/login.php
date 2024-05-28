@@ -21,7 +21,14 @@
         <form action="/login" method="POST">
             <div>
                 <label for="">Email</label>
-                <input name="email" type="email">
+                <input name="email" value="
+                <?php
+                
+                if (isset($_SESSION["old"]["email"])) { // get the old value from session
+                    echo htmlspecialchars($_SESSION["old"]["email"]);
+                    unset($_SESSION["old"]["email"]);
+                }
+                ?>" type="email">
             </div>
             <div>
                 <label for="">Password</label>
