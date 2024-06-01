@@ -17,13 +17,13 @@ class User extends AuthModel
         ],
         "belongsToMany" => [ // many-to-many through pivot relationship
             "certificates" => [ // opposite relationship table
-                "table" => "certificates",
+                "other_table" => "certificates",
                 "pivot_table" => "certificate_user", // pivot table name
                 "primary_key" => "id",
                 "foreign_key" => "user_id",
                 "other_table_primary_key" => "id", // opposite relationship pk
                 "other_table_foreign_key" => "certificate_id", // opposite relationship fk
-                "other_class" => Certificate::class, // opposite relationship class model
+                "class" => Certificate::class, // opposite relationship class model
             ]
         ]
     ];
@@ -35,6 +35,7 @@ class User extends AuthModel
         public string $profile_image = "",
         public string $role = "user",
         public array $courses = [],
+        public array $certificates = [],
         public string $password = "",   
     ) {
         parent::__construct();

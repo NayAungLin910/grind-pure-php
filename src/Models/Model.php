@@ -5,6 +5,7 @@ namespace Src\Models;
 use Exception;
 use Src\DbConnection;
 use Src\Models\Enums\ModelSQLEnum;
+use stdClass;
 use Symfony\Component\Console\Output\NullOutput;
 
 class Model
@@ -205,7 +206,7 @@ class Model
                 }
 
                 if ($relationType == "belongsToMany" && $relationNameSame) { //if many-to-many relationship type
-                    dd("Ok");
+                    static::manyToManyQueryConcat($relationType, $relationName, $relationInfo);
                 }
             }
         }
@@ -218,16 +219,33 @@ class Model
      */
     public static function oneToManyQueryConcat(string $relationType, string $relationName, array $relationInfo): Model
     {
-        if (!isset(static::$relationships[$relationType][$relationName])) return new static;
-
-        $relationshipInfo = static::$relationships[$relationType][$relationName];
-        $relationTableName = $relationshipInfo["table"];
-        $relationForeignColumn = $relationshipInfo["foreign_id"];
-        $primaryColumn = $relationshipInfo["primary_id"];
+        $relationTableName = $relationInfo["table"];
+        $relationForeignColumn = $relationInfo["foreign_id"];
+        $primaryColumn = $relationInfo["primary_id"];
 
         static::$loadedRelationships[$relationName] = $relationInfo; // add realtion info array to the laoded relationships of the model
 
         static::$query .= " LEFT JOIN " . $relationTableName . " ON " . static::$table . ".$primaryColumn = $relationTableName.$relationForeignColumn";
+
+        return new static;
+    }
+
+    /**
+     * Many-to-many relationship query string concat
+     */
+    public static function manyToManyQueryConcat(string $relationType, string $relationName, array $relationInfo): Model
+    {
+        $pivotTable = $relationInfo["pivot_table"];
+        $primaryKey = $relationInfo["primary_key"];
+        $foreignKey = $relationInfo["foreign_key"];
+        $otherTable = $relationInfo["other_table"];
+        $otherTableForeignKey = $relationInfo["other_table_foreign_key"];
+        $otherTablePrimaryKey = $relationInfo["other_table_primary_key"];
+
+        static::$loadedRelationships[$relationName] = $relationInfo;
+
+        static::$query .= " LEFT JOIN $pivotTable ON " . static::$table . ".$primaryKey = $pivotTable.$foreignKey";
+        static::$query .= " LEFT JOIN $otherTable ON $pivotTable.$otherTableForeignKey = $otherTable.$otherTablePrimaryKey";  
 
         return new static;
     }
@@ -239,13 +257,14 @@ class Model
     {
         static::runQuery(); // run the initialized query
 
-        $model = new static;
+        $model = null;
         $id = "id";
 
         while ($row = static::$result->fetch_assoc()) {  // fetch row(s) as an associative array
 
-            if (isset($model->$id) && $model->$id == $row["id"]) {
+            $model = new static;
 
+            if (isset($model->$id) && $model->$id == $row["id"]) {
                 $model = static::iniRelationModels($row, $model);
                 continue;
             }
@@ -253,6 +272,8 @@ class Model
             $model = static::iniModelUsingAssocArray($row);
             $model = static::iniRelationModels($row, $model);
         };
+
+        static::resetStaticValues();
 
         return $model;
     }
@@ -267,6 +288,8 @@ class Model
         $row = static::$result->fetch_assoc(); // fetch row as an associative array
 
         if ($row === null) return $row;
+
+        static::resetStaticValues();
 
         return static::iniAuthModel($row);
     }
@@ -294,6 +317,9 @@ class Model
 
             $index++;
         }
+
+        static::resetStaticValues();
+
         return $models;
     }
 
@@ -332,7 +358,8 @@ class Model
     private static function iniRelationModels(array $row, array|Model $models, int $index = 0): array|Model
     {
         if (count(static::$loadedRelationships) > 0) { // if there is(are) loaded relationships of the model
-
+            
+            // dd("hello");
             foreach (static::$loadedRelationships as $relationName => $relationInfo) { // loop the relationship
 
                 $relationModel = new $relationInfo["class"]; // initialize relation model class
@@ -396,6 +423,16 @@ class Model
         }
 
         return $selfClass;
+    }
+
+    /**
+     * Rest the static values
+     */
+    private static function resetStaticValues(): void
+    {
+        static::$query = '';
+        static::$loadedRelationships = [];
+        static::$values = [];
     }
 
     /**

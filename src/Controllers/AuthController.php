@@ -3,7 +3,6 @@
 namespace Src\Controllers;
 
 use Src\Controller;
-use Src\Models\Course;
 use Src\Models\User;
 use Src\Router;
 use Src\Validators\User\UserValidator;
@@ -27,24 +26,23 @@ class AuthController extends Controller
      */
     public function postRegister(): void
     {
-        $users = User::select([
-            "users.id",
-            "users.name",
-            "courses.title AS courses_title",
-            "courses.id AS courses_id"
-        ])->with('courses')->where("users.name", "user1")->getSingle();
-        dd($users);
+        $userValidator = new UserValidator();
+
+        $userValidator->checkRequestFields(["name", "email", "password"]);
 
         $name = $_POST['name'];
         $email = $_POST['email'];
         $password = $_POST['password'];
 
-        $userValidator = new UserValidator();
         $userValidator->nameValidate($name, 'name');
         $userValidator->emailValidate($email, 'email');
         $userValidator->passwordValidate($password, 'password');
 
-        $userValidator->flashErrors(); // session flash errors
+        $userValidator->flashOldRequestData([
+            "name" => $name,
+            "email" => $email,
+        ]);
+        $userValidator->flashErrors();
 
         User::create([ // create a new user
             "name" => $name,
@@ -69,15 +67,17 @@ class AuthController extends Controller
      */
     public function postLogin(): void
     {
+        $userValidator = new UserValidator();
+
+        $userValidator->checkRequestFields(["email", "password"]);
+
         $email = $_POST['email'];
         $password = $_POST['password'];
 
-        $userValidator = new UserValidator();
         $userValidator->emailValidate($email, "email");
         $userValidator->loginPasswordValidate($password, "password");
-        $userValidator->flashPreFormData([
-            "email" => $email
-        ]);
+
+        $userValidator->flashOldRequestData(["email" => $email]);
         $userValidator->flashErrors();
 
         User::auth([

@@ -54,7 +54,7 @@ class FormValidator
     protected function checkWhiteSpaceExits(string $value, string $errorKey): void
     {
         if (preg_match('/\s/', $value)) {
-            $this->errors[$errorKey][] = ["$errorKey must not conatin whisepace."];
+            $this->errors[$errorKey][] = "$errorKey must not conatin whisepace.";
         }
     }
 
@@ -64,7 +64,7 @@ class FormValidator
     protected function checkStringWithinDefinedLength(string $value, string $errorKey, int $min, int $max): void
     {
         if (strlen($value) < $min || strlen($value) > $max) {
-            $this->errors[$errorKey][] = ["$errorKey must not be less than $min and more than $max."];
+            $this->errors[$errorKey][] = "$errorKey must not be less than $min and more than $max.";
         }
     }
 
@@ -74,7 +74,7 @@ class FormValidator
     protected function checkEmailFormat(string $value, string $errorKey): void
     {
         if (!filter_var($value, FILTER_VALIDATE_EMAIL)) {
-            $this->errors[$errorKey][] = ["$errorKey is not a valid email address."];
+            $this->errors[$errorKey][] = "$errorKey is not a valid email address.";
         }
     }
 
@@ -84,7 +84,7 @@ class FormValidator
     protected function checkSringShorterMinLength(string $value, string $errorKey, int $min): void
     {
         if (strlen($value) < $min) {
-            $this->errors[$errorKey] = ["$errorKey must be more than $min words."];
+            $this->errors[$errorKey][] = "$errorKey must be more than $min words.";
         }
     }
 
@@ -99,7 +99,7 @@ class FormValidator
         $containsOneSpecialChar = preg_match('/[^a-zA-Z\d]/', $value);
 
         if (!$containsOneDigit || !$containsOneCapital || !$containsOneSpecialChar) {
-            $this->errors[$errorKey][] = ["$errorKey must contain at least one digit, one captital letter and one special character"];
+            $this->errors[$errorKey][] = "$errorKey must contain at least one digit, one captital letter and one special character";
         }
     }
 
@@ -114,7 +114,22 @@ class FormValidator
         $model = $model::selectAll()->where($column, $value)->getSingle();
 
         if (!empty($model)) {
-            $this->errors[$errorKey][] = [$className . " with the $column, " . '"' . $value . '"' . " already exists"];
+            $this->errors[$errorKey][] = $className . " with the $column, " . '"' . $value . '"' . " already exists";
+        }
+    }
+
+    /**
+     * Check if the request contains all the fields it should contain 
+     */
+    public function checkRequestFields(array $fields): void
+    {
+        foreach ($fields as $index => $field) {
+            
+            if (!isset($_REQUEST[$field])) {
+
+                $this->errors["fields"][] = "$field must be included in the request.";
+                $this->flashErrors();
+            }
         }
     }
 
@@ -134,21 +149,25 @@ class FormValidator
             $redirect = $redirect !== '' ? $redirect : $_SERVER["HTTP_REFERER"];
 
             header("Location: " . $redirect); // redirects back 
+
+            session_write_close();
             die();
         }
     }
 
     /**
-     * Flash previous form data
+     * Flash the previous request data
      */
-    public function flashPreFormData(array $oldData = [])
+    public function flashOldRequestData(array $oldData = [])
     {
-       
+
         if (count($oldData) > 0) { // if errors in valiation exists as well as the data to be flashed
-            
+
             session_start();
 
             $_SESSION["old"] = $oldData; // set previous form data
+            
+            session_write_close();
         }
     }
 }

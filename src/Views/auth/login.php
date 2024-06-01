@@ -2,41 +2,59 @@
 <html lang="en">
 
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login Page</title>
+    <!-- Head -->
+    <?php require_once("../src/Views/components/head.php")  ?>
+    
+    <title>Grind | Login</title>
 </head>
 
 <body>
-    <div>
-        <?php
 
-        session_start();
+    <!-- Nav -->
+    <?php require_once("../src/Views/components/nav.php") ?>
 
-        if (isset($_SESSION["errors"])) { // if errror session exits
-            var_dump($_SESSION["errors"]);
-            unset($_SESSION["errors"]);
-        }
-        ?>
-        <form action="/login" method="POST">
-            <div>
-                <label for="">Email</label>
-                <input name="email" value="
-                <?php
-                
-                if (isset($_SESSION["old"]["email"])) { // get the old value from session
-                    echo htmlspecialchars($_SESSION["old"]["email"]);
-                    unset($_SESSION["old"]["email"]);
-                }
-                ?>" type="email">
-            </div>
-            <div>
-                <label for="">Password</label>
-                <input name="password" type="password">
-            </div>
-            <button type="submit">Login</button>
-        </form>
+    <!-- Main -->
+    <div class="main">
+
+        <!-- Login Card -->
+        <div class="card login-card">
+
+            <form action="/login" method="POST">
+
+                <!-- Card Header -->
+                <h3 class="card-header">Login</h3>
+
+                <!-- Email -->
+                <div class="form-group">
+                    <label class="form-label text-white" for="email">Email</label>
+                    <input class="input form-input" id="email" name="email" value="<?php  ?>" type="email">
+                    <?php displayErrorMessage("email") ?>
+                </div>
+
+                <!-- Password -->
+                <div class="form-group">
+                    <label class="form-label text-white" for="password">Password</label>
+                    <input class="input form-input" name="password" name="password" type="password">
+                    <?php displayErrorMessage("password") ?>
+                    <?php displayAllErrorMessages() ?>
+                </div>
+
+                <!-- Register Page Link -->
+                <div class="mtb-mid">
+                    <a href="/register" class="btn text-d-none">
+                        Sign up a new acccount?
+                    </a>
+                </div>
+
+                <!-- Submit Button -->
+                <div class="flex jcc">
+                    <button class="btn" type="submit">Login</button>
+                </div>
+            </form>
+        </div>
     </div>
 </body>
+
+<script src="./assets/js/nav-toggle.js"></script>
 
 </html>

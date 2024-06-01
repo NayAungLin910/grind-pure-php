@@ -2,8 +2,6 @@
 
 namespace Src;
 
-use Exception;
-
 class Controller
 {
 
@@ -16,8 +14,10 @@ class Controller
             extract($data);
         }
 
-        include "routes.php";
+        include "../src/routes.php";
 
-        include "Views/$view.php";
+        include "../src/Views/utilities/UtilityFunctions.php";
+
+        include "../src/Views/$view.php";
     }
 }

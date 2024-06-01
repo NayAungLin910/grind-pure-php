@@ -1,11 +1,26 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-</head>
+
+<?php require_once("../src/Views/components/head.php")  ?>
+
 <body>
-    <h1>Welcome Page</h1>  
+    
+    <!-- Nav Bar -->
+    <?php require_once("../src/Views/components/nav.php") ?>
+
+    <!-- Main Body -->
+    <div class="main">
+        <div style="height: 500px;background-color:red;"></div>
+        <div style="height: 500px; margin-top: 10px; background-color:red;"></div>
+        <div style="height: 500px; margin-top: 10px; background-color:red;"></div>
+        <div style="height: 500px; margin-top: 10px; background-color:red;"></div>
+        <div style="height: 500px; margin-top: 10px; background-color:red;"></div>
+        <div style="height: 500px; margin-top: 10px; background-color:red;"></div>
+        <div style="height: 500px; margin-top: 10px; background-color:red;"></div>
+        <div style="height: 500px; margin-top: 10px; background-color:red;"></div>
+        <div style="height: 500px; margin-top: 10px; background-color:red;"></div>
+    </div>
+
 </body>
+    <script src="./assets/js/nav-toggle.js"></script>
 </html>
