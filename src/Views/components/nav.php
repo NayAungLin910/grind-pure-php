@@ -24,6 +24,25 @@
             <div class="nav-inner-link">
                 <a class="btn link-plain" href="">Profile</a>
             </div>
+
+            <!-- Not Auth -->
+            <?php if (!$ifAuth) : ?>
+                <div class="nav-inner-link">
+                    <div class="flex jcc">
+                        <a class="btn half-left-round link-plain" href="<?php echo getRouteUsingRouteName("show-login") ?>">Login</a>
+                        <a class="btn half-right-round link-plain" href="<?php echo getRouteUsingRouteName("show-register") ?>">Register</a>
+                    </div>
+                </div>
+            <?php endif; ?>
+
+            <!-- Auth -->
+            <?php if ($ifAuth) : ?>
+                <div class="nav-inner-link">
+                    <form action="<?php echo getRouteUsingRouteName("logout") ?>" method="POST">
+                        <input type="submit" class="btn link-plain" value="Logout">
+                    </form>
+                </div>
+            <?php endif; ?>
         </div>
     </div>
 </nav>

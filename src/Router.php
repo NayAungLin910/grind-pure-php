@@ -30,7 +30,7 @@ class Router
     /**
      * Add middleware to guard the route
      */
-    public function addMidleware($middleware): Router
+    public function addMiddleware($middleware): Router
     {
         $latestRoute = array_key_last($this->routes);
         $lastestMethodOfLatestRoute = array_key_last($this->routes[$latestRoute]);
@@ -106,18 +106,14 @@ class Router
         }
 
         include "routes.php";
-
         
         foreach ($router->routes as $url => $mappedInfos) {
-            
             foreach ($router->routes[$url] as $method => $value) {
                 
                 $routeNameExists = isset($router->routes[$url][$method]["name"]); // the route name parameter is defined
-                
                 $routeNameSame = $router->routes[$url][$method]["name"] == $routeName; // check if the current route name is the same with the route being searched 
                 
                 if ($routeNameExists && $routeNameSame) {
-
                     header("Location: $url");
                     die();
                 }

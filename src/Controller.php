@@ -16,7 +16,7 @@ class Controller
 
         include "../src/routes.php";
 
-        include "../src/Views/utilities/UtilityFunctions.php";
+        include "../src/Views/utilities/ViewUtilities.php";
 
         include "../src/Views/$view.php";
     }

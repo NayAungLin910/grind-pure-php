@@ -73,6 +73,7 @@ class AuthController extends Controller
 
         $email = $_POST['email'];
         $password = $_POST['password'];
+        $remember = $_POST['remember'] ?? null;
 
         $userValidator->emailValidate($email, "email");
         $userValidator->loginPasswordValidate($password, "password");
@@ -83,11 +84,21 @@ class AuthController extends Controller
         User::auth([
             "email" => $email,
             "password" => $password,
+            "remember" => $remember,
         ]);
     }
 
-    public function registerPost(): void
+    /**
+     * Logout the authenticated user
+     */
+    public function logout(): void
     {
-        return;
+        session_start();
+
+        if (isset($_SESSION["auth"])) unset($_SESSION["auth"]);
+
+        session_write_close();
+
+        $this->router->redirectUsingRouteName("show-login");
     }
 }

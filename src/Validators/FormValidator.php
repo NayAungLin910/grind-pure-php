@@ -21,7 +21,7 @@ class FormValidator
     }
 
     /**
-     * Set the errors
+     * Add an error message
      */
     public function addError(string $errorKey, string $message): void
     {

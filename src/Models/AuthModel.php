@@ -27,22 +27,44 @@ class AuthModel extends Model
             $router->redirectBack();
         }
 
+        $id = "id";
         $password = "password";
         $name = "name";
-        $id = "id";
+        $role = "role";
 
         if (password_verify($credentials["password"], $user->$password)) { // if password matches
 
             session_start();
 
-            $_SESSION['auth'] = TRUE;
-            $_SESSION['name'] = $user->$name;
-            $_SESSION['id'] = $user->$id;
+            $_SESSION['auth'] = [
+                "id" => $user->$id,
+                "name" => $user->$name,
+                "role" => $user->$role,
+            ];
+
+            session_write_close();
 
             $router->redirectUsingRouteName("welcome");
         }
 
         $validator->addError("password", "Wrong password!");
         $validator->flashErrors();
+    }
+    
+    /**
+     * Logout user, destroy auth session and redirect back
+     */
+    public function logout(): void
+    {
+        session_start();
+
+        if (isset($_SESSION["auth"])) {
+            unset($_SESSION["auth"]);
+        }
+
+        session_write_close();
+
+        $router = new Router();
+        $router->redirectUsingRouteName("welcome");
     }
 }

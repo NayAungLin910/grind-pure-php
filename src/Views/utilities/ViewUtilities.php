@@ -1,9 +1,9 @@
 <?php
 
-/**
- * Utilitiy functions to be used in php views
- */
+//------------------------------- View Utilities -------------------------------
 
+
+//------------------------------- Functions ------------------------------------
 /**
  * If the session has the given value, display it
  */
@@ -56,3 +56,39 @@ function displayAllErrorMessages(): void
 
     session_write_close();
 }
+
+/**
+ * Get route using route name
+ */
+function getRouteUsingRouteName(string $routeName): string
+{
+    if ($routeName == "") {
+        throw new Exception("Please enter a route name");
+    }
+
+    include "../src/routes.php";
+
+    foreach ($router->routes as $url => $mappedInfos) {
+        foreach ($router->routes[$url] as $method => $value) {
+
+            $routeNameExists = isset($router->routes[$url][$method]["name"]); // the route name parameter is defined
+            if (!$routeNameExists) continue;
+
+            $routeNameSame = $router->routes[$url][$method]["name"] == $routeName; // check if the current route name is the same with the route being searched 
+
+            if ($routeNameSame) {
+                return $url; // return the route
+            }
+        }
+    }
+
+    throw new Exception("$routeName is not a declared route name.");
+}
+
+//------------------------------- If condition boolean variables  ------------------------------------
+
+$ifAuth = isset($_SESSION["auth"]);
+
+$ifAuthUser = $ifAuth && $_SESSION["auth"]["role"] == "user";
+
+$ifAuthAdmin = $ifAuth && $_SESSION["auth"]["role"] == "admin";

@@ -4,7 +4,7 @@
 <head>
     <!-- Head -->
     <?php require_once("../src/Views/components/head.php")  ?>
-    
+
     <title>Grind | Login</title>
 </head>
 
@@ -27,16 +27,22 @@
                 <!-- Email -->
                 <div class="form-group">
                     <label class="form-label text-white" for="email">Email</label>
-                    <input class="input form-input" id="email" name="email" value="<?php  ?>" type="email">
+                    <input class="input form-input" id="email" name="email" value="<?php displayFlashedSessionValue('old', 'email') ?>" type="email">
                     <?php displayErrorMessage("email") ?>
                 </div>
 
                 <!-- Password -->
                 <div class="form-group">
                     <label class="form-label text-white" for="password">Password</label>
-                    <input class="input form-input" name="password" name="password" type="password">
+                    <input class="input form-input" name="password" id="password" type="password">
                     <?php displayErrorMessage("password") ?>
                     <?php displayAllErrorMessages() ?>
+                </div>
+
+                <!-- Remember Me -->
+                <div class="flex aic g-sm">
+                    <label class="form-label text-white" for="remember">Remember Me</label>
+                    <input type="checkbox" class="checkbox" name="remember" id="remember">
                 </div>
 
                 <!-- Register Page Link -->

@@ -56,6 +56,13 @@ body {
     padding: 10px;
 }
 
+.checkbox {
+    outline: none;
+    display: inline-block;
+    width: 20px;
+    height: 20px;
+}
+
 .nav-search {
     width: 300px;
     height: 30px;
@@ -137,6 +144,14 @@ body {
     font-size: 17px;
 }
 
+.half-left-round {
+    border-radius: 20px 0 0 20px;
+}
+
+.half-right-round {
+    border-radius: 0 20px 20px 0;
+}
+
 .btn:hover {
     background-color: var(--pri-blue-heavier);
     box-shadow: 0 0 0.75px 0.75px var(--pri-blue-heavy);
@@ -188,9 +203,21 @@ body {
     margin: 0 auto;
 }
 
+.p-mid {
+    padding: 10px;
+}
+
 .mtb-mid {
     margin-top: 30px;
     margin-bottom: 30px;
+}
+
+.g-sm {
+    gap: 5px;
+}
+
+.g-mid {
+    gap: 10px;
 }
 
 .flex {
@@ -203,6 +230,10 @@ body {
 
 .jcc {
     justify-content: center;
+}
+
+.aic {
+    align-items: center;
 }
 
 .link {
