@@ -5,8 +5,6 @@ namespace Src\Models;
 use Exception;
 use Src\DbConnection;
 use Src\Models\Enums\ModelSQLEnum;
-use stdClass;
-use Symfony\Component\Console\Output\NullOutput;
 
 class Model
 {
@@ -326,16 +324,14 @@ class Model
     /**
      * Run prepare query
      */
-    private static function runQuery(): void
+    protected static function runQuery(): void
     {
         $dbCon = DbConnection::getMySQLConnection(); // get database connection
 
         $stmt = $dbCon->prepare(static::$query); // prepare statement
-
         $types = "";
 
         if (count(static::$values) > 0) {
-
             foreach (static::$values as $key => $value) {
                 $types .= static::getBindParamTypeString($value);
             }

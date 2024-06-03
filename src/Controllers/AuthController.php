@@ -93,11 +93,9 @@ class AuthController extends Controller
      */
     public function logout(): void
     {
-        session_start();
+        $user = User::selectAll()->where("id", $_SESSION["auth"]["id"])->getSingle();
 
-        if (isset($_SESSION["auth"])) unset($_SESSION["auth"]);
-
-        session_write_close();
+        $user::logout();
 
         $this->router->redirectUsingRouteName("show-login");
     }
