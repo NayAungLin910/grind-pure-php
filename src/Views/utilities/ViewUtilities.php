@@ -4,6 +4,11 @@
 
 
 //------------------------------- Functions ------------------------------------
+
+use Src\Models\AuthModel;
+use Src\Models\User;
+use Src\Services\CookieService;
+
 /**
  * If the session has the given value, display it
  */
@@ -87,7 +92,9 @@ function getRouteUsingRouteName(string $routeName): string
 
 //------------------------------- If condition boolean variables  ------------------------------------
 
-$ifAuth = isset($_SESSION["auth"]);
+$cookieService = new CookieService();
+
+$ifAuth = isset($_SESSION["auth"]) || $cookieService->confirmRememberLoginCookie();
 
 $ifAuthUser = $ifAuth && $_SESSION["auth"]["role"] == "user";
 

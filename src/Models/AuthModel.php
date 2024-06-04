@@ -55,6 +55,7 @@ class AuthModel extends Model
     public static function setCookieAndToken(string $email): void
     {
         $randToken = static::generateToken();
+
         $randSelectorToken = static::generateToken();
 
         $randTokenHashed = password_hash($randToken, PASSWORD_DEFAULT);
@@ -102,7 +103,7 @@ class AuthModel extends Model
     {
         $row = static::getTokenUsingEmail($email);
 
-        if ($row !== null) static::deleteToken($row["id"]); // if an old token exists, delete the token
+        if ($row !== null) static::deleteToken($row["id"]);  // if an old token exists, delete the token
 
         static::$query = "INSERT INTO login_tokens (email, password, selector) VALUES (?, ?, ?)";
         static::$values = [$email, $randTokenHashed, $randTokenSelectorHashed];
@@ -116,12 +117,12 @@ class AuthModel extends Model
      */
     public static function getTokenUsingEmail(string $email): array|null
     {
-        static::$query = "SELECT * FROM login_tokens WHERE email = ?";
+        static::$query = "SELECT * FROM login_tokens WHERE email = ? AND expiry_date >= NOW()"; // select token that has not beeen expired using given email
         static::$values = [$email];
         static::runQuery();
 
         $row = static::$result->fetch_assoc();
-        static::$result = null;
+        static::resetStaticValues();
 
         return $row;
     }
@@ -135,7 +136,7 @@ class AuthModel extends Model
         static::$values = [$id];
 
         static::runQuery();
-        static::$result = null;
+        static::resetStaticValues();
     }
 
     /**

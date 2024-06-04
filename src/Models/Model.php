@@ -424,7 +424,7 @@ class Model
     /**
      * Rest the static values
      */
-    private static function resetStaticValues(): void
+    protected static function resetStaticValues(): void
     {
         static::$query = '';
         static::$loadedRelationships = [];

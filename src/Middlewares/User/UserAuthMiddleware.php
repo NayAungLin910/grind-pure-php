@@ -3,7 +3,9 @@
 namespace Src\Middlewares\User;
 
 use Src\Middlewares\Middleware;
+use Src\Models\User;
 use Src\Router;
+use Src\Services\CookieService;
 
 class UserAuthMiddleware extends Middleware
 {
@@ -16,8 +18,23 @@ class UserAuthMiddleware extends Middleware
 
         session_start();
 
-        if (!isset($_SESSION['auth'])) { // if not logged in
-            $router->redirectUsingRouteName("show-login");
+        if (!isset($_SESSION['auth']) && empty($_COOKIE['email'])) $router->redirectUsingRouteName("show-login");
+
+        if (!isset($_SESSION['auth']) && !empty($_COOKIE['email'])) { // if cookie exists
+
+            $cookieService = new CookieService();
+
+            $res = $cookieService->confirmRememberLoginCookie();
+
+            if (!$res) $router->redirectUsingRouteName("show-login");
+
+            $user = User::selectAll()->where('email', $_COOKIE["email"])->getSingle();
+
+            $_SESSION['auth'] = [ // reset the session
+                "id" => $user->id,
+                "name" => $user->name,
+                "role" => $user->role,
+            ];
         }
 
         session_write_close();

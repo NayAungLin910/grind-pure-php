@@ -10,7 +10,9 @@
         </div>
         <div class="nav-search">
             <input class="input search-input" type="text">
-            <i class="bi bi-search nav-icon"></i>
+            <div class="nav-icon-div">
+                <i class="bi bi-search nav-icon"></i>
+            </div>
         </div>
     </div>
     <div class="nav-link">
