@@ -54,6 +54,41 @@ body {
     border: none;
     height: 30px;
     padding: 10px;
+    background-color: white;
+}
+
+.file-input {
+    width: 0.1px;
+    height: 0.1px;
+    opacity: 0;
+    overflow: hidden;
+    position: absolute;
+    z-index: -1;
+}
+
+.file-input+label {
+    border-radius: 10px;
+    height: 30px;
+    padding: 10px;
+    display: block;
+    width: 100%;
+    background-color: black;
+    display: inline-block;
+    background-color: white;
+}
+
+.file-input:focus+label,
+.file-input+label:hover {
+    background-color: var(--pri-blue-light);
+}
+
+.file-input+label {
+    cursor: pointer;
+}
+
+.file-input:focus+label {
+    outline: 1px dotted #000;
+    outline: -webkit-focus-ring-color auto 5px;
 }
 
 .checkbox {
@@ -85,15 +120,21 @@ body {
     width: 50px;
     height: 100%;
     border-radius: 0 10px 10px 0;
-    background-color: var(--pri-blue);
+    background-color: var(--pri-blue-heavy);
     display: flex;
     align-items: center;
     justify-content: center;
+    cursor: pointer;
 }
 
 .nav-icon {
     font-size: 15px;
     color: white;
+    font-weight: bold;
+}
+
+.icon-black {
+    font-size: 25px;
     font-weight: bold;
 }
 
@@ -240,6 +281,10 @@ body {
     justify-content: center;
 }
 
+.jcb {
+    justify-content: space-between;
+}
+
 .aic {
     align-items: center;
 }
@@ -265,6 +310,10 @@ body {
     border-radius: 10px;
     padding: 5px;
     margin-top: 10px;
+}
+
+.test-class {
+    color: red;
 }
 
 @media (max-width: 1024px) {

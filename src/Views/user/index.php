@@ -1,10 +1,11 @@
 <!DOCTYPE html>
 <html lang="en">
 
-<?php require_once("../src/Views/components/head.php")  ?>
+<head>
+    <?php require_once("../src/Views/components/head.php")  ?>
+</head>
 
 <body>
-    
     <!-- Nav Bar -->
     <?php require_once("../src/Views/components/nav.php") ?>
 
@@ -22,5 +23,6 @@
     </div>
 
 </body>
-    <script src="./assets/js/nav-toggle.js"></script>
+<script src="./assets/js/nav-toggle.js"></script>
+
 </html>

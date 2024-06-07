@@ -96,6 +96,6 @@ $cookieService = new CookieService();
 
 $ifAuth = isset($_SESSION["auth"]) || $cookieService->confirmRememberLoginCookie();
 
-$ifAuthUser = $ifAuth && $_SESSION["auth"]["role"] == "user";
+$ifAuthUser = $ifAuth && $_SESSION["auth"]["role"] == "user"; // if auth user
 
-$ifAuthAdmin = $ifAuth && $_SESSION["auth"]["role"] == "admin";
+$ifAuthAdmin = $ifAuth && $_SESSION["auth"]["role"] == "admin"; // if auth admin

@@ -3,7 +3,7 @@
         <div class="nav-logo">
             <div class="nav-mobile-top-section">
                 <a href="/">
-                    <img class="nav-slogan" src="./default/images/grind_slogan.png" alt="THe grind slogan.">
+                    <img class="nav-slogan" src="/default/images/grind_slogan.png" alt="THe grind slogan.">
                 </a>
                 <i class="bi bi-list nav-toggle-icon" onclick="navToggle()"></i>
             </div>
@@ -43,6 +43,13 @@
                     <form action="<?php echo getRouteUsingRouteName("logout") ?>" method="POST">
                         <input type="submit" class="btn link-plain" value="Logout">
                     </form>
+                </div>
+            <?php endif; ?>
+
+            <!-- Admin -->
+            <?php if ($ifAuthAdmin) : ?>
+                <div class="nav-inner-link">
+                    <a class="btn link-plain" href="<?php echo getRouteUsingRouteName("show-course"); ?>">Dashboard</a>
                 </div>
             <?php endif; ?>
         </div>

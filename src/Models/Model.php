@@ -243,7 +243,7 @@ class Model
         static::$loadedRelationships[$relationName] = $relationInfo;
 
         static::$query .= " LEFT JOIN $pivotTable ON " . static::$table . ".$primaryKey = $pivotTable.$foreignKey";
-        static::$query .= " LEFT JOIN $otherTable ON $pivotTable.$otherTableForeignKey = $otherTable.$otherTablePrimaryKey";  
+        static::$query .= " LEFT JOIN $otherTable ON $pivotTable.$otherTableForeignKey = $otherTable.$otherTablePrimaryKey";
 
         return new static;
     }
@@ -266,7 +266,7 @@ class Model
                 $model = static::iniRelationModels($row, $model);
                 continue;
             }
-            
+
             $model = static::iniModelUsingAssocArray($row);
             $model = static::iniRelationModels($row, $model);
         };
@@ -354,15 +354,12 @@ class Model
     private static function iniRelationModels(array $row, array|Model $models, int $index = 0): array|Model
     {
         if (count(static::$loadedRelationships) > 0) { // if there is(are) loaded relationships of the model
-            
-            // dd("hello");
             foreach (static::$loadedRelationships as $relationName => $relationInfo) { // loop the relationship
 
                 $relationModel = new $relationInfo["class"]; // initialize relation model class
                 $modelPropertySetCount = 0;
 
                 foreach ($row as $column => $value) {
-
                     if (str_contains($column, $relationName) && $value !== null) { // if the column is of the relation model
 
                         $modelProperty = substr($column, strpos($column, "_") + 1); // get the property to set from the column E.g get "title" from "courses_title"
@@ -374,16 +371,24 @@ class Model
                 // if no property of the relation model class is set, returns the existing models
                 if ($modelPropertySetCount == 0) return $models;
 
-                if (is_array($models)) {
-                    $models[$index]->$relationName[] = $relationModel; // append the relation model class to the relation model array property of the model
-                } else {
-                    $models->$relationName[] = $relationModel;
+                $modelsIsArray = is_array($models);
+                $idExists = false;
+
+                if ($modelsIsArray) { // check if a relation model with the same id already exists
+                    foreach ($models[$index]->$relationName as $i => $rModel) {
+                        if ($rModel->id === $relationModel->id) {
+                            $idExists = true;
+                        }
+                    }
                 }
 
-                return $models;
+                if ($modelsIsArray && !$idExists) {
+                    $models[$index]->$relationName[] = $relationModel; // append the relation model class to the relation model array property of the model
+                } elseif (!$idExists) {
+                    $models->$relationName[] = $relationModel;
+                }
             }
         }
-
         return $models;
     }
 

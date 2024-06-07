@@ -38,6 +38,21 @@
                     <?php displayErrorMessage("email") ?>
                 </div>
 
+                <!-- File -->
+                <div class="form-group">
+                    <input type="file" class="file-input" id="profile" name="profile" data-multiple-caption="{count} files selected." multiple>
+                    <label class="file-input-label" for="profile">
+                        <div class="file-input-text-inner flex jcb aic" style="height: 100%;">
+                            <div class="file-input-text">
+                                Select File
+                            </div>
+                            <div>
+                                <i class="bi bi-cloud-arrow-up-fill icon-black"></i>
+                            </div>
+                        </div>
+                    </label>
+                </div>
+
                 <!-- Password -->
                 <div class="form-group">
                     <label class="form-label text-white" for="password">Password</label>
@@ -63,5 +78,8 @@
 
 <!-- Nav toggle js -->
 <script src="./assets/js/nav-toggle.js"></script>
+
+<!-- File input interactive js -->
+<script src="/assets/js/file-input-interactive.js"></script>
 
 </html>

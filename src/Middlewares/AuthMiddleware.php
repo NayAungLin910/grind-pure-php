@@ -1,13 +1,13 @@
 <?php
 
-namespace Src\Middlewares\User;
+namespace Src\Middlewares;
 
 use Src\Middlewares\Middleware;
 use Src\Models\User;
 use Src\Router;
 use Src\Services\CookieService;
 
-class UserAuthMiddleware extends Middleware
+class AuthMiddleware extends Middleware
 {
     /**
      * Run security check on the current route

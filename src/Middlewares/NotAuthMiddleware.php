@@ -1,11 +1,11 @@
 <?php
 
-namespace Src\Middlewares\User;
+namespace Src\Middlewares;
 
 use Src\Middlewares\Middleware;
 use Src\Router;
 
-class UserNotAuthMiddleware extends Middleware
+class NotAuthMiddleware extends Middleware
 {
     /**
      * Run security check on the current route

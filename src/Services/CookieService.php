@@ -20,7 +20,10 @@ class CookieService
         
         $user = User::selectAll()->where('email', $_COOKIE["email"])->getSingle();
         
-        if (!$user) return false;
+        if (!$user) {
+            AuthModel::clearCookies();
+            return false;
+        }
 
         $token = $user::getTokenUsingEmail($user->email);
         
