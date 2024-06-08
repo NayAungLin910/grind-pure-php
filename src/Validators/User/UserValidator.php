@@ -72,4 +72,21 @@ class UserValidator extends FormValidator
 
         return $this;
     }
+
+    /**
+     * Validate profile image
+     */
+    public function profileImageValidate(array $profileImage, string $errorKey, int $index = 0,): UserValidator
+    {
+        $commonImageExtensions = ['image/jpeg', 'image/png', 'image/gif'];
+
+        $fileExtension = is_array($profileImage['type']) ? $profileImage['type'][$index] : $profileImage['type'];
+        $fileSize = is_array($profileImage['size']) ? $profileImage['size'][$index] : $profileImage['size'];
+
+        $this->checkFileExtension($fileExtension, $errorKey, $commonImageExtensions);
+
+        $this->checkFileSize($fileSize, $errorKey, 25);
+
+        return $this;
+    }
 }

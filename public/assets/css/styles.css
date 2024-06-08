@@ -1,6 +1,6 @@
 :root {
     --pri-blue: #6c6add;
-    --nav-slogan-width: 70px;
+    --nav-slogan-width: 55px;
     --nav-link-gap: 30px;
     --body-offset-navbar: 64px;
     --pri-blue-heavy: #3d3bc2;
@@ -42,8 +42,7 @@ body {
 
 .nav-slogan {
     border-radius: 10px;
-    width: 80px;
-    height: 50px;
+    width: var(--nav-slogan-width);
 }
 
 .input {
@@ -345,11 +344,6 @@ body {
         flex-direction: column;
         gap: var(--nav-link-gap);
         text-align: center;
-    }
-
-    .nav-slogan {
-        width: var(--nav-slogan-width);
-        height: calc(var(--nav-slogan-width) - (var(--nav-slogan-width) * (30/100)));
     }
 
     .nav-search {

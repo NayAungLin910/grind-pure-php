@@ -23,9 +23,13 @@
             <div class="nav-inner-link">
                 <a class="btn link-plain" href="">Explore</a>
             </div>
-            <div class="nav-inner-link">
-                <a class="btn link-plain" href="">Profile</a>
-            </div>
+
+            <!-- If Auth -->
+            <?php if ($ifAuth) : ?>
+                <div class="nav-inner-link">
+                    <a class="btn link-plain" href="">Profile</a>
+                </div>
+            <?php endif; ?>
 
             <!-- Not Auth -->
             <?php if (!$ifAuth) : ?>

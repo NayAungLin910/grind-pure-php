@@ -14,12 +14,8 @@ class NotAuthMiddleware extends Middleware
     {
         $router = new Router();
 
-        session_start();
-
         if (isset($_SESSION['auth'])) { // if logged in
             $router->redirectUsingRouteName("welcome");
         }
-
-        session_write_close();
     }
 }

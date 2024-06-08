@@ -123,13 +123,34 @@ class FormValidator
      */
     public function checkRequestFields(array $fields): void
     {
-        foreach ($fields as $index => $field) {
-            
-            if (!isset($_REQUEST[$field])) {
+        foreach ($fields as $field) {
+            if (!isset($_REQUEST[$field]) && !isset($_FILES[$field])) {
 
                 $this->errors["fields"][] = "$field must be included in the request.";
                 $this->flashErrors();
             }
+        }
+    }
+
+    /**
+     * Check if the file extension is among the given extensions
+     */
+    public function checkFileExtension(string $extension, string $errorKey, array $allowedExtensions): void
+    {
+        if (!in_array($extension, $allowedExtensions)) {
+            $this->errors[$errorKey][] = "$errorKey is not an allowed file type";
+        }
+    }
+
+    /**
+     * Check if the file exceeds the number of allowed bytes
+     */
+    public function checkFileSize(int $fileSize, string $errorKey, int $megaByte): void
+    {
+        $bytes = $megaByte * pow(10, 6);
+
+        if ($fileSize > $bytes) {
+            $this->errors[$errorKey][] = "$errorKey, file size should not be bigger than $megaByte" . "MB.";
         }
     }
 
@@ -142,15 +163,12 @@ class FormValidator
 
         if (count($errors) > 0) { // if error(s) exist
 
-            session_start();
-
             $_SESSION["errors"] = $errors; // set error session
 
             $redirect = $redirect !== '' ? $redirect : $_SERVER["HTTP_REFERER"];
 
             header("Location: " . $redirect); // redirects back 
 
-            session_write_close();
             die();
         }
     }
@@ -163,11 +181,7 @@ class FormValidator
 
         if (count($oldData) > 0) { // if errors in valiation exists as well as the data to be flashed
 
-            session_start();
-
             $_SESSION["old"] = $oldData; // set previous form data
-            
-            session_write_close();
         }
     }
 }

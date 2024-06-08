@@ -19,7 +19,7 @@
         <!-- Login Card -->
         <div class="card login-card">
 
-            <form action="/register" method="POST">
+            <form action="/register" method="POST" enctype="multipart/form-data">
 
                 <!-- Card Header -->
                 <h3 class="card-header">Sign Up</h3>
@@ -40,7 +40,8 @@
 
                 <!-- File -->
                 <div class="form-group">
-                    <input type="file" class="file-input" id="profile" name="profile" data-multiple-caption="{count} files selected." multiple>
+                    <p class="form-label text-white">Profile Image</p>
+                    <input type="file" class="file-input" id="profile" name="profile[]" data-multiple-caption="{count} files selected." multiple>
                     <label class="file-input-label" for="profile">
                         <div class="file-input-text-inner flex jcb aic" style="height: 100%;">
                             <div class="file-input-text">
@@ -51,13 +52,15 @@
                             </div>
                         </div>
                     </label>
+                    <?php displayErrorMessage("profile image") ?>
                 </div>
 
                 <!-- Password -->
                 <div class="form-group">
                     <label class="form-label text-white" for="password">Password</label>
                     <input class="input form-input" name="password" name="password" type="password">
-                    <?php displayErrorMessage("password") ?>
+                    <?php displayErrorMessage("password")  ?>
+                    <?php displayAllErrorMessages() ?>
                 </div>
 
                 <!-- Login Page Link -->

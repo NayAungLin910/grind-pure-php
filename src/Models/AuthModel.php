@@ -26,15 +26,11 @@ class AuthModel extends Model
 
         if (password_verify($credentials["password"], $user->password)) { // if password matches
 
-            session_start();
-
             $_SESSION['auth'] = [
                 "id" => $user->id,
                 "name" => $user->name,
                 "role" => $user->role,
             ];
-
-            session_write_close();
 
             if (isset($credentials["remember"])) {
                 static::setCookieAndToken($user->email);
@@ -75,11 +71,8 @@ class AuthModel extends Model
      */
     public static function logout(): void
     {
-        session_start();
 
         if (isset($_SESSION["auth"])) unset($_SESSION["auth"]);
-
-        session_write_close();
 
         static::clearCookies();
     }

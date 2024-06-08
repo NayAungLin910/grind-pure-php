@@ -5,11 +5,12 @@ namespace Src\Controllers;
 use Src\Controller;
 use Src\Models\User;
 use Src\Router;
+use Src\Services\FormService;
 use Src\Validators\User\UserValidator;
 
 class AuthController extends Controller
 {
-    public function __construct(private $router = new Router())
+    public function __construct(private $router = new Router(), private $formService = new FormService())
     {
     }
 
@@ -28,15 +29,17 @@ class AuthController extends Controller
     {
         $userValidator = new UserValidator();
 
-        $userValidator->checkRequestFields(["name", "email", "password"]);
+        $userValidator->checkRequestFields(["name", "email", "password", "profile"]);
 
         $name = $_POST['name'];
         $email = $_POST['email'];
         $password = $_POST['password'];
+        $profileImage = $_FILES['profile'];
 
         $userValidator->nameValidate($name, 'name');
         $userValidator->emailValidate($email, 'email');
         $userValidator->passwordValidate($password, 'password');
+        $userValidator->profileImageValidate($profileImage, 'profile image');
 
         $userValidator->flashOldRequestData([
             "name" => $name,
@@ -44,10 +47,14 @@ class AuthController extends Controller
         ]);
         $userValidator->flashErrors();
 
+        $profileDir = $this->formService->uploadFiles($profileImage, "/images", "profile image");
+
+        dd(true);
+
         User::create([ // create a new user
             "name" => $name,
             "email" => $email,
-            "profile_image" => "/default/images/default_user.jpg",
+            "profile_image" => $profileDir,
             "password" => password_hash($password, PASSWORD_DEFAULT)
         ]);
 

@@ -16,8 +16,6 @@ class AuthMiddleware extends Middleware
     {
         $router = new Router();
 
-        session_start();
-
         if (!isset($_SESSION['auth']) && empty($_COOKIE['email'])) $router->redirectUsingRouteName("show-login");
 
         if (!isset($_SESSION['auth']) && !empty($_COOKIE['email'])) { // if cookie exists
@@ -36,7 +34,5 @@ class AuthMiddleware extends Middleware
                 "role" => $user->role,
             ];
         }
-
-        session_write_close();
     }
 }

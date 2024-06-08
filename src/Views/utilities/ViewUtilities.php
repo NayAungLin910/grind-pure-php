@@ -5,8 +5,6 @@
 
 //------------------------------- Functions ------------------------------------
 
-use Src\Models\AuthModel;
-use Src\Models\User;
 use Src\Services\CookieService;
 
 /**
@@ -14,14 +12,10 @@ use Src\Services\CookieService;
  */
 function displayFlashedSessionValue(string $sessionName, string $key): void
 {
-    session_start();
-
     if (isset($_SESSION[$sessionName][$key])) {
         echo htmlspecialchars($_SESSION[$sessionName][$key]);
         unset($_SESSION[$sessionName][$key]);
     }
-
-    session_write_close();
 }
 
 /**
@@ -29,15 +23,11 @@ function displayFlashedSessionValue(string $sessionName, string $key): void
  */
 function displayErrorMessage(string $field): void
 {
-    session_start();
-
     if (isset($_SESSION["errors"][$field]) && count($_SESSION["errors"][$field]) > 0) {
 
         echo '<span class="error-message">' . htmlspecialchars($_SESSION["errors"][$field][0]) . '</span>';
         unset($_SESSION["errors"][$field]);
     }
-
-    session_write_close();
 }
 
 /**
@@ -45,8 +35,6 @@ function displayErrorMessage(string $field): void
  */
 function displayAllErrorMessages(): void
 {
-    session_start();
-
     if (isset($_SESSION["errors"]) && count($_SESSION["errors"]) > 0) {
 
         foreach ($_SESSION["errors"] as $fieldName => $messages) {
@@ -58,8 +46,6 @@ function displayAllErrorMessages(): void
             }
         }
     }
-
-    session_write_close();
 }
 
 /**

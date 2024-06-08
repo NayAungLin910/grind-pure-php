@@ -14,8 +14,6 @@ class AdminAuthMiddleware extends Middleware
     {
         $router = new Router();
 
-        session_start();
-
         if (!isset($_SESSION['auth'])) { // if not logged in
             $router->redirectUsingRouteName("show-login");
         }
@@ -23,7 +21,5 @@ class AdminAuthMiddleware extends Middleware
         if ($_SESSION['auth']['role'] !== "admin") { // if logged in but not admin account
             $router->redirectUsingRouteName("welcome");
         }
-
-        session_write_close();
     }
 }

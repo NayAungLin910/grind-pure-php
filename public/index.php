@@ -4,6 +4,8 @@ use Dotenv\Dotenv;
 
 require '../vendor/autoload.php';
 
+session_start();
+
 require '../src/routes.php';
 
 $dontenv = Dotenv::createImmutable('../config');
