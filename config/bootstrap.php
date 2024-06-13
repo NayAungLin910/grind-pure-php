@@ -3,12 +3,8 @@
 use Doctrine\DBAL\DriverManager;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\ORMSetup;
-use Dotenv\Dotenv;
 
 require '../vendor/autoload.php';
-
-// $dotenv = Dotenv::createImmutable('../');
-// $dotenv->load();
 
 $paths = [
     "../src/Models"
@@ -30,4 +26,5 @@ $connection = DriverManager::getConnection($dbConfig, $config);
 
 $entityManager = new EntityManager($connection, $config);
 
-
+$con = $entityManager->getConnection();
+$con->getDatabasePlatform()->registerDoctrineTypeMapping('enum', 'string');

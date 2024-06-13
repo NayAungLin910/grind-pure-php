@@ -2,15 +2,17 @@
 
 namespace Src\Controllers;
 
+use Doctrine\Persistence\ObjectManager;
 use Src\Controller;
 use Src\Models\User;
 use Src\Router;
+use Src\Services\AuthService;
 use Src\Services\FormService;
 use Src\Validators\User\UserValidator;
 
 class AuthController extends Controller
 {
-    public function __construct(private $router = new Router(), private $formService = new FormService())
+    public function __construct(private $router = new Router(), private $formService = new FormService(), private $authService = new AuthService())
     {
     }
 
@@ -49,14 +51,17 @@ class AuthController extends Controller
 
         $profileDir = $this->formService->uploadFiles($profileImage, "/images", "profile image");
 
-        dd(true);
+        $user = new User;
+        $user->setName($name);
+        $user->setEmail($email);
+        $user->setProfileImage($profileDir);
+        $user->setPassword(password_hash($password, PASSWORD_DEFAULT));
 
-        User::create([ // create a new user
-            "name" => $name,
-            "email" => $email,
-            "profile_image" => $profileDir,
-            "password" => password_hash($password, PASSWORD_DEFAULT)
-        ]);
+        $objectManager = new ObjectManager();
+        $userRepository = $objectManager->getRepository(User::class);
+
+        $objectManager->persist($userRepository);
+        $objectManager->flush();
 
         $this->router->redirectUsingRouteName('show-login');
     }
@@ -88,7 +93,7 @@ class AuthController extends Controller
         $userValidator->flashOldRequestData(["email" => $email]);
         $userValidator->flashErrors();
 
-        User::auth([
+        $this->authService->auth([
             "email" => $email,
             "password" => $password,
             "remember" => $remember,
@@ -100,9 +105,11 @@ class AuthController extends Controller
      */
     public function logout(): void
     {
-        $user = User::selectAll()->where("id", $_SESSION["auth"]["id"])->getSingle();
+        require "../config/bootstrap.php";  
 
-        $user::logout();
+        $user = $entityManager->find('Src\Models\User', $_SESSION["auth"]["id"]);
+        
+        $this->authService->logout();
 
         $this->router->redirectUsingRouteName("show-login");
     }

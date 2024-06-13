@@ -36,7 +36,6 @@ function displayErrorMessage(string $field): void
 function displayAllErrorMessages(): void
 {
     if (isset($_SESSION["errors"]) && count($_SESSION["errors"]) > 0) {
-
         foreach ($_SESSION["errors"] as $fieldName => $messages) {
 
             if (is_array($_SESSION["errors"][$fieldName]) && count($_SESSION["errors"][$fieldName]) > 0) {

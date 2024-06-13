@@ -4,6 +4,8 @@ use Dotenv\Dotenv;
 
 require '../vendor/autoload.php';
 
+require_once "../config/bootstrap.php";
+
 session_start();
 
 require '../src/routes.php';
