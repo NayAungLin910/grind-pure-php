@@ -24,8 +24,6 @@ class UserValidator extends FormValidator
 
         $this->checkStringWithinDefinedLength($name, $errorKey, 6, 20);
 
-        $this->checkPreExistsModel($name, 'name', 'name', User::class);
-
         return $this;
     }
 
@@ -84,7 +82,6 @@ class UserValidator extends FormValidator
         $fileSize = is_array($profileImage['size']) ? $profileImage['size'][$index] : $profileImage['size'];
 
         $this->checkFileExtension($fileExtension, $errorKey, $commonImageExtensions);
-
         $this->checkFileSize($fileSize, $errorKey, 25);
 
         return $this;

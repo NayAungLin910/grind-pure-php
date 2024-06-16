@@ -67,7 +67,6 @@ class Router
         }
 
         if ($routeExists && $declaredRequestMethodExists) { // both the requested route and current method exists
-
             if (array_key_exists('middleware', $this->routes[$uri][$_SERVER['REQUEST_METHOD']])) { // if middleware exists
 
                 $middleware = $this->routes[$uri][$_SERVER['REQUEST_METHOD']]['middleware'];
@@ -87,7 +86,7 @@ class Router
         }
     }
 
-     /**
+    /**
      * Redirect to previous route
      */
     public function redirectBack(): void
@@ -106,13 +105,13 @@ class Router
         }
 
         include "routes.php";
-        
+
         foreach ($router->routes as $url => $mappedInfos) {
             foreach ($router->routes[$url] as $method => $value) {
-                
+
                 $routeNameExists = isset($router->routes[$url][$method]["name"]); // the route name parameter is defined
                 $routeNameSame = $router->routes[$url][$method]["name"] == $routeName; // check if the current route name is the same with the route being searched 
-                
+
                 if ($routeNameExists && $routeNameSame) {
                     header("Location: $url");
                     die();

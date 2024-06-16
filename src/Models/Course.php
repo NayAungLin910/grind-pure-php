@@ -54,10 +54,14 @@ class Course
     #[JoinTable(name: 'users_courses')]
     private Collection $users;
 
+    #[ManyToMany(targetEntity: Tag::class, mappedBy: 'courses')]
+    private Collection $tags;
+
     public function __construct()
     {
         $this->certificates = new ArrayCollection();
         $this->users = new ArrayCollection();
+        $this->created_at = new DateTime();
     }
 
     public function getId(): int
@@ -138,7 +142,7 @@ class Course
     public function getCertificates(): Collection
     {
         return $this->certificates;
-    } 
+    }
 
     public function setCertificates(Collection $certificates): void
     {
@@ -150,8 +154,13 @@ class Course
         return $this->users;
     }
 
-    public function setUsers(Collection $users): void
+    public function setTags(Collection $tags): void
     {
-        $this->users = $users;
+        $this->tags = $tags;
+    }
+
+    public function getTags(): Collection
+    {
+        return $this->tags;
     }
 }

@@ -4,6 +4,7 @@ namespace Src\Middlewares\Admin;
 
 use Src\Middlewares\Middleware;
 use Src\Router;
+use Src\Services\MiddlewareService;
 
 class AdminAuthMiddleware extends Middleware
 {
@@ -14,12 +15,16 @@ class AdminAuthMiddleware extends Middleware
     {
         $router = new Router();
 
-        if (!isset($_SESSION['auth'])) { // if not logged in
-            $router->redirectUsingRouteName("show-login");
-        }
+        if (!isset($_SESSION['auth']) && empty($_COOKIE['email'])) $router->redirectUsingRouteName("show-login");
 
-        if ($_SESSION['auth']['role'] !== "admin") { // if logged in but not admin account
-            $router->redirectUsingRouteName("welcome");
+        if (isset($_SESSION['auth']) && $_SESSION['auth']['role'] !== 'admin') $router->redirectUsingRouteName("welcome");
+
+        if (!isset($_SESSION['auth']) && !empty($_COOKIE['email'])) { // if cookie exists
+
+            $middlewareService = new MiddlewareService();
+            $middlewareService->resetSectionFromExistingCookie();
+
+            if ($_SESSION['auth']['role'] !== 'admin') $router->redirectUsingRouteName("welcome");
         }
     }
 }

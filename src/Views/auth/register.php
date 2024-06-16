@@ -38,10 +38,10 @@
                     <?php displayErrorMessage("email") ?>
                 </div>
 
-                <!-- File -->
+                <!-- Profile Image -->
                 <div class="form-group">
                     <p class="form-label text-white">Profile Image</p>
-                    <input type="file" class="file-input" id="profile" name="profile[]" data-multiple-caption="{count} files selected." multiple>
+                    <input type="file" class="file-input" id="profile" name="profile" data-multiple-caption="{count} files selected." multiple>
                     <label class="file-input-label" for="profile">
                         <div class="file-input-text-inner flex jcb aic" style="height: 100%;">
                             <div class="file-input-text">

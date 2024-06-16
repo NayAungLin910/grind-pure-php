@@ -9,7 +9,6 @@ use Doctrine\ORM\Mapping\Column;
 use Doctrine\ORM\Mapping\Entity;
 use Doctrine\ORM\Mapping\GeneratedValue;
 use Doctrine\ORM\Mapping\Id;
-use Doctrine\ORM\Mapping\JoinTable;
 use Doctrine\ORM\Mapping\ManyToMany;
 use Doctrine\ORM\Mapping\Table;
 use Doctrine\ORM\Mapping\OneToMany;
@@ -43,11 +42,14 @@ class User
     #[Column(type: 'string')]
     private string $role;
 
-    #[Column(type: 'datetime')]
-    private DateTime $created_at;
+    #[Column(type: 'datetime', nullable: true)]
+    private DateTime|null $created_at;
 
     #[Column(type: 'datetime', nullable: true)]
     private DateTime $updated_at;
+
+    #[OneToMany(targetEntity: Tag::class, mappedBy: 'user')]
+    private Collection $tags;
 
     #[OneToMany(targetEntity: Course::class, mappedBy: 'user')]
     private Collection $courses;
@@ -55,12 +57,10 @@ class User
     #[ManyToMany(targetEntity: Certificate::class, mappedBy: 'users')]
     private Collection $certificates;
 
-    #[ManyToMany(targetEntity: Course::class, inversedBy: 'enrolledCourses')]
-    #[JoinTable(name: 'users_courses')]
+    #[ManyToMany(targetEntity: Course::class, mappedBy: 'users')]
     private Collection $enrolledCourses;
 
-    #[ManyToMany(targetEntity: Step::class, inversedBy: 'users')]
-    #[JoinTable(name: 'users_steps')]
+    #[ManyToMany(targetEntity: Step::class, mappedBy: 'users')]
     private Collection $completedSteps;
 
     public function __construct()
@@ -69,6 +69,8 @@ class User
         $this->certificates = new ArrayCollection();
         $this->enrolledCourses = new ArrayCollection();
         $this->completedSteps = new ArrayCollection();
+        $this->created_at = new DateTime();
+        $this->role = 'user';
     }
 
     public function getId(): int
@@ -133,6 +135,16 @@ class User
         }
 
         $this->role = $role;
+    }
+
+    public function getTags(): Collection
+    {
+        return $this->tags;
+    }
+
+    public function setTags(Collection $tags): void
+    {
+        $this->tags = $tags;
     }
 
     public function getCourses(): Collection

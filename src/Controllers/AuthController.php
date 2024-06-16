@@ -2,7 +2,6 @@
 
 namespace Src\Controllers;
 
-use Doctrine\Persistence\ObjectManager;
 use Src\Controller;
 use Src\Models\User;
 use Src\Router;
@@ -57,11 +56,10 @@ class AuthController extends Controller
         $user->setProfileImage($profileDir);
         $user->setPassword(password_hash($password, PASSWORD_DEFAULT));
 
-        $objectManager = new ObjectManager();
-        $userRepository = $objectManager->getRepository(User::class);
+        require "../config/bootstrap.php";
 
-        $objectManager->persist($userRepository);
-        $objectManager->flush();
+        $entityManager->persist($user);
+        $entityManager->flush();
 
         $this->router->redirectUsingRouteName('show-login');
     }
@@ -105,10 +103,8 @@ class AuthController extends Controller
      */
     public function logout(): void
     {
-        require "../config/bootstrap.php";  
+        require "../config/bootstrap.php";
 
-        $user = $entityManager->find('Src\Models\User', $_SESSION["auth"]["id"]);
-        
         $this->authService->logout();
 
         $this->router->redirectUsingRouteName("show-login");

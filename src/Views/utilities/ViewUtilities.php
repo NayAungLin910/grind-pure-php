@@ -39,7 +39,6 @@ function displayAllErrorMessages(): void
         foreach ($_SESSION["errors"] as $fieldName => $messages) {
 
             if (is_array($_SESSION["errors"][$fieldName]) && count($_SESSION["errors"][$fieldName]) > 0) {
-
                 echo '<span class="error-message">' . htmlspecialchars($_SESSION["errors"][$fieldName][0]) . '</span>';
                 unset($_SESSION["errors"][$fieldName]);
             }
@@ -75,11 +74,31 @@ function getRouteUsingRouteName(string $routeName): string
     throw new Exception("$routeName is not a declared route name.");
 }
 
+/**
+ * Check if the route is the route mapped with the given routename
+ */
+function checkCurrentRouteSame(string $routeName): bool
+{
+    $route = getRouteUsingRouteName($routeName); // get the Route using route name
+
+    return $_SERVER['REQUEST_URI'] === $route;
+}
+
+/**
+ * echo class name if current route the same
+ */
+function echoClassCurrentRouteSame(string $routeName, string $className)
+{
+    if (checkCurrentRouteSame($routeName)) {
+        echo $className;
+    }
+}
+
 //------------------------------- If condition boolean variables  ------------------------------------
 
 $cookieService = new CookieService();
 
-$ifAuth = isset($_SESSION["auth"]) || $cookieService->confirmRememberLoginCookie();
+$ifAuth = isset($_SESSION["auth"]);
 
 $ifAuthUser = $ifAuth && $_SESSION["auth"]["role"] == "user"; // if auth user
 

@@ -59,7 +59,7 @@ class Step
     #[Column(type: 'datetime')]
     private DateTime $created_at;
 
-    #[Column(type: 'datetime', nullable: true)] 
+    #[Column(type: 'datetime', nullable: true)]
     private DateTime $updated_at;
 
     #[ManyToOne(targetEntity: Section::class, inversedBy: 'steps')]
@@ -73,6 +73,7 @@ class Step
     public function __construct()
     {
         $this->users = new ArrayCollection();
+        $this->type = static::SECTION_READING;
     }
 
     public function getId(): int
@@ -179,7 +180,7 @@ class Step
         $this->updated_at = $updated_at;
     }
 
-    public function getSection(): Section|null 
+    public function getSection(): Section|null
     {
         return $this->section;
     }

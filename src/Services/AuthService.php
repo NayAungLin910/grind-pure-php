@@ -137,7 +137,7 @@ class AuthService
 
         $statment = $con->prepare($query);
         $statment->bind_param("i", $id);
-        $statment->exectue();
+        $statment->execute();
     }
 
     /**
@@ -160,5 +160,23 @@ class AuthService
         if (isset($_SESSION["auth"])) unset($_SESSION["auth"]);
 
         $this->clearCookies();
+    }
+
+    /**
+     * Get Current logged in user
+     */
+    public function getCurrentLoggedInUser(): User|bool
+    {
+        if (!isset($_SESSION['auth']['id'])) {
+            return false;
+        }
+
+        require "../config/bootstrap.php";
+
+        $user = $entityManager->getRepository(User::class)->find($_SESSION['auth']['id']);
+
+        if (!$user) return false;
+
+        return $user;
     }
 }

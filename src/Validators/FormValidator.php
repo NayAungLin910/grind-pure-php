@@ -33,6 +33,9 @@ class FormValidator
      */
     protected function checkStringExists(string $value, string $errorKey): void
     {
+        if (!is_string($value)) {
+            $this->errors[$errorKey][] = "The $errorKey must be of string type.";
+        }
         if ($value == "") {
             $this->errors[$errorKey][] = "Please fill in $errorKey.";
         }
@@ -106,14 +109,22 @@ class FormValidator
     /**
      * Check if a model with a given parameter and value exists
      */
-    protected function checkPreExistsModel(string|float|int $value, string $errorKey, string $column, string $model): void
+    protected function checkPreExistsModel(string|float|int $value, string $errorKey, string $column, string $model, int $except = 0): void
     {
         $lastSlashIndex = strrpos($model, "\\");
         $className = substr($model, $lastSlashIndex + 1);
 
-        $model = $model::selectAll()->where($column, $value)->getSingle();
+        require "../config/bootstrap.php";
 
-        if (!empty($model)) {
+        $preModel = $entityManager->getRepository($model)->findOneBy([
+            $column => $value
+        ]);
+
+        if ($preModel && $except !== 0 && $preModel->getId() == $except) {
+            return;
+        }
+
+        if ($preModel) {
             $this->errors[$errorKey][] = $className . " with the $column, " . '"' . $value . '"' . " already exists";
         }
     }
@@ -138,7 +149,7 @@ class FormValidator
     public function checkFileExtension(string $extension, string $errorKey, array $allowedExtensions): void
     {
         if (!in_array($extension, $allowedExtensions)) {
-            $this->errors[$errorKey][] = "$errorKey is not an allowed file type";
+            $this->errors[$errorKey][] = "The uploaded file is not an allowed file type";
         }
     }
 
@@ -176,12 +187,22 @@ class FormValidator
     /**
      * Flash the previous request data
      */
-    public function flashOldRequestData(array $oldData = [])
+    public function flashOldRequestData(array $oldData = []): void
     {
 
         if (count($oldData) > 0) { // if errors in valiation exists as well as the data to be flashed
 
             $_SESSION["old"] = $oldData; // set previous form data
+        }
+    }
+
+    /**
+     * Reset the previous request data
+     */
+    public function resetOldRequestData(): void
+    {
+        if (isset($_SESSION['old'])) {
+            unset($_SESSION['old']);
         }
     }
 }
