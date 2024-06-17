@@ -28,17 +28,19 @@
                     <i class="bi bi-tag"></i>
                     Tag
                 </div>
-                <i class="bi bi-chevron-down sidebar-menu-item-droparrow droparrow-1 <?php echoClassCurrentRouteSame('show-tag-create', 'rotate'); ?>" id="droparrow-1"></i>
+                <i class="bi bi-chevron-down sidebar-menu-item-droparrow droparrow-1 <?php echoClassCurrentRouteSame('show-tag-create', 'rotate');
+                                                                                        echoClassCurrentRouteSame('show-tag', 'rotate'); ?>" id="droparrow-1"></i>
             </div>
 
-            <!--Sub Menu of Dropdown Item 1 -->
-            <div class="sub-menu <?php echoClassCurrentRouteSame('show-tag-create', 'active') ?>" id="sub-menu-1">
-                <!-- <a class="link-plain text-white" href="<?php echo getRouteUsingRouteName('show-course') ?>" class="">
-                    <div class="sub-menu-item <?php echoClassCurrentRouteSame('show-course', 'active'); ?>">
+            <!--Sub Menu of Tag Dropdown -->
+            <div class="sub-menu <?php echoClassCurrentRouteSame('show-tag-create', 'active');
+                                    echoClassCurrentRouteSame('show-tag', 'active'); ?>" id="sub-menu-1">
+                <a class="link-plain text-white" href="<?php echo getRouteUsingRouteName('show-tag') ?>" class="">
+                    <div class="sub-menu-item <?php echoClassCurrentRouteSame('show-tag', 'active'); ?>">
                         <i class="bi bi-card-list"></i>
                         Tags
                     </div>
-                </a> -->
+                </a>
                 <a class="link-plain text-white" href="<?php echo getRouteUsingRouteName('show-tag-create') ?>" class="">
                     <div class="sub-menu-item <?php echoClassCurrentRouteSame('show-tag-create', 'active') ?>">
                         <i class="bi bi-plus-square"></i>
@@ -56,7 +58,7 @@
                     Course
                 </div>
                 <i class="bi bi-chevron-down sidebar-menu-item-droparrow droparrow-1 <?php echoClassCurrentRouteSame('show-course', 'rotate');
-                                                                                        echoClassCurrentRouteSame('show-course', 'rotate'); ?>" id="droparrow-2"></i>
+                                                                                        echoClassCurrentRouteSame('show-course-create', 'rotate'); ?>" id="droparrow-2"></i>
             </div>
 
             <!--Sub Menu of Course -->
@@ -77,23 +79,24 @@
             </div>
         </div>
 
-        <!-- Dropdown Item 2 -->
-        <div class="sidebar-menu-item" onclick="subMenuToggle(2)">
+        <!-- Bin Dropdown -->
+        <div class="sidebar-menu-item" onclick="subMenuToggle(3)">
             <div class="flex jcb">
                 <div>
-                    <i class="bi bi-collection"></i>
-                    Dash 2
+                    <i class="bi bi-trash-fill"></i>
+                    Bin
                 </div>
-                <i class="bi bi-chevron-down sidebar-menu-item-droparrow droparrow-2" id="droparrow-2"></i>
+                <i class="bi bi-chevron-down sidebar-menu-item-droparrow droparrow-2 <?php echoClassCurrentRouteSame('show-bin-tag', 'rotate') ?>" id="droparrow-3"></i>
             </div>
 
-            <!--Sub Menu of Dropdown Item 1 -->
-            <div class="sub-menu" id="sub-menu-2">
-                <div class="sub-menu-item">
-                    <a class="link-plain text-white" href="" class="">
-                        Sub Menu Item 1
-                    </a>
-                </div>
+            <!--Sub Menu of Bin Dropdown -->
+            <div class="sub-menu <?php echoClassCurrentRouteSame('show-bin-tag', 'active') ?>" id="sub-menu-3">
+                <a class="link-plain text-white" href="<?= getRouteUsingRouteName('show-bin-tag') ?>" class="">
+                    <div class="sub-menu-item <?php echoClassCurrentRouteSame('show-bin-tag', 'active') ?>">
+                        <i class="bi bi-tag"></i>
+                        Tags
+                    </div>
+                </a>
                 <div class="sub-menu-item">
                     <a class="link-plain text-white" href="" class="">
                         Sub Menu Item 2

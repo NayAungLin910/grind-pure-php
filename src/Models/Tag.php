@@ -37,6 +37,9 @@ class Tag
     #[Column(type: 'datetime', nullable: true)]
     private DateTime $updated_at;
 
+    #[Column(type: 'boolean')]
+    private bool $deleted;
+
     #[ManyToOne(targetEntity: User::class, inversedBy: 'tags')]
     #[JoinColumn(name: 'user_id', referencedColumnName: 'id')]
     private User $user;
@@ -49,6 +52,7 @@ class Tag
     {
         $this->courses = new ArrayCollection();
         $this->created_at = new DateTime();
+        $this->deleted = false;
     }
 
     public function getId(): int
@@ -94,6 +98,16 @@ class Tag
     public function setUpdatedAt(): void
     {
         $this->updated_at = new DateTime();
+    }
+
+    public function getDeleted(): bool
+    {
+        return $this->deleted;
+    }
+
+    public function setDeleted(bool $deleted): void
+    {
+        $this->deleted = $deleted;
     }
 
     public function getUser(): User

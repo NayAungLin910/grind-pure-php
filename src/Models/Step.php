@@ -62,6 +62,9 @@ class Step
     #[Column(type: 'datetime', nullable: true)]
     private DateTime $updated_at;
 
+    #[Column(type: 'boolean')]
+    private bool $deleted;
+
     #[ManyToOne(targetEntity: Section::class, inversedBy: 'steps')]
     #[JoinColumn(name: 'section_id', referencedColumnName: 'id')]
     private Section|null $section = null;
@@ -74,6 +77,7 @@ class Step
     {
         $this->users = new ArrayCollection();
         $this->type = static::SECTION_READING;
+        $this->deleted = false;
     }
 
     public function getId(): int
@@ -178,6 +182,16 @@ class Step
     public function setUpdatedAt(?DateTime $updated_at): void
     {
         $this->updated_at = $updated_at;
+    }
+
+    public function getDeleted(): bool
+    {
+        return $this->deleted;
+    }
+
+    public function setDeleted(bool $deleted): void
+    {
+        $this->deleted = $deleted;
     }
 
     public function getSection(): Section|null

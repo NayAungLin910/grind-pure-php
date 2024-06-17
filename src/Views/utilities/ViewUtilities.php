@@ -19,6 +19,18 @@ function displayFlashedSessionValue(string $sessionName, string $key): void
 }
 
 /**
+ * Check flash session exists
+ */
+function checkFlashedSessionExist(string $sessionName, string $key): bool
+{
+    if (isset($_SESSION[$sessionName][$key])) {
+        unset($_SESSION[$sessionName][$key]);
+        return true;
+    }
+    return false;
+}
+
+/**
  * If error message(s) for a field, display message(s)
  */
 function displayErrorMessage(string $field): void
@@ -81,7 +93,13 @@ function checkCurrentRouteSame(string $routeName): bool
 {
     $route = getRouteUsingRouteName($routeName); // get the Route using route name
 
-    return $_SERVER['REQUEST_URI'] === $route;
+    $uri =  $_SERVER['REQUEST_URI'];
+
+    if ($_SERVER['REQUEST_METHOD'] == 'GET' && str_contains($_SERVER['REQUEST_URI'], '?')) { // if get method and the quesetion mark exists within the route
+        $uri = substr($_SERVER['REQUEST_URI'], 0, strpos($_SERVER['REQUEST_URI'], '?')); // get the route before the question mark
+    }
+
+    return $uri === $route;
 }
 
 /**

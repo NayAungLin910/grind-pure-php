@@ -58,7 +58,10 @@ class Router
      * method of the controller.
      */
     public function dispatch($uri): void
-    {
+    {       
+        if ($_SERVER['REQUEST_METHOD'] == 'GET' && str_contains($uri, '?')) { // if get method and the quesetion mark exists within the route
+            $uri = substr($uri, 0, strpos($uri, '?'));
+        }
 
         $routeExists = array_key_exists($uri, $this->routes); // the current route exists
 
@@ -120,5 +123,14 @@ class Router
         }
 
         throw new Exception("$routeName is not a declared route name.");
+    }
+
+    /**
+     * Notification session flash
+     */
+    public function notificationSessionFlash(string $className, string $message): void
+    {
+        $_SESSION['noti']['class'] = $className;
+        $_SESSION['noti']['message'] = $message;
     }
 }

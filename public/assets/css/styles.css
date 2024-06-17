@@ -7,6 +7,10 @@
     --pri-blue-heavier: #1a17b6;
     --pri-blue-heavier2: #0f0d70;
     --pri-blue-light: #b0afee;
+    --success: #127e12;
+    --success-heavy: #0f4d0f;
+    --danger: #c50808;
+    --danger-heavy: #940b0b;
     --box-shadow-grey: rgb(75, 71, 71);
     --body-offset-sidebar: 230px;
     --card-max-width: 650px;
@@ -478,6 +482,120 @@ body {
     border-radius: 10px;
     margin: 10px auto;
     box-shadow: 1px 1px 2px 1px var(--box-shadow-grey);
+}
+
+.noti {
+    position: fixed;
+    bottom: 3px;
+    right: 3px;
+    width: auto;
+    display: inline-block;
+    font-size: 17px;
+    font-weight: bold;
+    color: white;
+    padding: 10px;
+    border-radius: 10px;
+}
+
+.noti-success {
+    background-color: var(--success);
+}
+
+.noti-danger {
+    background-color: var(--danger);
+}
+
+.noti-close-icon {
+    cursor: pointer;
+}
+
+.res-table {
+    overflow-x: auto;
+    border-radius: 10px;
+    padding: 5px;
+    margin: 10px auto;
+}
+
+.table {
+    width: 100%;
+    min-width: 500px;
+    text-wrap: nowrap;
+    border-collapse: collapse;
+    border: 1px solid white;
+    background-color: var(--pri-blue-heavy);
+}
+
+.table tr td,
+.table tr th {
+    padding: 10px;
+    font-weight: bold;
+}
+
+.table tr th {
+    text-align: start;
+    border-bottom: 1px solid white;
+}
+
+.table tr:hover {
+    background-color: var(--pri-blue-heavier);
+}
+
+.pagi-nav {
+    display: flex;
+    gap: 30px;
+    justify-content: center;
+    align-items: center;
+}
+
+.square {
+    border-radius: 0;
+}
+
+.btn-small {
+    padding: 3px;
+}
+
+.btn.disabled {
+    opacity: 0.7;
+    pointer-events: none;
+    cursor: default;
+}
+
+.filter-form-groups {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px;
+    align-items: center;
+}
+
+.filter-form-group {
+    margin: 10px 0;
+    max-width: 400px;
+    align-items: center;
+}
+
+.btn-success {
+    background-color: var(--success);
+    border-radius: 0;
+}
+
+.btn-success:hover {
+    background-color: var(--success-heavy);
+}
+
+.btn-danger {
+    background-color: var(--danger);
+    border-radius: 0;
+}
+
+.btn-danger:hover {
+    background-color: var(--danger-heavy);
+}
+
+.pagi-not-found {
+    text-align: center;
+    margin: 20px;
+    font-size: 20px;
 }
 
 @media (max-width: 1024px) {

@@ -1,8 +1,11 @@
 <!DOCTYPE html>
 <html lang="en">
 
-<head>
-    <?php require_once("../src/Views/components/head.php")  ?>
+<head>   
+    <?php 
+    $title = "Tag Edit";
+    require_once("../src/Views/components/head.php");
+    ?>
 </head>
 
 <body>
@@ -16,7 +19,7 @@
     <!-- Main Body -->
     <main class="main sidebar-main p-mid">
 
-        <form action="<?php echo getRouteUsingRouteName('post-tag-create') ?>" method="POST" enctype="multipart/form-data">
+        <form action="<?php echo getRouteUsingRouteName('post-tag-edit') ?>" method="POST" enctype="multipart/form-data">
 
             <!-- Tag Create Card -->
             <div class="card create-card">
@@ -26,22 +29,26 @@
                     <div class="flex jcc">
                         <div>
                             <i class="bi bi-tag"></i>
-                            Tag
+                            Tag Edit
                         </div>
                     </div>
                 </h3>
 
+                <!-- Tag Id -->
+                <input type="hidden" value="<?= $tag->getId() ?>" name="update-id">
+
                 <!-- Title -->
                 <div class="form-group">
                     <label class="form-label text-white" for="name">Name</label>
-                    <input class="input form-input limit-input-width" id="name" name="name" value="<?php displayFlashedSessionValue('old', 'name') ?>" type="text">
+                    <input class="input form-input limit-input-width" id="name" name="name" value="<?= $tag->getName() ?>" type="text">
                 </div>
                 <?php displayErrorMessage("name") ?>
                 <?php displayAllErrorMessages() ?>
 
                 <!--Submit Button -->
-                <div class="flex jcc">
-                    <button class="btn" type="submit">Create</button>
+                <div class="flex jcc g-mid">
+                    <a href="<?= getRouteUsingRouteName('show-tag') ?>" class="btn link-plain" type="submit"><i class="bi bi-arrow-left"></i> Back</a>
+                    <button class="btn" type="submit">Save</button>
                 </div>
             </div>
         </form>

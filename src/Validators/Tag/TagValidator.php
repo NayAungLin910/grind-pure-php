@@ -10,10 +10,10 @@ class TagValidator extends FormValidator
     /**
      * Validates name
      */
-    public function nameValidate(string $name, string $errorKey): TagValidator
+    public function nameValidate(string $name, string $errorKey, int $exceptId = 0): TagValidator
     {
         $this->checkStringExists($name, $errorKey);
-        $this->checkPreExistsModel($name, $errorKey, 'name', Tag::class);
+        $this->checkPreExistsModel($name, $errorKey, 'name', Tag::class, $exceptId);
 
         return $this;
     }
