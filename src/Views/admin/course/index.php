@@ -2,11 +2,18 @@
 <html lang="en">
 
 <head>
-    <?php require_once("../src/Views/components/head.php")  ?>
+    <?php require_once("../src/Views/components/head.php") ?>
+
+    <!-- JQuery -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js" integrity="sha512-v2CJ7UaYy4JwqLDIrZUI/4hqeoQieOmAZNXBeQyjo21dadnwR+8ZaIJVT8EE2iyI61OV8e6M8PP2/4hpQINQ/g==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+    <!-- Select 2 -->
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
 </head>
 
 <body>
-    
+
     <!-- Nav Bar -->
     <?php require_once("../src/Views/components/nav.php") ?>
 
@@ -14,14 +21,117 @@
     <?php require_once("../src/Views/components/sidebar.php") ?>
 
     <!-- Main Body -->
-    <main class="main sidebar-main">
-        Hello from course
+    <main class="main sidebar-main p-mid bg-pri">
+
+        <!-- Tag Create Card -->
+        <div class="card create-card">
+
+            <!-- Header -->
+            <h3 class="text-white">
+                <div class="flex jcc">
+                    <div>
+                        <i class="bi bi-journals"></i>
+                        Course
+                    </div>
+                </div>
+            </h3>
+
+            <!-- Filter Section -->
+            <form action="<?php echo getRouteUsingRouteName('show-course') ?>" method="get">
+
+                <div class="filter-form-groups">
+
+                    <!-- Title -->
+                    <div class="filter-form-group flex aic g-sm">
+                        <label class="form-label text-white" for="title">Title</label>
+                        <input class="input form-input limit-input-width" id="title" name="title" value="<?php displayFlashedSessionValue('old', 'title') ?>" type="text">
+                    </div>
+
+                    <!-- Created By Me -->
+                    <div class="flex aic g-sm">
+                        <label class="form-label text-white" for="created_by_me">Created By Me</label>
+                        <input type="checkbox" class="checkbox" name="created_by_me" id="created_by_me" <?php if (checkFlashedSessionExist('old', 'created_by_me')) echo "checked" ?>>
+                    </div>
+
+                    <!-- Oldest -->
+                    <div class="flex aic g-sm">
+                        <label class="form-label text-white" for="oldest">Oldest</label>
+                        <input type="checkbox" class="checkbox" name="oldest" id="oldest" <?php if (checkFlashedSessionExist('old', 'sortByOldest')) echo "checked" ?>>
+                    </div>
+
+                    <!-- Tags -->
+                    <div class="flex aic g-sm">
+                        <label class="form-label text-white" for="tags">Tags</label>
+                        <select class="select2-multiple form-filter" id="tags" name="tags[]" multiple="multiple">
+                            <?php var_dump($_SESSION['old']['tagSelected']) ?>
+                            <?php foreach ($tags as $tag) : ?>
+                                <?php var_dump($tag->getId()) ?>
+                                <option value="<?= $tag->getId() ?>" <?= checkIdExistsInOldSession('tagSelected', 'selected', $tag->getId()) ?>>
+                                    <?= $tag->getName() ?>
+                                </option>
+                            <?php endforeach; ?>
+                        </select>
+                        <?php displayErrorMessage("tags") ?>
+                    </div>
+                </div>
+
+                <div class="flex g-mid filter-action-group">
+                    <button type="submit" class="btn"><i class="bi bi-search"></i> Search</button>
+                    <a href="<?= getRouteUsingRouteName('show-course') ?>" type="submit" class="btn link-plain"><i class="bi bi-arrow-clockwise"></i> Clear</a>
+                </div>
+            </form>
+
+            <!-- Courses -->
+
+            <div class="cards">
+                <?php if (count($courses) > 0) : ?>
+                    <?php foreach ($courses as $course) : ?>
+
+                        <a href="<?= getRouteUsingRouteName('show-single-course') . "?" . $course->getTitle() ?>" class="link-plain">
+                            <div class="card-item text-white">
+                                <img src="<?= $course->getImage() ?>" alt="Card Image" class="card-image">
+                                <div class="card-title">
+                                    <?= $course->getTitle() ?>
+                                </div>
+                                <div class="card-description">
+                                    <?= $course->getDescription() ?>
+                                </div>
+                            </div>
+                        </a>
+
+                    <?php endforeach; ?>
+                <?php else : ?>
+                    <div class="pagi-not-found">
+                        <i class="bi bi-question-diamond-fill"></i> No courses found!
+                    </div>
+                <?php endif; ?>
+            </div>
+
+            <!-- Pagination Navigation -->
+            <?php
+            $pagiResource = $courses;
+            require_once("../src/Views/components/pagi-nav.php")
+            ?>
     </main>
+
+    <!-- Notification -->
+    <?php require_once("../src/Views/components/notification.php") ?>
 </body>
 
-    <!-- nav toggle -->
-    <script src="/assets/js/nav-toggle.js"></script>
+<!-- nav toggle -->
+<script src="/assets/js/nav-toggle.js"></script>
 
-    <!-- sidebar toggle -->
-    <script src="/assets/js/sidebar-toggle.js"></script>
+<!-- sidebar toggle -->
+<script src="/assets/js/sidebar-toggle.js"></script>
+
+<!-- Noti Js -->
+<script src="/assets/js/noti-uti.js"></script>
+
+<!-- Multiple Select with Select 2 -->
+<script>
+    $(document).ready(function() {
+        $('.select2-multiple').select2({});
+    });
+</script>
+
 </html>

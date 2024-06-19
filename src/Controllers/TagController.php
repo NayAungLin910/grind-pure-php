@@ -30,15 +30,15 @@ class TagController extends Controller
         $created_by_me = isset($_GET['created_by_me']) ? $_GET['created_by_me'] : null;
         $sortByOldest = isset($_GET['oldest']) ? $_GET['oldest'] : null;
 
-
         $paginationDql = $entityManager->createQueryBuilder()
             ->select('t')
             ->from(Tag::class, 't')
-            ->join('t.user', 'u');
+            ->join('t.user', 'u')
+            ->where('t.id > 0');
 
-        if ($name !== "") $paginationDql->where('t.name LIKE :name')->setParameter('name', "%$name%");
+        if ($name !== "") $paginationDql->andWhere('t.name LIKE :name')->setParameter('name', "%$name%");
 
-        if ($created_by_me) $paginationDql->where('u.id = :id')->setParameter('id', $_SESSION['auth']['id']);
+        if ($created_by_me) $paginationDql->andWhere('u.id = :id')->setParameter('id', $_SESSION['auth']['id']);
 
         if ($sortByOldest) {
             $paginationDql = $paginationDql->orderBy('t.created_at', 'ASC');

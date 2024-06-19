@@ -2,7 +2,14 @@
 <html lang="en">
 
 <head>
-    <?php require_once("../src/Views/components/head.php")  ?>
+    <?php require_once("../src/Views/components/head.php") ?>
+
+    <!-- JQuery -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js" integrity="sha512-v2CJ7UaYy4JwqLDIrZUI/4hqeoQieOmAZNXBeQyjo21dadnwR+8ZaIJVT8EE2iyI61OV8e6M8PP2/4hpQINQ/g==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+    <!-- Select 2 -->
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
 </head>
 
 <body>
@@ -61,6 +68,16 @@
                     </label>
                 </div>
                 <?php displayErrorMessage("image") ?>
+
+                <div class="form-group">
+                    <label class="form-label text-white" for="tags">Tags</label>
+                    <select class="select2-multiple form-select limit-input-width" id="tags" name="tags[]" multiple="multiple">
+                        <?php foreach ($tags as $tag) : ?>
+                            <option value="<?= $tag->getId() ?>" <?= checkIdExistsInOldSession('tags', 'selected', $tag->getId()) ?>><?= $tag->getName() ?></option>
+                        <?php endforeach; ?>
+                    </select>
+                </div>
+                <?php displayErrorMessage("tags") ?>
                 <?php displayAllErrorMessages() ?>
 
                 <!--Submit Button -->
@@ -69,8 +86,10 @@
                 </div>
             </div>
         </form>
-
     </main>
+
+    <!-- Notification -->
+    <?php require_once("../src/Views/components/notification.php") ?>
 </body>
 
 <!-- nav toggle -->
@@ -81,5 +100,17 @@
 
 <!-- File input interactive js -->
 <script src="/assets/js/file-input-interactive.js"></script>
+
+<!-- Noti Js -->
+<script src="/assets/js/noti-uti.js"></script>
+
+<!-- Multiple Select with Select 2 -->
+<script>
+    $(document).ready(function() {
+        $('.select2-multiple').select2({
+            theme: 'classic',
+        });
+    });
+</script>
 
 </html>

@@ -24,7 +24,7 @@
                 <div class="flex jcc">
                     <div>
                         <i class="bi bi-tag"></i>
-                        Tags in 
+                        Tags in
                         <i class="bi bi-trash-fill"></i>
                         Bin
                     </div>
@@ -55,7 +55,7 @@
                     </div>
                 </div>
 
-                <div class="flex g-mid">
+                <div class="flex g-mid filter-action-group">
                     <button type="submit" class="btn"><i class="bi bi-search"></i> Search</button>
                     <a href="<?= getRouteUsingRouteName('show-bin-tag') ?>" type="submit" class="btn link-plain"><i class="bi bi-arrow-clockwise"></i> Refresh</a>
                 </div>
@@ -79,13 +79,20 @@
                                 <td><?= $tag->getUser()->getName() ?></td>
                                 <td>
                                     <div class="flex jcc aic g-mid">
+                                        <!-- Recover --->
+                                        <form action="<?= getRouteUsingRouteName('post-bin-tag-recover') ?>" method="POST">
+                                            <input type="hidden" value="<?= $tag->getId() ?>" name="recover-id">
+                                            <button type="submit" class="btn square">
+                                                <i class="bi bi-arrow-counterclockwise"></i> Recover
+                                            </button>
+                                        </form>
 
                                         <!-- Delete --->
                                         <form action="<?= getRouteUsingRouteName('post-bin-tag-delete') ?>" method="POST" id="delete-tag-form-<?= $tag->getId() ?>">
                                             <input type="hidden" value="<?= $tag->getId() ?>" name="delete-id">
                                             <button type="button" onclick="confirmDeleteTag(<?= $tag->getId() ?>, '<?= $tag->getName() ?>')" class="btn square">
                                                 <i class="bi bi-trash-fill"></i>
-                                            </button>   
+                                            </button>
                                         </form>
                                     </div>
                                 </td>
@@ -124,7 +131,6 @@
 
 <!-- Sweetalert Confirm Delete -->
 <script>
-
     // confirm the tag permanent delete
     function confirmDeleteTag(tagId, tagName) {
         Swal.fire({

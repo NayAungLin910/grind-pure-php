@@ -268,7 +268,12 @@ body {
     color: black;
 }
 
-.form-input:focus {
+.text-pri {
+    color: var(--pri-blue);
+}
+
+.form-input:focus,
+.form-:focus {
     box-shadow: 0 0 0 2px lightblue;
 }
 
@@ -596,6 +601,66 @@ body {
     text-align: center;
     margin: 20px;
     font-size: 20px;
+}
+
+.form-select {
+    width: 100%;
+}
+
+.form-filter {
+    width: 200px;
+}
+
+/* Select2 change color */
+.select2-container .select2-selection {
+    color: black !important;
+    border: 1px solid #444 !important;
+    border-radius: 10px !important;
+    border: none !important;
+}
+
+.cards {
+    display: flex;
+    gap: 15px;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+    margin: 15px auto;
+}
+
+.card-image {
+    width: 300px;
+    margin: 0 auto;
+    border-radius: 10px 10px 0 0;
+}
+
+.card-title {
+    text-align: center;
+    margin: 10px auto;
+    font-weight: bold;
+    font-size: 17px;
+}
+
+.card-description {
+    padding: 10px;
+    text-align: justify;
+}
+
+.card-item {
+    cursor: pointer;
+    max-width: 300px;
+    background-color: var(--pri-blue-heavy);
+    border-radius: 10px;
+    box-shadow: 1px 1px 2px 1px var(--box-shadow-grey);
+}
+
+.card-item:hover{
+    background-color: var(--pri-blue-heavier);
+    box-shadow: 1.5px 1.5px 2.5px 2px var(--box-shadow-grey);
+}
+
+.filter-action-group {
+    margin-top: 10px;
 }
 
 @media (max-width: 1024px) {

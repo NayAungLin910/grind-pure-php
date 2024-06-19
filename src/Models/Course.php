@@ -63,6 +63,7 @@ class Course
     public function __construct()
     {
         $this->certificates = new ArrayCollection();
+        $this->tags = new ArrayCollection();
         $this->users = new ArrayCollection();
         $this->created_at = new DateTime();
         $this->deleted = false;

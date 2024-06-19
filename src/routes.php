@@ -4,6 +4,7 @@ use Src\Controllers\AuthController;
 use Src\Controllers\BinController;
 use Src\Controllers\CourseController;
 use Src\Controllers\TagController;
+use Src\Controllers\Bin\TagController as BinTagController;
 use Src\Controllers\UserController;
 use Src\Middlewares\Admin\AdminAuthMiddleware;
 use Src\Middlewares\AuthMiddleware;
@@ -16,6 +17,9 @@ $router = new Router();
 //---------------- Register -------------//
 $router->addGetRoute('/register', AuthController::class, 'showRegister')->addMiddleware(NotAuthMiddleware::class)->addRouteName("show-register");
 $router->addPostRoute('/register', AuthController::class, 'postRegister')->addMiddleware(NotAuthMiddleware::class);
+
+// --------------- Course --------------//
+$router->addGetRoute('/admin/course/single', CourseController::class, "showSingleCourse")->addRouteName('show-single-course');
 
 //---------------- Login -------------//
 $router->addGetRoute('/login', AuthController::class, 'showLogin')->addMiddleware(NotAuthMiddleware::class)->addRouteName("show-login");
@@ -39,7 +43,8 @@ $router->addGetRoute('/admin/course', CourseController::class, "showCourses")->a
 $router->addGetRoute('/admin/course/create', CourseController::class, "showCourseCreate")->addMiddleware(AdminAuthMiddleware::class)->addRouteName("show-course-create");
 $router->addPostRoute('/admin/course/create', CourseController::class, 'postCourseCreate')->addMiddleware(AdminAuthMiddleware::class)->addRouteName('post-course-create');
 
-//------------- Bin Routes ----------//
-$router->addGetRoute('/admin/bin/tag', BinController::class, "showBinTag")->addMiddleware(AdminAuthMiddleware::class)->addRouteName('show-bin-tag');
-$router->addPostRoute('/admin/bin/tag', BinController::class, "postDeleteBinTag")->addMiddleware(AdminAuthMiddleware::class)->addRouteName('post-bin-tag-delete');
-
+//------------------------ Bin Routes --------------------//
+//----------- Tag Routes ---------//
+$router->addGetRoute('/admin/bin/tag', BinTagController::class, "showBinTag")->addMiddleware(AdminAuthMiddleware::class)->addRouteName('show-bin-tag');
+$router->addPostRoute('/admin/bin/tag', BinTagController::class, "postDeleteBinTag")->addMiddleware(AdminAuthMiddleware::class)->addRouteName('post-bin-tag-delete');
+$router->addPostRoute('/admin/bin/tag/recover', BinTagController::class, "postBinTagRecover")->addMiddleware(AdminAuthMiddleware::class)->addRouteName('post-bin-tag-recover');

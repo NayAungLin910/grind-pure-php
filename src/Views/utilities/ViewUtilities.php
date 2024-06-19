@@ -112,6 +112,21 @@ function echoClassCurrentRouteSame(string $routeName, string $className)
     }
 }
 
+/**
+ * Echo the text if old sessinon exist
+ */
+function checkIdExistsInOldSession(string $sessionKey, string $text, int $checkId): string|null
+{
+    if (isset($_SESSION['old'][$sessionKey]) && in_array($checkId, $_SESSION['old'][$sessionKey])) {
+
+        $indexOfIdFound = array_search($checkId, $_SESSION['old'][$sessionKey]);
+        unset($_SESSION['old'][$sessionKey][$indexOfIdFound]);
+
+        return $text;
+    }
+
+    return null;
+}
 //------------------------------- If condition boolean variables  ------------------------------------
 
 $cookieService = new CookieService();

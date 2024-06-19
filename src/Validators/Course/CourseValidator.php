@@ -2,6 +2,7 @@
 
 namespace Src\Validators\Course;
 
+use Src\Models\Course;
 use Src\Validators\FormValidator;
 
 class CourseValidator extends FormValidator
@@ -11,6 +12,8 @@ class CourseValidator extends FormValidator
         $this->checkStringExists($title, $errorKey);
 
         $this->checkStringWithinDefinedLength($title, $errorKey, 5, 130);
+
+        $this->checkPreExistsModel($title, $errorKey, 'title', Course::class);
 
         return $this;
     }
@@ -31,6 +34,13 @@ class CourseValidator extends FormValidator
 
         $this->checkFileExtension($fileExtension, $errorKey, $commonImageExtensions);
         $this->checkFileSize($fileSize, $errorKey, 25);
+
+        return $this;
+    }
+
+    public function tagValidate(array|null $tags, string $errorKey): CourseValidator
+    {
+        $this->checkArrayNotEmpty($tags, 'tags');
 
         return $this;
     }

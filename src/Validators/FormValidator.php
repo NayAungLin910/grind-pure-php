@@ -185,6 +185,16 @@ class FormValidator
     }
 
     /**
+     * Check array not empty
+     */
+    public function checkArrayNotEmpty(mixed $array, string $errorKey): void
+    {   
+        if (!is_array($array) || count($array) <= 0) {
+            $this->errors[$errorKey][] = "$errorKey must not be empty.";
+        }
+    }
+
+    /**
      * Flash the previous request data
      */
     public function flashOldRequestData(array $oldData = []): void

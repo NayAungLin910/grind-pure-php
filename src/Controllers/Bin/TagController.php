@@ -1,6 +1,6 @@
 <?php
 
-namespace Src\Controllers;
+namespace Src\Controllers\Bin;
 
 use Doctrine\ORM\Tools\Pagination\Paginator;
 use Src\Controller;
@@ -8,7 +8,7 @@ use Src\Models\Tag;
 use Src\Router;
 use Src\Validators\FormValidator;
 
-class BinController extends Controller
+class TagController extends Controller
 {
     public function __construct(private $router = new Router())
     {
@@ -91,5 +91,30 @@ class BinController extends Controller
 
         $this->router->notificationSessionFlash('noti-success', 'Tag deleted successfully!');
         $this->router->redirectUsingRouteName('show-bin-tag');
+    }
+
+    /**
+     * Recover the tag from bin
+     */
+    public function postBinTagRecover(): void
+    {
+        if (!isset($_POST['recover-id'])) {
+            $this->router->notificationSessionFlash('noti-danger', 'Id not found!');
+            $this->router->redirectUsingRouteName('show-bin-tag');
+        }
+
+        require "../config/bootstrap.php";
+
+        $tag = $entityManager->getRepository(Tag::class)->findOneBy([
+            'id' => $_POST['recover-id']
+        ]);
+
+        $tag->setDeleted(false);
+
+        $entityManager->persist($tag);
+        $entityManager->flush();
+
+        $this->router->notificationSessionFlash('noti-success', "Tag recovered successfully!");
+        $this->router->redirectUsingRouteName("show-bin-tag");
     }
 }

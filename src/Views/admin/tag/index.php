@@ -53,9 +53,9 @@
                     </div>
                 </div>
 
-                <div class="flex g-mid">
+                <div class="flex g-mid filter-action-group">
                     <button type="submit" class="btn"><i class="bi bi-search"></i> Search</button>
-                    <a href="<?= getRouteUsingRouteName('show-tag') ?>" type="submit" class="btn link-plain"><i class="bi bi-arrow-clockwise"></i> Refresh</a>
+                    <a href="<?= getRouteUsingRouteName('show-tag') ?>" type="submit" class="btn link-plain"><i class="bi bi-arrow-clockwise"></i> Clear</a>
                 </div>
             </form>
 
