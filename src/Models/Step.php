@@ -65,6 +65,9 @@ class Step
     #[Column(type: 'boolean')]
     private bool $deleted;
 
+    #[Column(type: 'integer')]
+    private int $priority;
+
     #[ManyToOne(targetEntity: Section::class, inversedBy: 'steps')]
     #[JoinColumn(name: 'section_id', referencedColumnName: 'id')]
     private Section|null $section = null;
@@ -197,6 +200,16 @@ class Step
     public function getSection(): Section|null
     {
         return $this->section;
+    }
+
+    public function getPriority(): int
+    {
+        return $this->priority;
+    }
+
+    public function setPriority(int $priority): void
+    {
+        $this->priority = $priority;
     }
 
     public function setSection(Section $section): void

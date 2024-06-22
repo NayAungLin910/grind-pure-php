@@ -10,9 +10,7 @@ class CourseValidator extends FormValidator
     public function titleValidate(string $title, string $errorKey): CourseValidator
     {
         $this->checkStringExists($title, $errorKey);
-
         $this->checkStringWithinDefinedLength($title, $errorKey, 5, 130);
-
         $this->checkPreExistsModel($title, $errorKey, 'title', Course::class);
 
         return $this;
@@ -41,6 +39,14 @@ class CourseValidator extends FormValidator
     public function tagValidate(array|null $tags, string $errorKey): CourseValidator
     {
         $this->checkArrayNotEmpty($tags, 'tags');
+
+        return $this;
+    }
+
+    public function titleSingleCourseValidate(string $title, string $errorKey): CourseValidator
+    {
+        $this->checkStringExists($title, $errorKey);
+        $this->checkStringWithinDefinedLength($title, $errorKey, 5, 130);
 
         return $this;
     }

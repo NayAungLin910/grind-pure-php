@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <?php require_once("../src/Views/components/head.php")  ?>
+</head>
+
+<body>
+
+    <!-- Nav Bar -->
+    <?php require_once("../src/Views/components/nav.php") ?>
+
+    <!-- Sidebar --->
+    <?php require_once("../src/Views/components/sidebar.php") ?>
+
+    <!-- Main Body -->
+    <main class="main sidebar-main p-mid">
+
+        <div class="course-info">
+
+            <!-- Section Create/Edit -->
+            <div class="course-info-form">
+
+                <?php if ($section && isset($_GET['add-step-section'])) : ?>
+                    <!-- Step Create of Selected Section -->
+                    <div class="course-info-form-card">
+                        <h3><i class="bi bi-bar-chart-steps"></i> Create Step for Section, <?= $section->getTitle() ?></h3>
+                        <form action="<?= getRouteUsingRouteName('post-step-create') ?>" method="POST" enctype="multipart/form-data">
+
+                            <div class="form-group flex jcc">
+                                <button type="submit" class="btn">Submit</button>
+                            </div>
+                        </form>
+                    </div>
+                <?php endif; ?>
+
+                <?php if ($section && isset($_GET['edit-section-id'])) : ?>
+                    <!-- Edit Section --->
+                    <div class="course-info-form-card">
+                        <h3 class=""><i class="bi bi-list"></i>Edit Section <?= $section->getTitle() ?></h3>
+
+                        <form action="<?= getRouteUsingRouteName('post-section-edit') ?>" method="POST" enctype="multipart/form-datap">
+
+                            <!-- Section Id -->
+                            <div class="form-group">
+                                <input type="hidden" name="section-id" value="<?= $section->getId() ?>" />
+                            </div>
+
+                            <!-- Course Id --->
+                            <div class="form-group">
+                                <input type="hidden" name="course-id" value="<?= $course->getId() ?>">
+                            </div>
+
+                            <!-- Edit Section Title -->
+                            <div class="form-group">
+                                <label class="form-label text-white" for="edit-section-title">Title</label>
+                                <input class="input form-input limit-input-width" id="edit-section-title" name="edit-section-title" value="<?= $section->getTitle() ?>" type="text">
+                            </div>
+                            <?php displayErrorMessage("title") ?>
+
+                            <!-- Edit Section Description -->
+                            <div class="form-group">
+                                <label class="form-label text-white" for="edit-section-description">Description</label>
+                                <textarea name="edit-section-description" rows="8" cols="30" class="textarea form-input" id="edit-section-description"><?= $section->getDescription() ?></textarea>
+                                <?php displayErrorMessage("edit-section-description") ?>
+                            </div>
+
+                            <!-- Priority -->
+                            <div class="form-group">
+                                <label class="form-label text-white" for="priority">Priority</label>
+                                <select class="input form-input form-select limit-input-width-xs square" id="priority" name="priority">
+                                    <?php foreach ($course->getSections() as $s) : ?>
+                                        <option value="<?= $s->getPriority() ?>" <?php if ($section->getPriority() === $s->getPriority()) echo "selected" ?>>
+                                            <?= $s->getPriority() ?>
+                                        </option>
+                                    <?php endforeach; ?>
+                                </select>
+                                <?php displayErrorMessage("priority") ?>
+                            </div>
+                            <?php displayAllErrorMessages() ?>
+
+                            <!--Submit Button -->
+                            <div class="flex jcc g-mid">
+                                <a href="<?= getRouteUsingRouteName("show-single-course") . "?title=" . $course->getTitle() ?>" class="btn link-plain">Cancel</a>
+                                <button class="btn" type="submit">Update</button>
+                            </div>
+                        </form>
+                    </div>
+                <?php endif; ?>
+
+                <div class="course-info-form-card">
+                    <h3 class=""><i class="bi bi-list"></i>Create Section</h3>
+
+                    <form action="<?= getRouteUsingRouteName('post-section-create') ?>" method="POST" enctype="multipart/form-datap">
+
+                        <!-- Course ID -->
+                        <div class="form-group">
+                            <input type="hidden" name="course-id" value="<?= $course->getId() ?>" />
+                        </div>
+
+                        <!-- Title -->
+                        <div class="form-group">
+                            <label class="form-label text-white" for="title">Title</label>
+                            <input class="input form-input limit-input-width" id="title" name="title" value="<?php displayFlashedSessionValue('old', 'title') ?>" type="text">
+                        </div>
+                        <?php displayErrorMessage("title") ?>
+
+                        <!-- Description -->
+                        <div class="form-group">
+                            <label class="form-label text-white" for="description">Description</label>
+                            <textarea name="description" rows="8" cols="30" class="textarea form-input" id="description"><?php displayFlashedSessionValue('old', 'description') ?></textarea>
+                            <?php displayErrorMessage("description") ?>
+                        </div>
+
+                        <!-- Priority -->
+                        <div class="form-group">
+                            <label class="form-label text-white" for="priority">Priority</label>
+                            <select class="input form-input form-select limit-input-width-xs square" id="priority" name="priority">
+
+                                <?php if (count($course->getSections()) > 0) : ?>
+                                    <?php foreach ($course->getSections() as $section) : ?>
+                                        <option value="<?= $section->getPriority() ?>"><?= $section->getPriority() ?></option>
+                                    <?php endforeach; ?>
+
+                                    <!-- Latest priority -->
+                                    <option value="<?= $course->getSections()->last()->getPriority() + 1 ?>" selected>
+                                        <?= $course->getSections()->last()->getPriority() + 1 ?>
+                                    </option>
+                                <?php else : ?>
+                                    <!-- Latest priority -->
+                                    <option value="1" selected>
+                                        1
+                                    </option>
+                                <?php endif; ?>
+                            </select>
+                            <?php displayErrorMessage("priority") ?>
+                        </div>
+                        <?php displayAllErrorMessages() ?>
+
+                        <!--Submit Button -->
+                        <div class="flex jcc">
+                            <button class="btn" type="submit">Create</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Course Info -->
+            <div class="course-info-course">
+                <div class="course-info-course-card">
+                    <div class="course-info-img">
+                        <img src="<?= $course->getImage() ?>" alt="<?= $course->getTitle() . "'s image" ?>">
+                    </div>
+                    <div class="course-info-text">
+                        <div class="course-info-title"><?= $course->getTitle() ?></div>
+                        <div class="course-info-description">
+                            <?= $course->getDescription() ?>
+                        </div>
+                        <div class="course-info-tags">
+
+                            <!-- Tags -->
+                            <?php foreach ($course->getTags() as $tag) : ?>
+                                <a href="" class="btn link-plain text-white btn-tag-small"><?= $tag->getName() ?></a>
+                            <?php endforeach; ?>
+                        </div>
+                        <div class="course-info-sections">
+
+                            <!-- Sections -->
+                            <?php foreach ($course->getSections() as $section) : ?>
+                                <div class="course-info-section" onclick="dropdownToggle(<?= $section->getId() ?>)">
+                                    <div>
+                                        <?= $section->getTitle() ?>
+                                    </div>
+
+                                    <i class="bi bi-chevron-down drop-arrow" id="drop-arrow-<?= $section->getId() ?>"></i>
+                                </div>
+                                <div class="course-info-section-steps drop-sub-menu" id="drop-sub-menu-<?= $section->getId() ?>">
+                                    <div class="mtb-sm">
+                                        <?= $section->getDescription() ?>
+                                    </div>
+                                    <div class="flex jcc g-mid">
+                                        <a href="<?= getRouteUsingRouteName("show-single-course") . "?add-step-section=" . $section->getId() . "&title=" . $course->getTitle() ?>" class="btn btn-small link-plain">Add Step</a>
+                                        <a href="<?= getRouteUsingRouteName('show-single-course') . "?edit-section-id=" . $section->getId() . "&title=" . $course->getTitle() ?>" class="btn btn-small link-plain">
+                                            Edit
+                                        </a>
+                                    </div>
+                                </div>
+                            <?php endforeach; ?>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- Notification -->
+    <?php require_once("../src/Views/components/notification.php") ?>
+</body>
+
+<!-- nav toggle -->
+<script src="/assets/js/nav-toggle.js"></script>
+
+<!-- sidebar toggle -->
+<script src="/assets/js/sidebar-toggle.js"></script>
+
+<!-- Noti Js -->
+<script src="/assets/js/noti-uti.js"></script>
+
+<!-- Utilities -->
+<script src="/assets/js/utilities.js"></script>
+
+</html>

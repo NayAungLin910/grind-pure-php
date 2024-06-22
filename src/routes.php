@@ -5,6 +5,8 @@ use Src\Controllers\BinController;
 use Src\Controllers\CourseController;
 use Src\Controllers\TagController;
 use Src\Controllers\Bin\TagController as BinTagController;
+use Src\Controllers\SectionController;
+use Src\Controllers\StepController;
 use Src\Controllers\UserController;
 use Src\Middlewares\Admin\AdminAuthMiddleware;
 use Src\Middlewares\AuthMiddleware;
@@ -17,9 +19,6 @@ $router = new Router();
 //---------------- Register -------------//
 $router->addGetRoute('/register', AuthController::class, 'showRegister')->addMiddleware(NotAuthMiddleware::class)->addRouteName("show-register");
 $router->addPostRoute('/register', AuthController::class, 'postRegister')->addMiddleware(NotAuthMiddleware::class);
-
-// --------------- Course --------------//
-$router->addGetRoute('/admin/course/single', CourseController::class, "showSingleCourse")->addRouteName('show-single-course');
 
 //---------------- Login -------------//
 $router->addGetRoute('/login', AuthController::class, 'showLogin')->addMiddleware(NotAuthMiddleware::class)->addRouteName("show-login");
@@ -42,6 +41,14 @@ $router->addPostRoute('/admin/tag/edit', TagController::class, "postEditTag")->a
 $router->addGetRoute('/admin/course', CourseController::class, "showCourses")->addMiddleware(AdminAuthMiddleware::class)->addRouteName("show-course");
 $router->addGetRoute('/admin/course/create', CourseController::class, "showCourseCreate")->addMiddleware(AdminAuthMiddleware::class)->addRouteName("show-course-create");
 $router->addPostRoute('/admin/course/create', CourseController::class, 'postCourseCreate')->addMiddleware(AdminAuthMiddleware::class)->addRouteName('post-course-create');
+$router->addGetRoute('/admin/course/single', CourseController::class, "showSingleCourse")->addMiddleware(AdminAuthMiddleware::class)->addRouteName('show-single-course');
+
+//-------- Section Routes -----//
+$router->addPostRoute('/admin/section/create', SectionController::class, "postSectionCreate")->addMiddleware(AdminAuthMiddleware::class)->addRouteName('post-section-create');
+$router->addPostRoute('/admin/section/update', SectionController::class, "postSectionEdit")->addMiddleware(AdminAuthMiddleware::class)->addRouteName('post-section-edit');
+
+//-------- Step -------------//
+$router->addPostRoute('/admin/step/create', StepController::class, "postStepCreate")->addMiddleware(AdminAuthMiddleware::class)->addRouteName("post-step-create");
 
 //------------------------ Bin Routes --------------------//
 //----------- Tag Routes ---------//

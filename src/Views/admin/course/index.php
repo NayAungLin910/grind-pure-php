@@ -65,7 +65,6 @@
                         <select class="select2-multiple form-filter" id="tags" name="tags[]" multiple="multiple">
                             <?php var_dump($_SESSION['old']['tagSelected']) ?>
                             <?php foreach ($tags as $tag) : ?>
-                                <?php var_dump($tag->getId()) ?>
                                 <option value="<?= $tag->getId() ?>" <?= checkIdExistsInOldSession('tagSelected', 'selected', $tag->getId()) ?>>
                                     <?= $tag->getName() ?>
                                 </option>
@@ -87,8 +86,9 @@
                 <?php if (count($courses) > 0) : ?>
                     <?php foreach ($courses as $course) : ?>
 
-                        <a href="<?= getRouteUsingRouteName('show-single-course') . "?" . $course->getTitle() ?>" class="link-plain">
-                            <div class="card-item text-white">
+
+                        <div class="card-item text-white">
+                            <a href="<?= getRouteUsingRouteName('show-single-course') . "?title=" . $course->getTitle() ?>" class="link-plain text-white">
                                 <img src="<?= $course->getImage() ?>" alt="Card Image" class="card-image">
                                 <div class="card-title">
                                     <?= $course->getTitle() ?>
@@ -96,8 +96,14 @@
                                 <div class="card-description">
                                     <?= $course->getDescription() ?>
                                 </div>
+                            </a>
+                            <div class="card-description bg-pri-heavy-2 half-bottom-round-mid point-normal">
+                                <?php foreach ($course->getTags() as $tag) : ?>
+                                    <a href="" class="btn link-plain text-white btn-tag-small"><?= $tag->getName() ?></a>
+                                <?php endforeach; ?>
                             </div>
-                        </a>
+                        </div>
+
 
                     <?php endforeach; ?>
                 <?php else : ?>

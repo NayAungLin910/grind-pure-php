@@ -31,7 +31,7 @@
                     </div>
                 </h3>
 
-                <!-- Title -->
+                <!-- Name -->
                 <div class="form-group">
                     <label class="form-label text-white" for="name">Name</label>
                     <input class="input form-input limit-input-width" id="name" name="name" value="<?php displayFlashedSessionValue('old', 'name') ?>" type="text">

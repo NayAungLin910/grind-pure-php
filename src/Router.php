@@ -58,7 +58,7 @@ class Router
      * method of the controller.
      */
     public function dispatch($uri): void
-    {       
+    {
         if ($_SERVER['REQUEST_METHOD'] == 'GET' && str_contains($uri, '?')) { // if get method and the quesetion mark exists within the route
             $uri = substr($uri, 0, strpos($uri, '?'));
         }
@@ -132,5 +132,42 @@ class Router
     {
         $_SESSION['noti']['class'] = $className;
         $_SESSION['noti']['message'] = $message;
+    }
+
+    /**
+     * Redirects to the given route
+     */
+    public function redirectTo(string $route): void
+    {
+        header("Location: $route");
+        die();
+    }
+
+    /**
+     * Get route using route name
+     */
+    function getRouteUsingRouteName(string $routeName): string
+    {
+        if ($routeName == "") {
+            throw new Exception("Please enter a route name");
+        }
+
+        include "../src/routes.php";
+
+        foreach ($router->routes as $url => $mappedInfos) {
+            foreach ($router->routes[$url] as $method => $value) {
+
+                $routeNameExists = isset($router->routes[$url][$method]["name"]); // the route name parameter is defined
+                if (!$routeNameExists) continue;
+
+                $routeNameSame = $router->routes[$url][$method]["name"] == $routeName; // check if the current route name is the same with the route being searched 
+
+                if ($routeNameSame) {
+                    return $url; // return the route
+                }
+            }
+        }
+
+        throw new Exception("$routeName is not a declared route name.");
     }
 }

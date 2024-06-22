@@ -21,7 +21,7 @@ class Section
     #[Id]
     #[GeneratedValue]
     #[Column(type: 'integer')]
-    private int $int;
+    private int $id;
 
     #[Column(type: 'integer')]
     private int $course_id;
@@ -41,6 +41,9 @@ class Section
     #[Column(type: 'boolean')]
     private bool $deleted;
 
+    #[Column(type: 'integer')]
+    private int $priority;
+
     #[ManyToOne(targetEntity: Course::class, inversedBy: 'sections')]
     #[JoinColumn(name: 'course_id', referencedColumnName: 'id')]
     private Course|null $course = null;
@@ -52,16 +55,17 @@ class Section
     {
         $this->steps = new ArrayCollection();
         $this->deleted = false;
+        $this->created_at = new DateTime();
     }
 
-    public function getInt(): int
+    public function getId(): int
     {
-        return $this->int;
+        return $this->id;
     }
 
-    public function setInt(int $id): void
+    public function setId(int $id): void
     {
-        $this->int = $id;
+        $this->id = $id;
     }
 
     public function getCourseId(): int
@@ -128,6 +132,16 @@ class Section
     {
         $this->course = $course;
     }
+
+    public function getPriority(): int
+    {
+        return $this->priority;
+    }
+
+    public function setPriority(int $priority): void
+    {
+        $this->priority = $priority;
+    }   
 
     public function getSteps(): Collection
     {

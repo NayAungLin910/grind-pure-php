@@ -14,6 +14,7 @@ use Doctrine\ORM\Mapping\JoinTable;
 use Doctrine\ORM\Mapping\ManyToMany;
 use Doctrine\ORM\Mapping\ManyToOne;
 use Doctrine\ORM\Mapping\OneToMany;
+use Doctrine\ORM\Mapping\OrderBy;
 use Doctrine\ORM\Mapping\Table;
 
 #[Entity]
@@ -60,11 +61,16 @@ class Course
     #[ManyToMany(targetEntity: Tag::class, mappedBy: 'courses')]
     private Collection $tags;
 
+    #[OneToMany(targetEntity: Section::class, mappedBy: 'course')]
+    #[OrderBy(["priority" => "ASC"])]
+    private Collection $sections;
+
     public function __construct()
     {
         $this->certificates = new ArrayCollection();
         $this->tags = new ArrayCollection();
         $this->users = new ArrayCollection();
+        $this->sections = new ArrayCollection();
         $this->created_at = new DateTime();
         $this->deleted = false;
     }
@@ -177,5 +183,15 @@ class Course
     public function getTags(): Collection
     {
         return $this->tags;
+    }
+
+    public function getSections(): Collection
+    {
+        return $this->sections;
+    }
+
+    public function setSections(Collection $sections): void
+    {
+        $this->sections = $sections;
     }
 }

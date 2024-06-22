@@ -2,9 +2,12 @@
 
 namespace Src\Controllers;
 
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\ORM\NoResultException;
 use Doctrine\ORM\Tools\Pagination\Paginator;
 use Src\Controller;
 use Src\Models\Course;
+use Src\Models\Section;
 use Src\Models\Tag;
 use Src\Models\User;
 use Src\Router;
@@ -38,21 +41,24 @@ class CourseController extends Controller
             ->select('c')
             ->from(Course::class, 'c')
             ->join('c.user', 'u')
-            ->where('c.id > 0');
+            ->leftJoin('c.tags', 't')
+            ->andWhere('c.id > 0');
 
         if ($title !== "") $paginationDql->andWhere('c.title LIKE :title')->setParameter('title', "%$title%");
 
         if ($created_by_me) $paginationDql->andWhere('u.id = :id')->setParameter('id', $_SESSION['auth']['id']);
 
         if ($sortByOldest) {
-            $paginationDql = $paginationDql->orderBy('c.created_at', 'DESC');
+            $paginationDql = $paginationDql->orderBy('c.id', 'ASC');
         } else {
-            $paginationDql = $paginationDql->orderBy('c.created_at', 'ASC');
+            $paginationDql = $paginationDql->orderBy('c.id', 'DESC');
         }
 
         if ($tagSelected) {
-            $paginationDql->leftJoin('c.tags', 't')->andWhere('t.id IN (:tags)')->setParameter('tags', ['tags' => $tagSelected]);
+            $paginationDql->andWhere('t.id IN (:tags)')->setParameter('tags', ['tags' => $tagSelected]);
         }
+        // var_dump("hello");
+        // die();
 
         $paginationDql->andWhere('c.deleted = false');
         $paginationDql->setFirstResult(($page - 1) * $pageSize);
@@ -165,6 +171,52 @@ class CourseController extends Controller
      */
     public function showSingleCourse(): void
     {
-        var_dump($_GET);
+        if (!isset($_GET['title'])) {
+            $this->router->notificationSessionFlash('noti-danger', 'Id not found!');
+            $this->router->redirectUsingRouteName('show-course');
+        }
+
+        require "../config/bootstrap.php";
+
+        $title = $_GET['title'];
+
+        try {
+            $course = $entityManager->createQueryBuilder()
+                ->select('c')
+                ->from(Course::class, 'c')
+                ->leftJoin('c.tags', 't')
+                ->leftJoin('c.user', 'u')
+                ->leftJoin('c.sections', 's')
+                ->where('c.title = :title')->setParameter('title', $title)
+                ->getQuery()
+                ->getSingleResult();
+        } catch (NoResultException $e) { // if no result 
+            $this->router->notificationSessionFlash('noti-danger', 'Course not found!');
+            $this->router->redirectUsingRouteName('show-course');
+        }
+
+        $step_id = null;
+        $section = null;
+
+        if(isset($_GET['add-step-section'])) $step_id = $_GET['add-step-id'];
+        if(isset($_GET['edit-section-id'])) $step_id = $_GET['edit-section-id'];
+
+        if ($step_id) {
+            try {
+                $section = $entityManager->createQueryBuilder()
+                    ->select('s')
+                    ->from(Section::class, 's')
+                    ->andWhere('s.id = :step_id')->setParameter('step_id', $step_id)
+                    ->leftJoin('s.course', 'c')
+                    ->andWhere('c.title = :title')->setParameter('title', $title)
+                    ->getQuery()
+                    ->getSingleResult();
+            } catch (NoResultException $e) {
+                $this->router->notificationSessionFlash('noti-danger', 'Step not found!');
+                $this->router->redirectUsingRouteName('show-course');
+            }
+        }
+
+        $this->render('/admin/course/single', compact('course', 'section'));
     }
 }

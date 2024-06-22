@@ -1,11 +1,11 @@
 :root {
-    --pri-blue: #6c6add;
+    --pri-blue: #5654bd;
     --nav-slogan-width: 55px;
     --nav-link-gap: 30px;
     --body-offset-navbar: 64px;
-    --pri-blue-heavy: #3d3bc2;
-    --pri-blue-heavier: #1a17b6;
-    --pri-blue-heavier2: #0f0d70;
+    --pri-blue-heavy: #3331ad;
+    --pri-blue-heavier: #161491;
+    --pri-blue-heavier2: #0e0d5a;
     --pri-blue-light: #b0afee;
     --success: #127e12;
     --success-heavy: #0f4d0f;
@@ -32,6 +32,8 @@ body {
 .main {
     margin-top: var(--body-offset-navbar);
 }
+
+
 
 .nav {
     display: flex;
@@ -221,6 +223,22 @@ body {
     border-radius: 0 20px 20px 0;
 }
 
+.half-left-round-mid {
+    border-radius: 10px 0 0 10px;
+}
+
+.half-right-round-mid {
+    border-radius: 0 10px 10px 0;
+}
+
+.half-top-round-mid {
+    border-radius: 10px 10px 0 0;
+}
+
+.half-bottom-round-mid {
+    border-radius: 0 0 10px 10px;
+}
+
 .btn:hover {
     background-color: var(--pri-blue-heavier);
     box-shadow: 0 0 0.75px 0.75px var(--pri-blue-heavy);
@@ -272,6 +290,10 @@ body {
     color: var(--pri-blue);
 }
 
+.text-small {
+    font-size: 13px;
+}
+
 .form-input:focus,
 .form-:focus {
     box-shadow: 0 0 0 2px lightblue;
@@ -288,6 +310,11 @@ body {
 .mtb-mid {
     margin-top: 30px;
     margin-bottom: 30px;
+}
+
+.mtb-sm {
+    margin-top: 15px;
+    margin-bottom: 15px;
 }
 
 .g-sm {
@@ -467,6 +494,14 @@ body {
     max-width: var(--input-max-width);
 }
 
+.limit-input-width-sm {
+    max-width: calc(var(--input-max-width) / 2);
+}
+
+.limit-input-width-xs {
+    max-width: calc(var(--input-max-width) / 4);
+}
+
 .form-section-arrow {
     font-weight: bold;
     color: white;
@@ -557,7 +592,17 @@ body {
 }
 
 .btn-small {
-    padding: 3px;
+    font-size: 13px;
+}
+
+.btn-small {
+    background-color: var(--pri-blue);
+    color: white;
+    font-size: 13px;
+}
+
+.btn-small:hover {
+    background-color: var(--pri-blue-heavier2);
 }
 
 .btn.disabled {
@@ -605,6 +650,8 @@ body {
 
 .form-select {
     width: 100%;
+    height: 100%;
+    font-size: 15px;
 }
 
 .form-filter {
@@ -638,7 +685,7 @@ body {
     text-align: center;
     margin: 10px auto;
     font-weight: bold;
-    font-size: 17px;
+    font-size: 17.5px;
 }
 
 .card-description {
@@ -654,13 +701,116 @@ body {
     box-shadow: 1px 1px 2px 1px var(--box-shadow-grey);
 }
 
-.card-item:hover{
+.card-item:hover {
     background-color: var(--pri-blue-heavier);
     box-shadow: 1.5px 1.5px 2.5px 2px var(--box-shadow-grey);
 }
 
 .filter-action-group {
     margin-top: 10px;
+}
+
+.btn-tag-small {
+    background-color: var(--pri-blue);
+    color: white;
+    font-size: 13px;
+}
+
+.btn-tag-small:hover {
+    background-color: var(--pri-blue-heavier2);
+}
+
+.course-info {
+    display: flex;
+    gap: 15px;
+}
+
+.course-info-form {
+    width: 100%;
+}
+
+.course-info-form-card {
+    border-radius: 10px;
+    box-shadow: 1px 1px 0.75px 0.75px var(--pri-blue-heavier);
+    background-color: var(--pri-blue);
+    color: white;
+    padding: 10px;
+    margin-bottom: 15px;
+}
+
+.course-info-course {
+    max-width: 300px;
+}
+
+.course-info-course-card {
+    border-radius: 10px;
+    box-shadow: 1px 1px 0.75px 0.75px var(--pri-blue-heavier);
+    background-color: var(--pri-blue-heavy);
+    color: white;
+}
+
+.course-info-form {
+    padding: 10px;
+    width: 100%;
+}   
+
+.course-info-img {
+    max-width: 280px;
+    border-radius: 10px 10px 0 0;
+    margin: 0 auto;
+}
+
+.course-info-img img {
+    max-width: 280px;
+    border-radius: 10px 10px 0 0;
+}
+
+.course-info-title {
+    text-align: center;
+    font-weight: bold;
+    font-size: 18px;
+    margin: 3px 0;
+}
+
+.course-info-description {
+    margin: 10px 0;
+    text-align: justify;
+}
+
+.course-info-text {
+    padding: 15px;
+}
+
+.course-info-section {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin: 20px auto;
+}
+
+.course-info-section:hover {
+    cursor: pointer;
+}
+
+.drop-sub-menu {
+    display: none;
+}
+
+.drop-arrow {
+    transition: all;
+    transition-duration: 0.75s;
+}
+
+.bg-pri-heavy-2 {
+    background-color: var(--pri-blue-heavier2);
+}
+
+.rounded-mid {
+    border-radius: 10px;
+}
+
+.point-normal {
+    cursor: default;
 }
 
 @media (max-width: 1024px) {
@@ -712,5 +862,18 @@ body {
 
     .sidebar-close-btn {
         display: flex;
+    }
+
+    .course-info {
+        flex-direction: column;
+    }
+
+    .course-info-course {
+        max-width: none;
+    }
+
+    .course-info-img img {
+        margin-top: 10px;
+        border-radius: 10px;
     }
 }

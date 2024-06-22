@@ -188,7 +188,7 @@ class FormValidator
      * Check array not empty
      */
     public function checkArrayNotEmpty(mixed $array, string $errorKey): void
-    {   
+    {
         if (!is_array($array) || count($array) <= 0) {
             $this->errors[$errorKey][] = "$errorKey must not be empty.";
         }
@@ -204,6 +204,16 @@ class FormValidator
 
             $_SESSION["old"] = $oldData; // set previous form data
         }
+    }
+
+    /**
+     * Check if value is integer
+     */
+    public function checkInteger(mixed $value, string $errorKey): void
+    {
+        $res = is_int((int) $value);
+
+        if(!$res) $this->errors[$errorKey][] = "$errorKey must be of type integer.";
     }
 
     /**
