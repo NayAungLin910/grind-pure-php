@@ -1,17 +1,17 @@
 :root {
-    --pri-blue: #5654bd;
+    --pri-blue: #2943b8;
     --nav-slogan-width: 55px;
     --nav-link-gap: 30px;
     --body-offset-navbar: 64px;
-    --pri-blue-heavy: #3331ad;
-    --pri-blue-heavier: #161491;
-    --pri-blue-heavier2: #0e0d5a;
-    --pri-blue-light: #b0afee;
-    --success: #127e12;
+    --pri-blue-heavy: #203591;
+    --pri-blue-heavier: #172561;
+    --pri-blue-heavier2: #101941;
+    --pri-blue-light: #889cf7;
+    --success: #127e12; 
     --success-heavy: #0f4d0f;
     --danger: #c50808;
     --danger-heavy: #940b0b;
-    --box-shadow-grey: rgb(75, 71, 71);
+    --box-shadow-grey: #0d1436;
     --body-offset-sidebar: 230px;
     --card-max-width: 650px;
     --input-max-width: 500px;
@@ -691,6 +691,9 @@ body {
 .card-description {
     padding: 10px;
     text-align: justify;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 5px;
 }
 
 .card-item {
@@ -743,6 +746,7 @@ body {
 }
 
 .course-info-course-card {
+    width: 300px;
     border-radius: 10px;
     box-shadow: 1px 1px 0.75px 0.75px var(--pri-blue-heavier);
     background-color: var(--pri-blue-heavy);
@@ -755,13 +759,12 @@ body {
 }   
 
 .course-info-img {
-    max-width: 280px;
     border-radius: 10px 10px 0 0;
     margin: 0 auto;
 }
 
 .course-info-img img {
-    max-width: 280px;
+    width: 100%;
     border-radius: 10px 10px 0 0;
 }
 
@@ -779,6 +782,10 @@ body {
 
 .course-info-text {
     padding: 15px;
+}
+
+.course-info-tags {
+
 }
 
 .course-info-section {
@@ -870,10 +877,15 @@ body {
 
     .course-info-course {
         max-width: none;
+        width: 100%;
+    }
+
+    .course-info-course-card {
+        max-width: none;
+        width: 100%;
     }
 
     .course-info-img img {
-        margin-top: 10px;
-        border-radius: 10px;
+        border-radius: 10px 10px 0 0;
     }
 }

@@ -16,6 +16,15 @@ class CourseValidator extends FormValidator
         return $this;
     }
 
+    public function titleEditValidate(string $title, string $errorKey, int $course_id): CourseValidator
+    {
+        $this->checkStringExists($title, $errorKey);
+        $this->checkStringWithinDefinedLength($title, $errorKey, 5, 130);
+        $this->checkPreExistsModel($title, $errorKey, 'title', Course::class, $course_id);
+
+        return $this;
+    }
+
     public function descriptionValidate(string $description, string $errorKey): CourseValidator
     {
         $this->checkStringExists($description, $errorKey);

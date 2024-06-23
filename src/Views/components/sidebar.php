@@ -16,8 +16,8 @@
         <!-- Item 1 -->
         <div class="sidebar-menu-item">
             <a class="link-plain text-white" href="">
-                <i class="bi bi-collection"></i>
-                Dash
+                <i class="bi bi-speedometer"></i>
+                Dashboard
             </a>
         </div>
 

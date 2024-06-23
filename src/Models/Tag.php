@@ -125,6 +125,14 @@ class Tag
         return $this->courses;
     }
 
+    public function getUndeletedCourses(): Collection
+    {
+        $unDeletedCourses = $this->courses->filter(function ($c) { // on get undeleted sections
+            return $c->getDeleted() === false;
+        });
+        return $unDeletedCourses;
+    }
+
     public function setCourses(Collection $courses): void
     {
         $this->courses = $courses;

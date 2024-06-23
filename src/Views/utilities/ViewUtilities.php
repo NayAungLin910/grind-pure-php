@@ -5,6 +5,7 @@
 
 //------------------------------- Functions ------------------------------------
 
+use Doctrine\Common\Collections\Collection;
 use Src\Services\CookieService;
 
 /**
@@ -113,6 +114,15 @@ function echoClassCurrentRouteSame(string $routeName, string $className)
 }
 
 /**
+ * Check if the current route contains 
+ * the given string
+ */
+function checkCurrentRouteContains(string $checkRoute)
+{
+    return str_contains($_SERVER['REQUEST_URI'], $checkRoute);
+}
+
+/**
  * Echo the text if old sessinon exist
  */
 function checkIdExistsInOldSession(string $sessionKey, string $text, int $checkId): string|null
@@ -127,6 +137,19 @@ function checkIdExistsInOldSession(string $sessionKey, string $text, int $checkI
 
     return null;
 }
+
+/**
+ * Echo the test if the id is in the given collection
+ */
+function checkIdInCollection(Collection $collection, int $id): bool
+{
+    foreach ($collection as $c) {
+        if ($c->getId() === $id) return true;
+    }
+
+    return false;
+}
+
 //------------------------------- If condition boolean variables  ------------------------------------
 
 $cookieService = new CookieService();

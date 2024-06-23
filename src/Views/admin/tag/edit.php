@@ -35,12 +35,12 @@
                 </h3>
 
                 <!-- Tag Id -->
-                <input type="hidden" value="<?= $tag->getId() ?>" name="update-id">
+                <input type="hidden" value="<?= htmlspecialchars($tag->getId()) ?>" name="update-id">
 
                 <!-- Title -->
                 <div class="form-group">
                     <label class="form-label text-white" for="name">Name</label>
-                    <input class="input form-input limit-input-width" id="name" name="name" value="<?= $tag->getName() ?>" type="text">
+                    <input class="input form-input limit-input-width" id="name" name="name" value="<?= htmlspecialchars($tag->getName()) ?>" type="text">
                 </div>
                 <?php displayErrorMessage("name") ?>
                 <?php displayAllErrorMessages() ?>

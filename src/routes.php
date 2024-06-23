@@ -42,6 +42,8 @@ $router->addGetRoute('/admin/course', CourseController::class, "showCourses")->a
 $router->addGetRoute('/admin/course/create', CourseController::class, "showCourseCreate")->addMiddleware(AdminAuthMiddleware::class)->addRouteName("show-course-create");
 $router->addPostRoute('/admin/course/create', CourseController::class, 'postCourseCreate')->addMiddleware(AdminAuthMiddleware::class)->addRouteName('post-course-create');
 $router->addGetRoute('/admin/course/single', CourseController::class, "showSingleCourse")->addMiddleware(AdminAuthMiddleware::class)->addRouteName('show-single-course');
+$router->addGetRoute('/admin/course/edit', CourseController::class, "showCourseEdit")->addMiddleware(AdminAuthMiddleware::class)->addRouteName('show-course-edit');
+$router->addPostRoute('/admin/course/edit', CourseController::class, "postCourseEdit")->addMiddleware(AdminAuthMiddleware::class)->addRouteName('post-course-edit');
 
 //-------- Section Routes -----//
 $router->addPostRoute('/admin/section/create', SectionController::class, "postSectionCreate")->addMiddleware(AdminAuthMiddleware::class)->addRouteName('post-section-create');

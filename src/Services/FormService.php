@@ -23,6 +23,14 @@ class FormService
     }
 
     /**
+     * Delete file specified, if it exists
+     */
+    public function deleteFile(string $file): void
+    {
+        if (file_exists('./' . $file)) unlink('./' . $file);
+    }
+
+    /**
      * Upload single file
      */
     protected function singleFileUpload(array $files, string $directory, string $errorKey): string

@@ -53,10 +53,11 @@
             <!-- Admin -->
             <?php if ($ifAuthAdmin) : ?>
                 <div class="nav-inner-link">
-                    <a class="btn link-plain <?php echoClassCurrentRouteSame('show-course', 'active-nav'); echoClassCurrentRouteSame('show-course-create', 'active-nav') ?>" href="<?php echo getRouteUsingRouteName("show-course") ?>">Dashboard</a>
+                    <a class="btn link-plain <?= checkCurrentRouteContains('/admin') ? 'active-nav' : '' ?>" href="<?php echo getRouteUsingRouteName("show-course") ?>">
+                        <i class="bi bi-speedometer"></i> Dashboard</a>
                 </div>
             <?php endif; ?>
-            
+
         </div>
     </div>
 </nav>

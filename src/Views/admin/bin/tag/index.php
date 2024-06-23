@@ -75,22 +75,22 @@
                         <?php foreach ($tags as $index => $tag) : ?>
                             <tr>
                                 <td><?= $index + 1 ?>.</td>
-                                <td><?= $tag->getName() ?></td>
-                                <td><?= $tag->getUser()->getName() ?></td>
+                                <td><?= htmlspecialchars($tag->getName()) ?></td>
+                                <td><?= htmlspecialchars($tag->getUser()->getName()) ?></td>
                                 <td>
                                     <div class="flex jcc aic g-mid">
                                         <!-- Recover --->
                                         <form action="<?= getRouteUsingRouteName('post-bin-tag-recover') ?>" method="POST">
-                                            <input type="hidden" value="<?= $tag->getId() ?>" name="recover-id">
+                                            <input type="hidden" value="<?= htmlspecialchars($tag->getId()) ?>" name="recover-id">
                                             <button type="submit" class="btn square">
                                                 <i class="bi bi-arrow-counterclockwise"></i> Recover
                                             </button>
                                         </form>
 
                                         <!-- Delete --->
-                                        <form action="<?= getRouteUsingRouteName('post-bin-tag-delete') ?>" method="POST" id="delete-tag-form-<?= $tag->getId() ?>">
-                                            <input type="hidden" value="<?= $tag->getId() ?>" name="delete-id">
-                                            <button type="button" onclick="confirmDeleteTag(<?= $tag->getId() ?>, '<?= $tag->getName() ?>')" class="btn square">
+                                        <form action="<?= getRouteUsingRouteName('post-bin-tag-delete') ?>" method="POST" id="delete-tag-form-<?= htmlspecialchars($tag->getId()) ?>">
+                                            <input type="hidden" value="<?= htmlspecialchars($tag->getId()) ?>" name="delete-id">
+                                            <button type="button" onclick="confirmDeleteTag(<?= htmlspecialchars($tag->getId()) ?>, '<?= htmlspecialchars($tag->getName()) ?>')" class="btn square">
                                                 <i class="bi bi-trash-fill"></i>
                                             </button>
                                         </form>

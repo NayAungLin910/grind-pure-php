@@ -63,10 +63,9 @@
                     <div class="flex aic g-sm">
                         <label class="form-label text-white" for="tags">Tags</label>
                         <select class="select2-multiple form-filter" id="tags" name="tags[]" multiple="multiple">
-                            <?php var_dump($_SESSION['old']['tagSelected']) ?>
                             <?php foreach ($tags as $tag) : ?>
-                                <option value="<?= $tag->getId() ?>" <?= checkIdExistsInOldSession('tagSelected', 'selected', $tag->getId()) ?>>
-                                    <?= $tag->getName() ?>
+                                <option value="<?= htmlspecialchars($tag->getId()) ?>" <?= checkIdExistsInOldSession('tagSelected', 'selected', $tag->getId()) ?>>
+                                    <?= htmlspecialchars($tag->getName()) ?>
                                 </option>
                             <?php endforeach; ?>
                         </select>
@@ -86,24 +85,22 @@
                 <?php if (count($courses) > 0) : ?>
                     <?php foreach ($courses as $course) : ?>
 
-
                         <div class="card-item text-white">
-                            <a href="<?= getRouteUsingRouteName('show-single-course') . "?title=" . $course->getTitle() ?>" class="link-plain text-white">
-                                <img src="<?= $course->getImage() ?>" alt="Card Image" class="card-image">
+                            <a href="<?= getRouteUsingRouteName('show-single-course') . "?title=" . htmlspecialchars($course->getTitle()) ?>" class="link-plain text-white">
+                                <img src="<?= htmlspecialchars($course->getImage()) ?>" alt="Card Image" class="card-image">
                                 <div class="card-title">
-                                    <?= $course->getTitle() ?>
+                                    <?= htmlspecialchars($course->getTitle()) ?>
                                 </div>
                                 <div class="card-description">
-                                    <?= $course->getDescription() ?>
+                                    <?= htmlspecialchars($course->getDescription()) ?>
                                 </div>
                             </a>
                             <div class="card-description bg-pri-heavy-2 half-bottom-round-mid point-normal">
-                                <?php foreach ($course->getTags() as $tag) : ?>
-                                    <a href="" class="btn link-plain text-white btn-tag-small"><?= $tag->getName() ?></a>
+                                <?php foreach ($course->getUndeletedTags() as $tag) : ?>
+                                    <a href="" class="btn link-plain text-white btn-tag-small"><?= htmlspecialchars($tag->getName()) ?></a>
                                 <?php endforeach; ?>
                             </div>
                         </div>
-
 
                     <?php endforeach; ?>
                 <?php else : ?>

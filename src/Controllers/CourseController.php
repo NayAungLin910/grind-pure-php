@@ -57,8 +57,6 @@ class CourseController extends Controller
         if ($tagSelected) {
             $paginationDql->andWhere('t.id IN (:tags)')->setParameter('tags', ['tags' => $tagSelected]);
         }
-        // var_dump("hello");
-        // die();
 
         $paginationDql->andWhere('c.deleted = false');
         $paginationDql->setFirstResult(($page - 1) * $pageSize);
@@ -105,6 +103,42 @@ class CourseController extends Controller
             ->getResult();
 
         $this->render("admin/course/create", compact('tags'));
+    }
+
+    /**
+     * Show course edit view
+     */
+    public function showCourseEdit(): void
+    {
+        $courseValidator = new CourseValidator();
+
+        $courseValidator->checkRequestFields(['title']);
+
+        $title = $_GET['title'];
+
+        require "../config/bootstrap.php";
+
+        try {
+            $course = $entityManager->createQueryBuilder()
+                ->select('c')
+                ->from(Course::class, 'c')
+                ->where('c.title = :title')->setParameter('title', $title)
+                ->leftJoin('c.tags', 't')
+                ->getQuery()
+                ->getSingleResult();
+        } catch (NoResultException $e) { // if no result 
+            $this->router->notificationSessionFlash('noti-danger', 'Course not found!');
+            $this->router->redirectUsingRouteName('show-course');
+        }
+
+        $tags = $entityManager->createQueryBuilder()
+            ->select('t')
+            ->from(Tag::class, 't')
+            ->where('t.deleted = false')
+            ->getQuery()
+            ->getResult();
+
+        $this->render("admin/course/edit", compact('course', 'tags'));
     }
 
     /**
@@ -167,6 +201,77 @@ class CourseController extends Controller
     }
 
     /**
+     * Handles post request to update the existing course
+     */
+    public function postCourseEdit(): void
+    {
+        $courseValidator = new CourseValidator();
+
+        $courseValidator->checkRequestFields(['title', 'description', 'course-id']);
+
+        $course_id = $_POST['course-id'];
+        $title = $_POST['title'];
+        $description = $_POST['description'];
+        $image = isset($_FILES['image']) && $_FILES['image']['name'] !== "" ? $_FILES['image'] : null;
+
+        $tags = isset($_POST['tags']) ? $_POST['tags'] : null;
+
+        $courseValidator->titleEditValidate($title, 'title', $course_id);
+        $courseValidator->descriptionValidate($description, 'description');
+        if ($image) $courseValidator->imageValidate($image, 'image');
+        $courseValidator->tagValidate($tags, 'tag');
+
+        if (is_array($tags)) $tags = array_map('intval', $tags);
+
+        $courseValidator->flashErrors();
+
+        $formService = new FormService();
+
+        require "../config/bootstrap.php";
+
+        try {
+            $course = $entityManager->createQueryBuilder()
+                ->select('c')
+                ->from(Course::class, 'c')
+                ->leftJoin('c.tags', 't')
+                ->where('c.id = :course_id')->setParameter('course_id', $course_id)
+                ->getQuery()
+                ->getSingleResult();
+        } catch (NoResultException $e) { // if no result 
+            $this->router->notificationSessionFlash('noti-danger', 'Course not found!');
+            $this->router->redirectUsingRouteName('show-course');
+        }
+
+        $tags = $entityManager->getRepository(Tag::class)->findBy(['id' => $_POST['tags']]);
+
+        $imageDir = $course->getImage();
+
+        if ($image) { // if new image is selected
+            $formService->deleteFile($course->getImage());
+            $imageDir = $formService->uploadFiles($image, "/images", 'image');
+        }
+
+        $course->setTitle($title);
+        $course->setDescription($description);
+        $course->setImage($imageDir);
+
+        foreach ($course->getUndeletedTags() as $t) { // removes old many-to-many relationship of tags
+            $course->getTags()->removeElement($t);
+            $t->getCourses()->removeElement($course);
+        }
+
+        foreach ($tags as $tag) {
+            $course->getTags()->add($tag);
+            $tag->getCourses()->add($course);
+        }
+
+        $entityManager->flush();
+
+        $this->router->notificationSessionFlash('noti-success', 'Course updated successfully!');
+        $this->router->redirectUsingRouteName('show-course');
+    }
+
+    /**
      * Show specific course
      */
     public function showSingleCourse(): void
@@ -198,8 +303,8 @@ class CourseController extends Controller
         $step_id = null;
         $section = null;
 
-        if(isset($_GET['add-step-section'])) $step_id = $_GET['add-step-id'];
-        if(isset($_GET['edit-section-id'])) $step_id = $_GET['edit-section-id'];
+        if (isset($_GET['add-step-section'])) $step_id = $_GET['add-step-id'];
+        if (isset($_GET['edit-section-id'])) $step_id = $_GET['edit-section-id'];
 
         if ($step_id) {
             try {

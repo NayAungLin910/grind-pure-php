@@ -24,7 +24,7 @@
                 <?php if ($section && isset($_GET['add-step-section'])) : ?>
                     <!-- Step Create of Selected Section -->
                     <div class="course-info-form-card">
-                        <h3><i class="bi bi-bar-chart-steps"></i> Create Step for Section, <?= $section->getTitle() ?></h3>
+                        <h3><i class="bi bi-bar-chart-steps"></i> Create Step for Section, <?= htmlspecialchars($section->getTitle()) ?></h3>
                         <form action="<?= getRouteUsingRouteName('post-step-create') ?>" method="POST" enctype="multipart/form-data">
 
                             <div class="form-group flex jcc">
@@ -37,31 +37,31 @@
                 <?php if ($section && isset($_GET['edit-section-id'])) : ?>
                     <!-- Edit Section --->
                     <div class="course-info-form-card">
-                        <h3 class=""><i class="bi bi-list"></i>Edit Section <?= $section->getTitle() ?></h3>
+                        <h3 class=""><i class="bi bi-list"></i>Edit Section <?= htmlspecialchars($section->getTitle()) ?></h3>
 
                         <form action="<?= getRouteUsingRouteName('post-section-edit') ?>" method="POST" enctype="multipart/form-datap">
 
                             <!-- Section Id -->
                             <div class="form-group">
-                                <input type="hidden" name="section-id" value="<?= $section->getId() ?>" />
+                                <input type="hidden" name="section-id" value="<?= htmlspecialchars($section->getId()) ?>" />
                             </div>
 
                             <!-- Course Id --->
                             <div class="form-group">
-                                <input type="hidden" name="course-id" value="<?= $course->getId() ?>">
+                                <input type="hidden" name="course-id" value="<?= htmlspecialchars($course->getId()) ?>">
                             </div>
 
                             <!-- Edit Section Title -->
                             <div class="form-group">
                                 <label class="form-label text-white" for="edit-section-title">Title</label>
-                                <input class="input form-input limit-input-width" id="edit-section-title" name="edit-section-title" value="<?= $section->getTitle() ?>" type="text">
+                                <input class="input form-input limit-input-width" id="edit-section-title" name="edit-section-title" value="<?= htmlspecialchars($section->getTitle()) ?>" type="text">
                             </div>
-                            <?php displayErrorMessage("title") ?>
+                            <?php displayErrorMessage("edit-section-title") ?>
 
                             <!-- Edit Section Description -->
                             <div class="form-group">
                                 <label class="form-label text-white" for="edit-section-description">Description</label>
-                                <textarea name="edit-section-description" rows="8" cols="30" class="textarea form-input" id="edit-section-description"><?= $section->getDescription() ?></textarea>
+                                <textarea name="edit-section-description" rows="8" cols="30" class="textarea form-input" id="edit-section-description"><?= htmlspecialchars($section->getDescription()) ?></textarea>
                                 <?php displayErrorMessage("edit-section-description") ?>
                             </div>
 
@@ -69,9 +69,9 @@
                             <div class="form-group">
                                 <label class="form-label text-white" for="priority">Priority</label>
                                 <select class="input form-input form-select limit-input-width-xs square" id="priority" name="priority">
-                                    <?php foreach ($course->getSections() as $s) : ?>
-                                        <option value="<?= $s->getPriority() ?>" <?php if ($section->getPriority() === $s->getPriority()) echo "selected" ?>>
-                                            <?= $s->getPriority() ?>
+                                    <?php foreach ($course->getUndeletedSections() as $s) : ?>
+                                        <option value="<?= htmlspecialchars($s->getPriority()) ?>" <?php if ($section->getPriority() === $s->getPriority()) echo "selected" ?>>
+                                            <?= htmlspecialchars($s->getPriority()) ?>
                                         </option>
                                     <?php endforeach; ?>
                                 </select>
@@ -81,13 +81,14 @@
 
                             <!--Submit Button -->
                             <div class="flex jcc g-mid">
-                                <a href="<?= getRouteUsingRouteName("show-single-course") . "?title=" . $course->getTitle() ?>" class="btn link-plain">Cancel</a>
+                                <a href="<?= getRouteUsingRouteName("show-single-course") . "?title=" . htmlspecialchars($course->getTitle()) ?>" class="btn link-plain">Cancel</a>
                                 <button class="btn" type="submit">Update</button>
                             </div>
                         </form>
                     </div>
                 <?php endif; ?>
 
+                <!-- Create Section -->
                 <div class="course-info-form-card">
                     <h3 class=""><i class="bi bi-list"></i>Create Section</h3>
 
@@ -95,7 +96,7 @@
 
                         <!-- Course ID -->
                         <div class="form-group">
-                            <input type="hidden" name="course-id" value="<?= $course->getId() ?>" />
+                            <input type="hidden" name="course-id" value="<?= htmlspecialchars($course->getId()) ?>" />
                         </div>
 
                         <!-- Title -->
@@ -117,14 +118,14 @@
                             <label class="form-label text-white" for="priority">Priority</label>
                             <select class="input form-input form-select limit-input-width-xs square" id="priority" name="priority">
 
-                                <?php if (count($course->getSections()) > 0) : ?>
-                                    <?php foreach ($course->getSections() as $section) : ?>
-                                        <option value="<?= $section->getPriority() ?>"><?= $section->getPriority() ?></option>
+                                <?php if (count($course->getUndeletedSections()) > 0) : ?>
+                                    <?php foreach ($course->getUndeletedSections() as $section) : ?>
+                                        <option value="<?= htmlspecialchars($section->getPriority()) ?>"><?= htmlspecialchars($section->getPriority()) ?></option>
                                     <?php endforeach; ?>
 
                                     <!-- Latest priority -->
-                                    <option value="<?= $course->getSections()->last()->getPriority() + 1 ?>" selected>
-                                        <?= $course->getSections()->last()->getPriority() + 1 ?>
+                                    <option value="<?= htmlspecialchars($course->getUndeletedSections()->last()->getPriority() + 1) ?>" selected>
+                                        <?= htmlspecialchars($course->getUndeletedSections()->last()->getPriority() + 1) ?>
                                     </option>
                                 <?php else : ?>
                                     <!-- Latest priority -->
@@ -149,39 +150,44 @@
             <div class="course-info-course">
                 <div class="course-info-course-card">
                     <div class="course-info-img">
-                        <img src="<?= $course->getImage() ?>" alt="<?= $course->getTitle() . "'s image" ?>">
+                        <img src="<?= htmlspecialchars($course->getImage()) ?>" alt="<?= htmlspecialchars($course->getTitle()) . "'s image" ?>">
                     </div>
                     <div class="course-info-text">
-                        <div class="course-info-title"><?= $course->getTitle() ?></div>
+                        <div class="course-info-title"><?= htmlspecialchars($course->getTitle()) ?></div>
                         <div class="course-info-description">
-                            <?= $course->getDescription() ?>
+                            <?= htmlspecialchars($course->getDescription()) ?>
                         </div>
-                        <div class="course-info-tags">
+                        <div class="form-group">
+                            <a href="<?= getRouteUsingRouteName('show-course-edit') . "?title=" . htmlspecialchars($course->getTitle()) ?>" class="btn btn-sm square">
+                                <i class="bi bi-pencil-square"></i>
+                            </a>
+                        </div>
+                        <div class="card-description">
 
                             <!-- Tags -->
-                            <?php foreach ($course->getTags() as $tag) : ?>
-                                <a href="" class="btn link-plain text-white btn-tag-small"><?= $tag->getName() ?></a>
+                            <?php foreach ($course->getUndeletedTags() as $tag) : ?>
+                                <a href="" class="btn link-plain text-white btn-tag-small"><?= htmlspecialchars($tag->getName()) ?></a>
                             <?php endforeach; ?>
                         </div>
                         <div class="course-info-sections">
 
                             <!-- Sections -->
-                            <?php foreach ($course->getSections() as $section) : ?>
-                                <div class="course-info-section" onclick="dropdownToggle(<?= $section->getId() ?>)">
+                            <?php foreach ($course->getUndeletedSections() as $section) : ?>
+                                <div class="course-info-section" onclick="dropdownToggle(<?= htmlspecialchars($section->getId()) ?>)">
                                     <div>
-                                        <?= $section->getTitle() ?>
+                                        <?= htmlspecialchars($section->getTitle()) ?>
                                     </div>
 
-                                    <i class="bi bi-chevron-down drop-arrow" id="drop-arrow-<?= $section->getId() ?>"></i>
+                                    <i class="bi bi-chevron-down drop-arrow" id="drop-arrow-<?= htmlspecialchars($section->getId()) ?>"></i>
                                 </div>
-                                <div class="course-info-section-steps drop-sub-menu" id="drop-sub-menu-<?= $section->getId() ?>">
+                                <div class="course-info-section-steps drop-sub-menu" id="drop-sub-menu-<?= htmlspecialchars($section->getId()) ?>">
                                     <div class="mtb-sm">
-                                        <?= $section->getDescription() ?>
+                                        <?= htmlspecialchars($section->getDescription()) ?>
                                     </div>
                                     <div class="flex jcc g-mid">
-                                        <a href="<?= getRouteUsingRouteName("show-single-course") . "?add-step-section=" . $section->getId() . "&title=" . $course->getTitle() ?>" class="btn btn-small link-plain">Add Step</a>
-                                        <a href="<?= getRouteUsingRouteName('show-single-course') . "?edit-section-id=" . $section->getId() . "&title=" . $course->getTitle() ?>" class="btn btn-small link-plain">
-                                            Edit
+                                        <a href="<?= getRouteUsingRouteName("show-single-course") . "?add-step-section=" . htmlspecialchars($section->getId()) . "&title=" . htmlspecialchars($course->getTitle()) ?>" class="btn btn-small link-plain">Add Step</a>
+                                        <a href="<?= getRouteUsingRouteName('show-single-course') . "?edit-section-id=" . htmlspecialchars($section->getId()) . "&title=" . htmlspecialchars($course->getTitle()) ?>" class="btn btn-small link-plain square">
+                                            <i class="bi bi-pencil-square"></i>
                                         </a>
                                     </div>
                                 </div>

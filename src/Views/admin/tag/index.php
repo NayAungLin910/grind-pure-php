@@ -73,17 +73,17 @@
                         <?php foreach ($tags as $index => $tag) : ?>
                             <tr>
                                 <td><?= $index + 1 ?>.</td>
-                                <td><?= $tag->getName() ?></td>
-                                <td><?= $tag->getUser()->getName() ?></td>
+                                <td><?= htmlspecialchars($tag->getName()) ?></td>
+                                <td><?= htmlspecialchars($tag->getUser()->getName()) ?></td>
                                 <td>
                                     <div class="flex jcc aic g-mid">
 
                                         <!-- Edit -->
-                                        <a href="<?= getRouteUsingRouteName('show-tag-edit') . "?update-id=" . $tag->getId() ?>" class="btn  square"><i class="bi bi-pencil-square"></i></a>
+                                        <a href="<?= getRouteUsingRouteName('show-tag-edit') . "?update-id=" . htmlspecialchars($tag->getId()) ?>" class="btn  square"><i class="bi bi-pencil-square"></i></a>
 
                                         <!-- Delete --->
                                         <form action="<?= getRouteUsingRouteName('post-tag-delete') ?>" method="POST">
-                                            <input type="hidden" value="<?= $tag->getId() ?>" name="delete-id">
+                                            <input type="hidden" value="<?= htmlspecialchars($tag->getId()) ?>" name="delete-id">
                                             <button type="submit" class="btn square">
                                                 <i class="bi bi-trash-fill"></i>
                                             </button>

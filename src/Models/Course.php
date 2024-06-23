@@ -185,10 +185,27 @@ class Course
         return $this->tags;
     }
 
+    public function getUndeletedTags(): Collection
+    {
+        $unDeletedTags = $this->tags->filter(function ($t) { // on get undeleted tags
+            return $t->getDeleted() == false;
+        });
+        return $unDeletedTags;
+    }
+
     public function getSections(): Collection
     {
         return $this->sections;
     }
+
+    public function getUndeletedSections(): Collection
+    {
+        $unDeletedSections = $this->sections->filter(function ($s) { // on get undeleted sections
+            return $s->getDeleted() == false;
+        });
+        return $unDeletedSections;
+    }
+
 
     public function setSections(Collection $sections): void
     {

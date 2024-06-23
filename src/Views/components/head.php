@@ -9,4 +9,4 @@
 
 <link rel="stylesheet" href="/assets/css/styles.css">
 
-<title><?= $title ? $title . ' | Grind Learning Platform' : 'Grind Learning Platform' ?></title>
+<title><?= isset($title) ? $title . ' | Grind Learning Platform' : 'Grind Learning Platform' ?></title>
