@@ -28,7 +28,6 @@ class TagController extends Controller
         $created_by_me = isset($_GET['created_by_me']) ? $_GET['created_by_me'] : null;
         $sortByOldest = isset($_GET['oldest']) ? $_GET['oldest'] : null;
 
-
         $paginationDql = $entityManager->createQueryBuilder()
             ->select('t')
             ->from(Tag::class, 't')
@@ -85,6 +84,13 @@ class TagController extends Controller
             $this->router->notificationSessionFlash('noti-danger', 'Tag not found!');
             $this->router->redirectUsingRouteName('show-bin-tag');
         }
+
+        foreach ($tag->getCourses() as $c) { // removes old many-to-many relationship of tags
+            $c->getTags()->removeElement($tag);
+            $tag->getCourses()->removeElement($c);
+        }
+
+        $entityManager->flush();
 
         $entityManager->remove($tag);
         $entityManager->flush();

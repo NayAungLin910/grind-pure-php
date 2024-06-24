@@ -198,15 +198,6 @@ class Course
         return $this->sections;
     }
 
-    public function getUndeletedSections(): Collection
-    {
-        $unDeletedSections = $this->sections->filter(function ($s) { // on get undeleted sections
-            return $s->getDeleted() == false;
-        });
-        return $unDeletedSections;
-    }
-
-
     public function setSections(Collection $sections): void
     {
         $this->sections = $sections;

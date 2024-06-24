@@ -88,9 +88,9 @@
                                         </form>
 
                                         <!-- Delete --->
-                                        <form action="<?= getRouteUsingRouteName('post-bin-tag-delete') ?>" method="POST" id="delete-tag-form-<?= htmlspecialchars($tag->getId()) ?>">
+                                        <form action="<?= getRouteUsingRouteName('post-bin-tag-delete') ?>" method="POST" id="delete-form-<?= htmlspecialchars($tag->getId()) ?>">
                                             <input type="hidden" value="<?= htmlspecialchars($tag->getId()) ?>" name="delete-id">
-                                            <button type="button" onclick="confirmDeleteTag(<?= htmlspecialchars($tag->getId()) ?>, '<?= htmlspecialchars($tag->getName()) ?>')" class="btn square">
+                                            <button type="button" onclick="confirmDelete(<?= htmlspecialchars($tag->getId()) ?>, '<?= htmlspecialchars($tag->getName()) ?>', 'tag')" class="btn square">
                                                 <i class="bi bi-trash-fill"></i>
                                             </button>
                                         </form>
@@ -130,24 +130,6 @@
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
 <!-- Sweetalert Confirm Delete -->
-<script>
-    // confirm the tag permanent delete
-    function confirmDeleteTag(tagId, tagName) {
-        Swal.fire({
-            title: `Are you sure about deleteing the tag, ${tagName} permanently?`,
-            text: "",
-            icon: "warning",
-            showCancelButton: true,
-            confirmButtonColor: "#3085d6",
-            cancelButtonColor: "#d33",
-            confirmButtonText: "Yes, delete it!"
-        }).then((result) => {
-            if (result.isConfirmed) {
-                let deleteForm = document.querySelector(`#delete-tag-form-${tagId}`);
-                deleteForm.submit();
-            }
-        });
-    }
-</script>
+<script src="/assets/js/sweet-alert-utilities.js"></script>
 
 </html>

@@ -84,7 +84,10 @@
                 <?php displayAllErrorMessages() ?>
 
                 <!--Submit Button -->
-                <div class="flex jcc">
+                <div class="flex jcc g-mid">
+                    <a href="<?= getRouteUsingRouteName('show-single-course') . "?title=" . $course->getTitle() ?>" class="link-plain btn">
+                        Cancel
+                    </a> 
                     <button class="btn" type="submit">Save</button>
                 </div>
             </div>

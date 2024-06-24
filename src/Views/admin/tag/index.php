@@ -120,4 +120,10 @@
 <!-- Noti Js -->
 <script src="/assets/js/noti-uti.js"></script>
 
+<!-- Sweetalert 2 Js -->
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+<!-- Sweetalert Confirm Delete -->
+<script src="/assets/js/sweet-alert-utilities.js"></script>
+
 </html>

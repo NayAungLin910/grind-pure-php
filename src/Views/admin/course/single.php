@@ -69,7 +69,7 @@
                             <div class="form-group">
                                 <label class="form-label text-white" for="priority">Priority</label>
                                 <select class="input form-input form-select limit-input-width-xs square" id="priority" name="priority">
-                                    <?php foreach ($course->getUndeletedSections() as $s) : ?>
+                                    <?php foreach ($course->getSections() as $s) : ?>
                                         <option value="<?= htmlspecialchars($s->getPriority()) ?>" <?php if ($section->getPriority() === $s->getPriority()) echo "selected" ?>>
                                             <?= htmlspecialchars($s->getPriority()) ?>
                                         </option>
@@ -118,14 +118,14 @@
                             <label class="form-label text-white" for="priority">Priority</label>
                             <select class="input form-input form-select limit-input-width-xs square" id="priority" name="priority">
 
-                                <?php if (count($course->getUndeletedSections()) > 0) : ?>
-                                    <?php foreach ($course->getUndeletedSections() as $section) : ?>
+                                <?php if (count($course->getSections()) > 0) : ?>
+                                    <?php foreach ($course->getSections() as $section) : ?>
                                         <option value="<?= htmlspecialchars($section->getPriority()) ?>"><?= htmlspecialchars($section->getPriority()) ?></option>
                                     <?php endforeach; ?>
 
                                     <!-- Latest priority -->
-                                    <option value="<?= htmlspecialchars($course->getUndeletedSections()->last()->getPriority() + 1) ?>" selected>
-                                        <?= htmlspecialchars($course->getUndeletedSections()->last()->getPriority() + 1) ?>
+                                    <option value="<?= htmlspecialchars($course->getSections()->last()->getPriority() + 1) ?>" selected>
+                                        <?= htmlspecialchars($course->getSections()->last()->getPriority() + 1) ?>
                                     </option>
                                 <?php else : ?>
                                     <!-- Latest priority -->
@@ -172,7 +172,7 @@
                         <div class="course-info-sections">
 
                             <!-- Sections -->
-                            <?php foreach ($course->getUndeletedSections() as $section) : ?>
+                            <?php foreach ($course->getSections() as $section) : ?>
                                 <div class="course-info-section" onclick="dropdownToggle(<?= htmlspecialchars($section->getId()) ?>)">
                                     <div>
                                         <?= htmlspecialchars($section->getTitle()) ?>
@@ -189,6 +189,14 @@
                                         <a href="<?= getRouteUsingRouteName('show-single-course') . "?edit-section-id=" . htmlspecialchars($section->getId()) . "&title=" . htmlspecialchars($course->getTitle()) ?>" class="btn btn-small link-plain square">
                                             <i class="bi bi-pencil-square"></i>
                                         </a>
+
+                                        <!-- Delete section -->
+                                        <form action="<?= getRouteUsingRouteName('post-section-delete') ?>" id="delete-form-<?= $section->getId() ?>" method="POST">
+                                            <input type="hidden" name="delete-id" value="<?= $section->getId() ?>" />
+                                            <button type="button" class="btn btn-small square btn-light" onclick="confirmDelete(<?= $section->getId() ?>, '<?= $section->getTitle() ?>', 'course')">
+                                                <i class="bi bi-trash-fill"></i>
+                                            </button>
+                                        </form>
                                     </div>
                                 </div>
                             <?php endforeach; ?>
@@ -215,5 +223,11 @@
 
 <!-- Utilities -->
 <script src="/assets/js/utilities.js"></script>
+
+<!-- Sweetalert 2 Js -->
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+<!-- Sweetalert Confirm Delete -->
+<script src="/assets/js/sweet-alert-utilities.js"></script>
 
 </html>

@@ -119,6 +119,7 @@ class SectionController extends Controller
             $this->router->redirectBack();
         }
 
+
         try {
             $section = $entityManager->createQueryBuilder()
                 ->select('s')
@@ -161,5 +162,39 @@ class SectionController extends Controller
 
         $this->router->notificationSessionFlash("noti-success", "Section updated successfully!");
         $this->router->redirectTo($singleCourseRoute . "?title=" . $course->getTitle());
+    }
+
+    /**
+     * Handles post request to delete section
+     */
+    public function postSectionDelete(): void
+    {
+        $sectionValidator = new SectionValidator();
+        $sectionValidator->checkRequestFields(['delete-id']);
+
+        $deleteId = $_POST['delete-id'];
+
+        require "../config/bootstrap.php";
+
+        $section = $entityManager->createQueryBuilder()
+            ->select('s')
+            ->from(Section::class, 's')
+            ->leftJoin('s.course', 'c')
+            ->where('s.id = :id')->setParameter('id', $deleteId)
+            ->getQuery()
+            ->getOneOrNullResult();
+
+        if (!$section) {
+            $route = $this->router->getRouteUsingRouteName('show-course');
+            $this->router->redirectTo($route);
+        }
+
+        $entityManager->remove($section);
+        $entityManager->flush();
+
+        $this->router->notificationSessionFlash('noti-success', 'Section deleted successfully!');
+
+        $route = $this->router->getRouteUsingRouteName('show-single-course') . "?title=" . $section->getCourse()->getTitle();
+        $this->router->redirectTo($route);
     }
 }

@@ -38,9 +38,6 @@ class Section
     #[Column(type: 'datetime', nullable: true)]
     private DateTime $updated_at;
 
-    #[Column(type: 'boolean')]
-    private bool $deleted;
-
     #[Column(type: 'integer')]
     private int $priority;
 
@@ -54,7 +51,6 @@ class Section
     public function __construct()
     {
         $this->steps = new ArrayCollection();
-        $this->deleted = false;
         $this->created_at = new DateTime();
     }
 
@@ -111,16 +107,6 @@ class Section
     public function setUpdatedAt(): void
     {
         $this->updated_at = new DateTime();
-    }
-
-    public function getDeleted(): bool
-    {
-        return $this->deleted;
-    }
-
-    public function setDeleted(bool $deleted): void
-    {
-        $this->deleted = $deleted;
     }
 
     public function getCourse(): Course|null

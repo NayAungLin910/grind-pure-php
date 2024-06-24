@@ -48,6 +48,7 @@ $router->addPostRoute('/admin/course/edit', CourseController::class, "postCourse
 //-------- Section Routes -----//
 $router->addPostRoute('/admin/section/create', SectionController::class, "postSectionCreate")->addMiddleware(AdminAuthMiddleware::class)->addRouteName('post-section-create');
 $router->addPostRoute('/admin/section/update', SectionController::class, "postSectionEdit")->addMiddleware(AdminAuthMiddleware::class)->addRouteName('post-section-edit');
+$router->addPostRoute('/admin/section/delete', SectionController::class, "postSectionDelete")->addMiddleware(AdminAuthMiddleware::class)->addRouteName('post-section-delete');
 
 //-------- Step -------------//
 $router->addPostRoute('/admin/step/create', StepController::class, "postStepCreate")->addMiddleware(AdminAuthMiddleware::class)->addRouteName("post-step-create");
