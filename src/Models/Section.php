@@ -41,6 +41,9 @@ class Section
     #[Column(type: 'integer')]
     private int $priority;
 
+    #[Column(type: 'boolean')]
+    private bool $completed;
+
     #[ManyToOne(targetEntity: Course::class, inversedBy: 'sections')]
     #[JoinColumn(name: 'course_id', referencedColumnName: 'id')]
     private Course|null $course = null;
@@ -92,6 +95,16 @@ class Section
     public function setDescription(string $description): void
     {
         $this->description = $description;
+    }
+
+    public function getCompleted(): bool
+    {
+        return $this->completed;
+    }
+
+    public function setCompleted(bool $completed): void
+    {
+        $this->completed = $completed;
     }
 
     public function getCreatedAt(): DateTime

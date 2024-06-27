@@ -21,19 +21,6 @@
             <!-- Section Create/Edit -->
             <div class="course-info-form">
 
-                <?php if ($section && isset($_GET['add-step-section'])) : ?>
-                    <!-- Step Create of Selected Section -->
-                    <div class="course-info-form-card">
-                        <h3><i class="bi bi-bar-chart-steps"></i> Create Step for Section, <?= htmlspecialchars($section->getTitle()) ?></h3>
-                        <form action="<?= getRouteUsingRouteName('post-step-create') ?>" method="POST" enctype="multipart/form-data">
-
-                            <div class="form-group flex jcc">
-                                <button type="submit" class="btn">Submit</button>
-                            </div>
-                        </form>
-                    </div>
-                <?php endif; ?>
-
                 <?php if ($section && isset($_GET['edit-section-id'])) : ?>
                     <!-- Edit Section --->
                     <div class="course-info-form-card">
@@ -162,13 +149,15 @@
                                 <i class="bi bi-pencil-square"></i>
                             </a>
                         </div>
-                        <div class="card-description">
+                        <?php if (count($course->getUndeletedTags()) > 0) : ?>
+                            <div class="card-description">
 
-                            <!-- Tags -->
-                            <?php foreach ($course->getUndeletedTags() as $tag) : ?>
-                                <a href="" class="btn link-plain text-white btn-tag-small"><?= htmlspecialchars($tag->getName()) ?></a>
-                            <?php endforeach; ?>
-                        </div>
+                                <!-- Tags -->
+                                <?php foreach ($course->getUndeletedTags() as $tag) : ?>
+                                    <a href="" class="btn link-plain text-white btn-tag-small"><?= htmlspecialchars($tag->getName()) ?></a>
+                                <?php endforeach; ?>
+                            </div>
+                        <?php endif; ?>
                         <div class="course-info-sections">
 
                             <!-- Sections -->
@@ -185,7 +174,7 @@
                                         <?= htmlspecialchars($section->getDescription()) ?>
                                     </div>
                                     <div class="flex jcc g-mid">
-                                        <a href="<?= getRouteUsingRouteName("show-single-course") . "?add-step-section=" . htmlspecialchars($section->getId()) . "&title=" . htmlspecialchars($course->getTitle()) ?>" class="btn btn-small link-plain">Add Step</a>
+                                        <a href="<?= getRouteUsingRouteName('show-step-create') . "?section-id=" . htmlspecialchars($section->getId()) . "&type=video" ?>" class="btn btn-small link-plain">Add Step</a>
                                         <a href="<?= getRouteUsingRouteName('show-single-course') . "?edit-section-id=" . htmlspecialchars($section->getId()) . "&title=" . htmlspecialchars($course->getTitle()) ?>" class="btn btn-small link-plain square">
                                             <i class="bi bi-pencil-square"></i>
                                         </a>

@@ -55,7 +55,7 @@
                 <!-- Course Image -->
                 <div class="form-group">
                     <p class="form-label text-white">Course Image</p>
-                    <input type="file" class="file-input limit-input-width" id="image" name="image" data-multiple-caption="{count} files selected." multiple>
+                    <input type="file" class="file-input limit-input-width" id="image" name="image" data-multiple-caption="{count} files selected.">
                     <label class="file-input-label limit-input-width" for="image">
                         <div class="file-input-text-inner flex jcb aic text-black" style="height: 100%;">
                             <div class="file-input-text">

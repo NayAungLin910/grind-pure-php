@@ -303,7 +303,6 @@ class CourseController extends Controller
         $step_id = null;
         $section = null;
 
-        if (isset($_GET['add-step-section'])) $step_id = $_GET['add-step-id'];
         if (isset($_GET['edit-section-id'])) $step_id = $_GET['edit-section-id'];
 
         if ($step_id) {
