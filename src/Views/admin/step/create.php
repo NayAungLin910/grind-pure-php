@@ -110,6 +110,7 @@
                     <label class="form-label text-white" for="priority">Priority</label>
                     <select class="input form-input form-select limit-input-width-xs square" id="priority" name="priority">
 
+
                         <?php if (count($section->getSteps()) > 0) : ?>
                             <?php foreach ($section->getSteps() as $step) : ?>
                                 <option value="<?= htmlspecialchars($step->getPriority()) ?>"><?= htmlspecialchars($step->getPriority()) ?></option>
@@ -117,7 +118,7 @@
 
                             <!-- Latest priority -->
                             <option value="<?= htmlspecialchars($section->getSteps()->last()->getPriority() + 1) ?>" selected>
-                                <?= htmlspecialchars($step->getSteps()->last()->getPriority() + 1) ?>
+                                <?= htmlspecialchars($section->getSteps()->last()->getPriority() + 1) ?>
                             </option>
                         <?php else : ?>
                             <!-- Latest priority -->
@@ -131,8 +132,12 @@
                         <?php displayAllErrorMessages() ?>
                     </p>
 
-                    <!--Submit Button -->
-                    <div class="flex jcc form-group">
+
+                    <div class="flex jcc form-group g-mid">
+                        <!-- Cancel Button -->
+                        <a class="btn link-plain" href="<?= getRouteUsingRouteName('show-single-course') . "?title=" . $section->getCourse()->getTitle() ?>">Back</a>
+
+                        <!--Submit Button -->
                         <button class="btn" type="submit">Create</button>
                     </div>
                 </div>

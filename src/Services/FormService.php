@@ -27,7 +27,7 @@ class FormService
      */
     public function deleteFile(string $file): void
     {
-        if (file_exists('./' . $file)) unlink('./' . $file);
+        if (file_exists('.' . $file)) unlink('.' . $file);
     }
 
     /**

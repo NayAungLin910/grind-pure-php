@@ -44,13 +44,13 @@ class Step
     #[Column(type: 'text')]
     private string $title;
 
-    #[Column(type: 'text')]
+    #[Column(type: 'text', nullable: true)]
     private string $video;
 
     #[Column(type: 'text')]
     private string $description;
 
-    #[Column(type: 'text')]
+    #[Column(type: 'text', nullable: true)]
     private string $reading_content;
 
     #[Column(type: 'integer')]
@@ -77,6 +77,7 @@ class Step
     {
         $this->users = new ArrayCollection();
         $this->type = static::SECTION_READING;
+        $this->created_at = new DateTime();
     }
 
     public function getId(): int

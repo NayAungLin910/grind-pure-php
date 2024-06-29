@@ -6,7 +6,9 @@ use Doctrine\ORM\NoResultException;
 use Src\Controller;
 use Src\Models\Course;
 use Src\Models\Section;
+use Src\Models\Step;
 use Src\Router;
+use Src\Services\FormService;
 use Src\Validators\Section\SectionValidator;
 
 class SectionController extends Controller
@@ -180,6 +182,7 @@ class SectionController extends Controller
             ->select('s')
             ->from(Section::class, 's')
             ->leftJoin('s.course', 'c')
+            ->leftJoin('s.steps', 'st')
             ->where('s.id = :id')->setParameter('id', $deleteId)
             ->getQuery()
             ->getOneOrNullResult();
@@ -187,6 +190,16 @@ class SectionController extends Controller
         if (!$section) {
             $route = $this->router->getRouteUsingRouteName('show-course');
             $this->router->redirectTo($route);
+        }
+
+        // also delete steps
+        foreach ($section->getSteps() as $st) {
+            if ($st->getType() === 'video') { // if step is of video type, deletes the video as well
+                $formService = new FormService();
+                $formService->deleteFile($st->getVide());
+            }
+
+            $entityManager->remove($st);
         }
 
         $entityManager->remove($section);

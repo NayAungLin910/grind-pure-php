@@ -801,7 +801,7 @@ body {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    margin: 20px auto;
+    margin: 10px auto;
 }
 
 .course-info-section:hover {
@@ -839,6 +839,29 @@ body {
 
 .current-button {
     cursor: default;
+    background-color: var(--pri-blue-heavier);
+}
+
+.step-link {
+    font-size: 14px;
+    padding-left: 10px;
+}
+
+.step-section {
+    margin: 10px 0;
+    padding: 7px;
+    border-radius: 10px;
+    background-color: var(--pri-blue);
+}
+
+.step-section:hover {
+    background-color: var(--pri-blue-heavy);
+    cursor: pointer;
+}
+
+.section-group {
+    padding: 5px;
+    border-radius: 10px;
     background-color: var(--pri-blue-heavier);
 }
 

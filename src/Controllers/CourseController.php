@@ -312,6 +312,7 @@ class CourseController extends Controller
                     ->from(Section::class, 's')
                     ->andWhere('s.id = :step_id')->setParameter('step_id', $step_id)
                     ->leftJoin('s.course', 'c')
+                    ->leftJoin('s.steps', 'st')
                     ->andWhere('c.title = :title')->setParameter('title', $title)
                     ->getQuery()
                     ->getSingleResult();

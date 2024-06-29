@@ -52,6 +52,7 @@ $router->addPostRoute('/admin/section/delete', SectionController::class, "postSe
 //-------- Step -------------//
 $router->addGetRoute('/admin/step/create-get', StepController::class, "showStepCreate")->addMiddleware(AdminAuthMiddleware::class)->addRouteName("show-step-create");
 $router->addPostRoute('/admin/step/create', StepController::class, "postStepCreate")->addMiddleware(AdminAuthMiddleware::class)->addRouteName("post-step-create");
+$router->addPostRoute('/admin/step/delete', StepController::class, "postStepDelete")->addMiddleware(AdminAuthMiddleware::class)->addRouteName('post-step-delete');
 
 //------------------------ Bin Routes --------------------//
 //----------- Tag Routes ---------//

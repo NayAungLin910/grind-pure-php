@@ -162,30 +162,54 @@
 
                             <!-- Sections -->
                             <?php foreach ($course->getSections() as $section) : ?>
-                                <div class="course-info-section" onclick="dropdownToggle(<?= htmlspecialchars($section->getId()) ?>)">
-                                    <div>
-                                        <?= htmlspecialchars($section->getTitle()) ?>
-                                    </div>
+                                <div class="section-group">
+                                    <div class="course-info-section" onclick="dropdownToggle(<?= htmlspecialchars($section->getId()) ?>)">
+                                        <div>
+                                            <?= htmlspecialchars($section->getTitle()) ?>
+                                        </div>
 
-                                    <i class="bi bi-chevron-down drop-arrow" id="drop-arrow-<?= htmlspecialchars($section->getId()) ?>"></i>
-                                </div>
-                                <div class="course-info-section-steps drop-sub-menu" id="drop-sub-menu-<?= htmlspecialchars($section->getId()) ?>">
-                                    <div class="mtb-sm">
-                                        <?= htmlspecialchars($section->getDescription()) ?>
+                                        <i class="bi bi-chevron-down drop-arrow" id="drop-arrow-<?= htmlspecialchars($section->getId()) ?>"></i>
                                     </div>
-                                    <div class="flex jcc g-mid">
-                                        <a href="<?= getRouteUsingRouteName('show-step-create') . "?section-id=" . htmlspecialchars($section->getId()) . "&type=video" ?>" class="btn btn-small link-plain">Add Step</a>
-                                        <a href="<?= getRouteUsingRouteName('show-single-course') . "?edit-section-id=" . htmlspecialchars($section->getId()) . "&title=" . htmlspecialchars($course->getTitle()) ?>" class="btn btn-small link-plain square">
-                                            <i class="bi bi-pencil-square"></i>
-                                        </a>
+                                    <div class="course-info-section-steps drop-sub-menu" id="drop-sub-menu-<?= htmlspecialchars($section->getId()) ?>">
+                                        <div class="mtb-sm">
+                                            <?= htmlspecialchars($section->getDescription()) ?>
+                                        </div>
+                                        <div class="flex jcc g-mid">
+                                            <a href="<?= getRouteUsingRouteName('show-step-create') . "?section-id=" . htmlspecialchars($section->getId()) . "&type=video" ?>" class="btn btn-small link-plain">Add Step</a>
+                                            <a href="<?= getRouteUsingRouteName('show-single-course') . "?edit-section-id=" . htmlspecialchars($section->getId()) . "&title=" . htmlspecialchars($course->getTitle()) ?>" class="btn btn-small link-plain square">
+                                                <i class="bi bi-pencil-square"></i>
+                                            </a>
 
-                                        <!-- Delete section -->
-                                        <form action="<?= getRouteUsingRouteName('post-section-delete') ?>" id="delete-form-<?= $section->getId() ?>" method="POST">
-                                            <input type="hidden" name="delete-id" value="<?= $section->getId() ?>" />
-                                            <button type="button" class="btn btn-small square btn-light" onclick="confirmDelete(<?= $section->getId() ?>, '<?= $section->getTitle() ?>', 'course')">
-                                                <i class="bi bi-trash-fill"></i>
-                                            </button>
-                                        </form>
+                                            <!-- Delete section -->
+                                            <form action="<?= getRouteUsingRouteName('post-section-delete') ?>" id="delete-form-<?= $section->getId() ?>" method="POST">
+                                                <input type="hidden" name="delete-id" value="<?= $section->getId() ?>" />
+                                                <button type="button" class="btn btn-small square btn-light" onclick="confirmDelete(<?= $section->getId() ?>, '<?= $section->getTitle() ?>', 'course')">
+                                                    <i class="bi bi-trash-fill"></i>
+                                                </button>
+                                            </form>
+                                        </div>
+
+                                        <!-- Steps -->
+                                        <?php if (count($section->getSteps()) > 0) : ?>
+                                            <div class="step-section">
+                                                <?php foreach ($section->getSteps() as $st) : ?>
+                                                    <div class="flex jcb aic">
+                                                        <p class="step-link"><?= $st->getTitle() ?></p>
+                                                        <div class="flex jce g-mid">
+                                                            <a href="" class="btn btn-small link-plain square">
+                                                                <i class="bi bi-pencil-square"></i>
+                                                            </a>
+                                                            <form action="<?= getRouteUsingRouteName('post-step-delete') ?>" id="delete-form-step-<?= $st->getId() ?>" method="POST">
+                                                                <input type="hidden" value="<?= $st->getId() ?>" name="delete-id">
+                                                                <button type="button" onclick="confirmDelete('<?= 'step-' . $st->getId() ?>', '<?= $st->getTitle() ?>', 'step')" class="btn btn-small square">
+                                                                    <i class="bi bi-trash-fill"></i>
+                                                                </button>
+                                                            </form>
+                                                        </div>
+                                                    </div>
+                                                <?php endforeach; ?>
+                                            </div>
+                                        <?php endif; ?>
                                     </div>
                                 </div>
                             <?php endforeach; ?>

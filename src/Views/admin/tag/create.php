@@ -39,8 +39,8 @@
                 <?php displayErrorMessage("name") ?>
                 <?php displayAllErrorMessages() ?>
 
-                <!--Submit Button -->
                 <div class="flex jcc">
+                    <!-- Submit Button -->
                     <button class="btn" type="submit">Create</button>
                 </div>
             </div>
