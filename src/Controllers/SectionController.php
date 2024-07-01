@@ -121,7 +121,6 @@ class SectionController extends Controller
             $this->router->redirectBack();
         }
 
-
         try {
             $section = $entityManager->createQueryBuilder()
                 ->select('s')
@@ -135,18 +134,29 @@ class SectionController extends Controller
             $this->router->redirectBack();
         }
 
-        if (count($course->getSections()) > 0) {
+        if ($priority > $section->getPriority() && count($course->getSections()) > 0) {
             foreach ($course->getSections() as $s) {
-
+                /**
+                 * decrease the priority of previous section by plus one
+                 * to sections which have equal to or lesser priority 
+                 * to the current section.
+                 */
+                if ($s->getPriority() <= $priority && $s->getId() !== $section->getId()) {
+                    $oldPriority = $s->getPriority();
+                    $s->setPriority($oldPriority - 1);
+                    $entityManager->persist($s);
+                }
+            }
+        } elseif ($priority < $section->getPriority() && count($course->getSections()) > 0) {
+            foreach ($course->getSections() as $s) {
                 /**
                  * increase the priority of previous section by plus one
                  * to sections which have greater or equal to priority 
-                 * to the new section.
+                 * to the current section.
                  */
-                if ($s->getPriority() >= $priority) {
-                    $oldPriority = $section->getPriority();
+                if ($s->getPriority() >= $priority && $s->getId() !== $section->getId()) {
+                    $oldPriority = $s->getPriority();
                     $s->setPriority($oldPriority + 1);
-
                     $entityManager->persist($s);
                 }
             }

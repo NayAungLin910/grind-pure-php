@@ -113,12 +113,14 @@
 
                         <?php if (count($section->getSteps()) > 0) : ?>
                             <?php foreach ($section->getSteps() as $step) : ?>
-                                <option value="<?= htmlspecialchars($step->getPriority()) ?>"><?= htmlspecialchars($step->getPriority()) ?></option>
+                                <option value="<?= htmlspecialchars($step->getPriority()) ?>">
+                                    <?= htmlspecialchars($section->getSteps()->indexOf($step) + 1) ?>
+                                </option>
                             <?php endforeach; ?>
 
                             <!-- Latest priority -->
                             <option value="<?= htmlspecialchars($section->getSteps()->last()->getPriority() + 1) ?>" selected>
-                                <?= htmlspecialchars($section->getSteps()->last()->getPriority() + 1) ?>
+                                <?= htmlspecialchars($section->getSteps()->indexOf($section->getSteps()->last()) + 2) ?>
                             </option>
                         <?php else : ?>
                             <!-- Latest priority -->

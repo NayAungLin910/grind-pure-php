@@ -13,6 +13,7 @@ use Doctrine\ORM\Mapping\JoinColumn;
 use Doctrine\ORM\Mapping\JoinTable;
 use Doctrine\ORM\Mapping\ManyToMany;
 use Doctrine\ORM\Mapping\ManyToOne;
+use Doctrine\ORM\Mapping\OneToMany;
 use Doctrine\ORM\Mapping\Table;
 use InvalidArgumentException;
 
@@ -72,6 +73,9 @@ class Step
     #[ManyToMany(targetEntity: User::class, inversedBy: 'completedSteps')]
     #[JoinTable(name: 'users_steps')]
     private Collection $users;
+
+    #[OneToMany(targetEntity: Question::class, mappedBy: 'step')]
+    private Collection $questions;
 
     public function __construct()
     {
@@ -212,5 +216,15 @@ class Step
     public function setUsers(Collection $users): void
     {
         $this->users = $users;
+    }
+
+    public function getQuestions(): Collection
+    {
+        return $this->questions;
+    }
+
+    public function setQuestions(Collection $questions): void
+    {
+        $this->questions = $questions;
     }
 }

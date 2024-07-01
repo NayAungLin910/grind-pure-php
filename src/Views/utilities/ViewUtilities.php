@@ -14,6 +14,7 @@ use Src\Services\CookieService;
 function displayFlashedSessionValue(string $sessionName, string $key): void
 {
     if (isset($_SESSION[$sessionName][$key])) {
+
         echo htmlspecialchars($_SESSION[$sessionName][$key]);
         unset($_SESSION[$sessionName][$key]);
     }

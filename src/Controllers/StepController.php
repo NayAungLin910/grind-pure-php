@@ -2,7 +2,9 @@
 
 namespace Src\Controllers;
 
+use Doctrine\ORM\NoResultException;
 use Src\Controller;
+use Src\Models\Question;
 use Src\Models\Section;
 use Src\Models\Step;
 use Src\Router;
@@ -73,7 +75,7 @@ class StepController extends Controller
             'title' => $title,
             'description' => $description,
             'priority' => $priority,
-            'readingContext' => $readingContext,
+            'reading context' => $readingContext,
         ]);
         $flashRoute = $this->router->getRouteUsingRouteName('show-step-create') . "?section-id=$sectionId&type=$type";
         $stepValidator->flashErrors($flashRoute);
@@ -171,6 +173,166 @@ class StepController extends Controller
         $entityManager->flush();
 
         $this->router->notificationSessionFlash('noti-success', 'Step deleted successfully!');
+        $this->router->redirectBack();
+    }
+
+    /**
+     * Shows step edit page
+     */
+    public function showStepEdit(): void
+    {
+        $stepValidator = new StepValidator();
+        $stepValidator->checkRequestFields(['edit-id']);
+
+        $stepId = $_GET['edit-id'];
+        $questionEditId = isset($_GET['question-edit']) ? $_GET['question-edit'] : '';
+
+        require '../config/bootstrap.php';
+
+        $step = $entityManager->createQueryBuilder()
+            ->select('s')
+            ->from(Step::class, 's')
+            ->leftJoin('s.section', 'se')
+            ->leftJoin('se.course', 'c')
+            ->leftJoin('s.questions', 'q')
+            ->where('s.id = :step_id')->setParameter('step_id', $stepId)
+            ->getQuery()
+            ->getOneOrNullResult();
+
+        if (!$step) {
+            $this->router->notificationSessionFlash('noti-danger', 'Step not found!');
+            $this->router->redirectUsingRouteName('show-course');
+        }
+
+        $quesitonEdit = null;
+
+        if ($questionEditId) {
+            $questionEdit = $entityManager->createQueryBuilder()
+                ->select('q')
+                ->from(Question::class, 'q')
+                ->where('q.id = :q_id')->setParameter('q_id', $questionEditId)
+                ->getQuery()
+                ->getOneOrNullResult();
+
+            if (!$questionEdit) {
+                $this->router->notificationSessionFlash('noti-danger', 'Question not found!');
+                $this->router->redirectUsingRouteName('show-course');
+            }
+        }
+
+        $this->render('/admin/step/edit', compact('step', 'questionEdit'));
+    }
+
+    /**
+     * Handle post request to update step
+     */
+    public function postStepEdit(): void
+    {
+        $stepValidator = new StepValidator();
+
+        $stepValidator->checkRequestFields(['step-id', 'title', 'description', 'priority', 'type']);
+
+        $stepId = $_POST['step-id'];
+        $title = $_POST['title'];
+        $description = $_POST['description'];
+        $priority = $_POST['priority'];
+        $type = $_POST['type'];
+
+        $video = $type === 'video' ? $_FILES['video'] : null;
+        $readingContext = $type === 'reading' ? $_POST['reading-context'] : null;
+
+        $stepValidator->titleValidate($title, 'title');
+        $stepValidator->descriptionValidate($description, 'description');
+        $stepValidator->priorityValidate($priority, 'priority');
+        if ($video && $video['name'] !== '') $stepValidator->videoValidate($video, 'video');
+        if ($readingContext) $stepValidator->readingContextValidate($readingContext, 'reading context');
+
+        $stepValidator->flashOldRequestData([
+            'title' => $title,
+            'description' => $description,
+            'priority' => $priority,
+            'reading context' => $readingContext,
+        ]);
+        $stepValidator->flashErrors();
+
+        require "../config/bootstrap.php";
+
+        $step = $entityManager->getRepository(Step::class)->findOneBy([
+            'id' => $stepId
+        ]);
+
+        $step = $entityManager->createQueryBuilder()
+            ->select('s')
+            ->from(Step::class, 's')
+            ->where('s.id = :id')->setParameter('id', $stepId)
+            ->getQuery()
+            ->getOneOrNullResult();
+
+        if (!$step) {
+            $this->router->notificationSessionFlash('noti-danger', 'Step not found!');
+            $this->router->redirectUsingRouteName('show-course');
+        }
+
+        $step->setTitle($title);
+        $step->setDescription($description);
+        $step->setPriority($priority);
+
+        if ($type === 'video' && $video['name'] !== '') { // if video step and there is a new video uploaded
+
+            // delete old video
+            $formService = new FormService();
+            $formService->deleteFile($step->getVideo());
+
+            $videoDir = $formService->uploadFiles($video, '/videos', 'video');
+            $step->setVideo($videoDir);
+        } elseif ($type === 'reading') { // if reading step, save reading context
+            $step->setReadingContent($readingContext);
+        }
+
+        $section = $entityManager->createQueryBuilder()
+            ->select('s')
+            ->from(Section::class, 's')
+            ->where('s.id = :id')->setParameter('id', $step->getSection()->getId())
+            ->getQuery()
+            ->getOneOrNullResult();
+
+        if (!$section) {
+            $this->router->notificationSessionFlash('noti-danger', 'Section not found!');
+            $this->router->redirectUsingRouteName('show-course');
+        }
+
+        if ($priority > $step->getPriority() && count($section->getSteps()) > 0) {
+            foreach ($section->getSections() as $s) {
+                /**
+                 * decrease the priority of previous section by plus one
+                 * to sections which have equal to or lesser priority 
+                 * to the current section.
+                 */
+                if ($s->getPriority() <= $priority && $s->getId() !== $step->getId()) {
+                    $oldPriority = $s->getPriority();
+                    $s->setPriority($oldPriority - 1);
+                    $entityManager->persist($s);
+                }
+            }
+        } elseif ($priority < $step->getPriority() && count($section->getSteps()) > 0) {
+            foreach ($section->getSteps() as $s) {
+                /**
+                 * increase the priority of previous section by plus one
+                 * to sections which have greater or equal to priority 
+                 * to the current section.
+                 */
+                if ($s->getPriority() >= $priority && $s->getId() !== $step->getId()) {
+                    $oldPriority = $s->getPriority();
+                    $s->setPriority($oldPriority + 1);
+                    $entityManager->persist($s);
+                }
+            }
+        }
+
+        $entityManager->flush();
+        $stepValidator->resetOldRequestData();
+
+        $this->router->notificationSessionFlash('noti-success', 'Step updated successfully!');
         $this->router->redirectBack();
     }
 }

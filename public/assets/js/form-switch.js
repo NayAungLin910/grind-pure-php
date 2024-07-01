@@ -47,7 +47,7 @@ function switchForm(formType, button) {
   resetClickedBtns(clickedButtons);
 
   parentForm.reset(); // reset the whole form
-
+  
   setHiddenStepType(button);
 
   resetInnerTextFileInput(createSwitchForms);

@@ -250,7 +250,7 @@ class CourseController extends Controller
             $formService->deleteFile($course->getImage());
             $imageDir = $formService->uploadFiles($image, "/images", 'image');
         }
-
+        
         $course->setTitle($title);
         $course->setDescription($description);
         $course->setImage($imageDir);

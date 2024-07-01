@@ -35,7 +35,7 @@ class Question
     #[Column(type: 'datetime', nullable: true)]
     private DateTime $updated_at;
 
-    #[ManyToOne(targetEntity: Step::class, inversedBy: 'step')]
+    #[ManyToOne(targetEntity: Step::class, inversedBy: 'questions')]
     #[JoinColumn(name: 'step_id', referencedColumnName: 'id')]
     private Step|null $step;
 
@@ -45,6 +45,7 @@ class Question
     public function __construct()
     {
         $this->answers = new ArrayCollection();
+        $this->created_at = new DateTime();
     }
 
     public function getId(): int

@@ -859,10 +859,24 @@ body {
     cursor: pointer;
 }
 
+.step-div {
+    margin: 5px 0;
+}
+
+.reading-context-wrap {
+    background-color: white;
+    color: black;
+}
+
 .section-group {
     padding: 5px;
     border-radius: 10px;
     background-color: var(--pri-blue-heavier);
+}
+
+.question-row {
+    margin: 10px 0;
+    font-size: 17px;
 }
 
 @media (max-width: 1024px) {

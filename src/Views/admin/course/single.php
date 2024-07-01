@@ -58,7 +58,7 @@
                                 <select class="input form-input form-select limit-input-width-xs square" id="priority" name="priority">
                                     <?php foreach ($course->getSections() as $s) : ?>
                                         <option value="<?= htmlspecialchars($s->getPriority()) ?>" <?php if ($section->getPriority() === $s->getPriority()) echo "selected" ?>>
-                                            <?= htmlspecialchars($s->getPriority()) ?>
+                                            <?= htmlspecialchars($course->getSections()->indexOf($s) + 1) ?>
                                         </option>
                                     <?php endforeach; ?>
                                 </select>
@@ -107,7 +107,7 @@
 
                                 <?php if (count($course->getSections()) > 0) : ?>
                                     <?php foreach ($course->getSections() as $section) : ?>
-                                        <option value="<?= htmlspecialchars($section->getPriority()) ?>"><?= htmlspecialchars($section->getPriority()) ?></option>
+                                        <option value="<?= htmlspecialchars($section->getPriority()) ?>"><?= htmlspecialchars($course->getSections()->indexOf($section) + 1) ?></option>
                                     <?php endforeach; ?>
 
                                     <!-- Latest priority -->
@@ -193,12 +193,16 @@
                                         <?php if (count($section->getSteps()) > 0) : ?>
                                             <div class="step-section">
                                                 <?php foreach ($section->getSteps() as $st) : ?>
-                                                    <div class="flex jcb aic">
+                                                    <div class="flex jcb aic step-div">
                                                         <p class="step-link"><?= $st->getTitle() ?></p>
                                                         <div class="flex jce g-mid">
-                                                            <a href="" class="btn btn-small link-plain square">
+
+                                                            <!-- Edit Step Btn -->
+                                                            <a href="<?= getRouteUsingRouteName('show-step-edit') . "?edit-id=" . $st->getId() ?>" class="btn btn-small link-plain square">
                                                                 <i class="bi bi-pencil-square"></i>
                                                             </a>
+
+                                                            <!-- Delete Step Btn -->
                                                             <form action="<?= getRouteUsingRouteName('post-step-delete') ?>" id="delete-form-step-<?= $st->getId() ?>" method="POST">
                                                                 <input type="hidden" value="<?= $st->getId() ?>" name="delete-id">
                                                                 <button type="button" onclick="confirmDelete('<?= 'step-' . $st->getId() ?>', '<?= $st->getTitle() ?>', 'step')" class="btn btn-small square">
