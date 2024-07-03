@@ -144,10 +144,22 @@
                         <div class="course-info-description">
                             <?= htmlspecialchars($course->getDescription()) ?>
                         </div>
-                        <div class="form-group">
+                        <div class="form-group flex g-mid">
+
+                            <!-- Edit Course -->
                             <a href="<?= getRouteUsingRouteName('show-course-edit') . "?title=" . htmlspecialchars($course->getTitle()) ?>" class="btn btn-sm square">
                                 <i class="bi bi-pencil-square"></i>
                             </a>
+
+                            <!-- Delete Course -->
+                            <form method="POST" id="delete-form-course-<?= $course->getId() ?>" action="<?= getRouteUsingRouteName('post-course-bin') ?>">
+                                <!-- Course Id -->
+                                <input type="hidden" name="course-id" value="<?= $course->getId() ?>">
+
+                                <button type="submit" class="btn square">
+                                    <i class="bi bi-trash-fill"></i>
+                                </button>
+                            </form>
                         </div>
                         <?php if (count($course->getUndeletedTags()) > 0) : ?>
                             <div class="card-description">

@@ -86,22 +86,23 @@
                     <i class="bi bi-trash-fill"></i>
                     Bin
                 </div>
-                <i class="bi bi-chevron-down sidebar-menu-item-droparrow droparrow-2 <?php echoClassCurrentRouteSame('show-bin-tag', 'rotate') ?>" id="droparrow-3"></i>
+                <i class="bi bi-chevron-down sidebar-menu-item-droparrow droparrow-2 <?= checkCurrentRouteContains('/admin/bin/') ? 'rotate' : '' ?>" id="droparrow-3"></i>
             </div>
 
             <!--Sub Menu of Bin Dropdown -->
-            <div class="sub-menu <?php echoClassCurrentRouteSame('show-bin-tag', 'active') ?>" id="sub-menu-3">
+            <div class="sub-menu <?= checkCurrentRouteContains('/admin/bin/') ? 'active' : '' ?>" id="sub-menu-3">
                 <a class="link-plain text-white" href="<?= getRouteUsingRouteName('show-bin-tag') ?>" class="">
                     <div class="sub-menu-item <?php echoClassCurrentRouteSame('show-bin-tag', 'active') ?>">
                         <i class="bi bi-tag"></i>
                         Tags
                     </div>
                 </a>
-                <div class="sub-menu-item">
-                    <a class="link-plain text-white" href="" class="">
-                        Sub Menu Item 2
-                    </a>
-                </div>
+                <a class="link-plain text-white" href="<?= getRouteUsingRouteName('show-bin-course') ?>" class="">
+                    <div class="sub-menu-item <?php echoClassCurrentRouteSame('show-bin-course', 'active') ?>">
+                        <i class="bi bi-journals"></i>
+                        Courses
+                    </div>
+                </a>
             </div>
         </div>
 

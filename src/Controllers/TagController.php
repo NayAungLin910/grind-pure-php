@@ -68,7 +68,7 @@ class TagController extends Controller
     }
 
     /**
-     * Dleete tag
+     * Delete tag
      */
     public function postDeleteTag(): void
     {

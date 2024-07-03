@@ -104,7 +104,6 @@
                     </select>
                     <p>
                         <?php displayErrorMessage("priority") ?>
-                        <?php displayAllErrorMessages() ?>
                     </p>
 
                     <div class="flex jcc form-group g-mid">
@@ -120,54 +119,226 @@
 
             <?php if ($step->getType() === 'quiz') : ?>
 
-                <!-- Questions -->
-                <label class="form-label text-white">Questions</label>
-                <?php if (count($step->getQuestions()) > 0) : ?>
-                    <?php foreach ($step->getQuestions() as $question) : ?>
-                        <div class="flex g-mid aic">
-                            <span><?= htmlspecialchars($step->getQuestions()->indexOf($question) + 1) ?>.</span>
-                            <div class="question-row"><?= htmlspecialchars($question->getDescription()) ?></div>
-                            <a href="<?= getRouteUsingRouteName('show-step-edit') . "?edit-id=" . htmlspecialchars($step->getId()) . "&question-edit=" . htmlspecialchars($question->getId()) ?>" class="btn btn-small square">
-                                <i class="bi bi-pencil-square"></i>
-                            </a>
-                        </div>
-                    <?php endforeach; ?>
-                <?php endif; ?>
-
-
                 <!-- Quiz Form -->
                 <div>
 
-                    <?php if (!isset($_GET['question-edit'])) : ?>
-                        <!-- New Question -->
-                        <form action="<?= getRouteUsingRouteName('post-question-create') ?>" method="POST">
-                            <input type="hidden" name="step-id" value="<?= $step->getId() ?>">
-                            <div class="form-group">
-                                <label class="form-label text-white" for="title">New Question</label>
-                                <input class="input form-input limit-input-width" id="question" name="question" value="<?= displayFlashedSessionValue('old', 'question') ?>" type="text">
-                            </div>
-                            <?php displayErrorMessage("question") ?>
-                            <div>
-                                <button type="submit" class="btn">Add</button>
-                            </div>
-                        </form>
-                    <?php else : ?>
-                        <form action="<?= getRouteUsingRouteName('post-question-edit') ?>" method="POST">
+                    <?php if (isset($_GET['question-edit'])) : ?>
+
+                        <form id="question-edit-form" action="<?= getRouteUsingRouteName('post-question-edit') ?>" method="POST">
                             <input type="hidden" name="step-id" value="<?= $step->getId() ?>">
                             <!-- Edit Question -->
                             <div class="form-group">
                                 <label class="form-label text-white" for="title">Edit Question</label>
                                 <input type="hidden" name="question-id" value="<?= $questionEdit->getId() ?>">
                                 <input class="input form-input limit-input-width" id="question" name="question" value="<?= htmlspecialchars($questionEdit->getDescription()) ?>" type="text">
+                                <div>
+                                    <?php displayErrorMessage("question") ?>
+                                </div>
                             </div>
-                            <?php displayErrorMessage("question") ?>
                             <div class="flex g-mid">
                                 <a class="btn link-plain" href="<?= getRouteUsingRouteName('show-step-edit') . "?edit-id=" . $step->getId() ?>">Back</a>
-                                <button type="submit" class="btn">Save</button>
+                                <button type="submit" form="question-edit-form" class="btn">Save</button>
                             </div>
                         </form>
+
+                    <?php elseif (isset($_GET['answer-edit-id'])) : ?>
+
+                        <!-- Title -->
+                        <h3>Edit Answer</h3>
+
+                        <!-- New Answer -->
+                        <form action="<?= getRouteUsingRouteName('post-answer-edit') ?>" method="POST">
+
+                            <?= isset($_SESSION['error']) ? var_dump($_SESSION['error']) : '' ?>
+
+                            <!-- Answer Id -->
+                            <input type="hidden" name="answer-id" value="<?= htmlspecialchars($answerEdit->getId()) ?>">
+
+
+                            <!-- Description -->
+                            <div class="form-group">
+                                <label class="form-label text-white" for="answer">Description</label>
+                                <input class="input form-input limit-input-width" id="answer" name="answer" value="<?= htmlspecialchars($answerEdit->getDescription()) ?>" type="text">
+                                <div>
+                                    <?php displayErrorMessage("answer") ?>
+                                </div>
+                            </div>
+
+                            <!-- Explanation -->
+                            <div class="form-group">
+                                <label class="form-label text-white" for="explanation">Explanation</label>
+                                <input class="input form-input limit-input-width" id="explanation" name="explanation" value="<?= htmlspecialchars($answerEdit->getExplanation()) ?>" type="text">
+                                <div>
+                                    <?php displayErrorMessage("explanation") ?>
+                                </div>
+                            </div>
+
+                            <!-- Correct -->
+                            <div class="form-group flex aic g-sm">
+                                <label class="form-label text-white" for="correct">Correct</label>
+                                <input type="checkbox" class="checkbox" name="correct" <?= $answerEdit->getCorrect() ? 'checked' : '' ?> id="correct">
+                            </div>
+
+                            <div class="flex g-mid">
+                                <a class="btn link-plain" href="<?= getRouteUsingRouteName('show-step-edit') . "?edit-id=" . $step->getId() ?>">Back</a>
+                                <button type="submit" class="btn">Add</button>
+                            </div>
+
+                        </form>
+
+
+                    <?php elseif (isset($_GET['question-add-answer'])) : ?>
+
+                        <!-- Title -->
+                        <h3>Add Answer</h3>
+
+                        <!-- New Answer -->
+                        <form action="<?= getRouteUsingRouteName('post-answer-create') ?>" method="POST">
+
+                            <?= isset($_SESSION['error']) ? var_dump($_SESSION['error']) : '' ?>
+
+                            <!-- Question Id -->
+                            <input type="hidden" name="question-id" value="<?= htmlspecialchars($questionAnswer->getId()) ?>">
+
+                            <!-- Description -->
+                            <div class="form-group">
+                                <label class="form-label text-white" for="answer">Description</label>
+                                <input class="input form-input limit-input-width" id="answer" name="answer" value="<?php displayFlashedSessionValue('old', 'answer') ?>" type="text">
+                                <div>
+                                    <?php displayErrorMessage("answer") ?>
+                                </div>
+                            </div>
+
+                            <!-- Explanation -->
+                            <div class="form-group">
+                                <label class="form-label text-white" for="explanation">Explanation</label>
+                                <input class="input form-input limit-input-width" id="explanation" name="explanation" value="<?php displayFlashedSessionValue('old', 'explanation') ?>" type="text">
+                                <div>
+                                    <?php displayErrorMessage("explanation") ?>
+                                </div>
+                            </div>
+
+                            <!-- Correct -->
+                            <div class="form-group flex aic g-sm">
+                                <label class="form-label text-white" for="correct">Correct</label>
+                                <input type="checkbox" class="checkbox" name="correct" id="correct">
+                            </div>
+
+                            <div class="flex g-mid">
+                                <a class="btn link-plain" href="<?= getRouteUsingRouteName('show-step-edit') . "?edit-id=" . $step->getId() ?>">Back</a>
+                                <button type="submit" class="btn">Add</button>
+                            </div>
+
+                        </form>
+
+                    <?php else : ?>
+
+                        <!-- New Question -->
+                        <form id="question-create-form" action="<?= getRouteUsingRouteName('post-question-create') ?>" method="POST">
+                            <input type="hidden" name="step-id" value="<?= $step->getId() ?>">
+                            <div class="form-group">
+                                <label class="form-label text-white" for="title">New Question</label>
+                                <input class="input form-input limit-input-width" id="question" name="question" value="<?= displayFlashedSessionValue('old', 'question') ?>" type="text">
+                                <div>
+                                    <?php displayErrorMessage("question") ?>
+                                </div>
+                            </div>
+                            <div>
+                                <button form="question-create-form" type="submit" class="btn">Add</button>
+                            </div>
+                        </form>
+
                     <?php endif; ?>
                 </div>
+
+                <!-- Questions -->
+                <label class="form-label text-white">Questions</label>
+
+                <div class="res-table">
+                    <table class="table width-auto">
+                        <?php if (count($step->getQuestions()) > 0) : ?>
+                            <?php foreach ($step->getQuestions() as $question) : ?>
+                                <tr>
+                                    <td><?= htmlspecialchars($step->getQuestions()->indexOf($question) + 1) ?>.</td>
+                                    <td>
+                                        <div class="question-row"><?= htmlspecialchars($question->getDescription()) ?></div>
+                                    </td>
+                                    <td>
+                                        <div class="flex g-mid">
+                                            <a href="<?= getRouteUsingRouteName('show-step-edit') . "?edit-id=" . htmlspecialchars($step->getId()) . "&question-edit=" . htmlspecialchars($question->getId()) ?>" class="btn btn-small square">
+                                                <i class="bi bi-pencil-square"></i>
+                                            </a>
+
+                                            <a href="<?= getRouteUsingRouteName('show-step-edit') . "?edit-id=" . htmlspecialchars($step->getId()) . "&question-add-answer=" . htmlspecialchars($question->getId()) ?>" class="btn btn-small link-plain square">
+                                                Add Answer
+                                            </a>
+
+                                            <!-- Delete Answer -->
+                                            <form method="POST" id="delete-form-question-<?= htmlspecialchars($question->getId()) ?>" action="<?= getRouteUsingRouteName('post-question-delete') ?>">
+                                                <input name="question-delete-id" type="hidden" value="<?= $question->getId() ?>">
+                                                <button type="button" class="btn btn-small square" onclick="confirmDelete('<?= htmlspecialchars('question-' . $question->getId()) ?>', '<?= htmlspecialchars($question->getDescription()) ?>', 'question')">
+                                                    <i class="bi bi-trash-fill"></i>
+                                                </button>
+                                            </form>
+                                        </div>
+                                    </td>
+                                </tr>
+
+                                <!-- Answers -->
+                                <?php if (count($question->getAnswers()) > 0) : ?>
+
+                                    <tr>
+                                        <td></td>
+                                        <td colspan="2">
+                                            <table class="table width-auto text-normal">
+                                                <?php foreach ($question->getAnswers() as $answer) : ?>
+                                                    <tr>
+                                                        <td>
+                                                            <?= htmlspecialchars($question->getAnswers()->indexOf($answer) + 1 . ".") ?>
+                                                        </td>
+                                                        <td>
+                                                            <?= htmlspecialchars($answer->getDescription()) ?>
+                                                        </td>
+                                                        <td>
+                                                            <?= htmlspecialchars($answer->getExplanation()) ?>
+                                                        </td>
+                                                        <td>
+
+                                                            <div class="flex g-mid">
+
+                                                                <!-- Correct -->
+                                                                <?php if ($answer->getCorrect() === true) : ?>
+                                                                    <p class="pill-success"> Correct </p>
+                                                                <?php endif; ?>
+
+                                                                <!-- Edit -->
+                                                                <a href="<?= getRouteUsingRouteName('show-step-edit') . "?edit-id=" . $step->getId() . "&answer-edit-id=" . $answer->getId() ?>" class="btn btn-small square">
+                                                                    <i class="bi bi-pencil-square"></i>
+                                                                </a>
+
+                                                                <!-- Delete Answer -->
+                                                                <form method="POST" id="delete-form-answer-<?= htmlspecialchars($answer->getId()) ?>" action="<?= getRouteUsingRouteName('post-answer-delete') ?>">
+                                                                    <input name="answer-delete-id" type="hidden" value="<?= $answer->getId() ?>">
+                                                                    <button type="button" class="btn btn-small square" onclick="confirmDelete('<?= htmlspecialchars('answer-' . $answer->getId()) ?>', '<?= htmlspecialchars($answer->getDescription()) ?>', 'answer')">
+                                                                        <i class="bi bi-trash-fill"></i>
+                                                                    </button>
+                                                                </form>
+                                                            </div>
+                                                        </td>
+                                                    </tr>
+                                                <?php endforeach; ?>
+
+                                            </table>
+                                        </td>
+                                    </tr>
+
+                                <?php endif; ?>
+
+                            <?php endforeach; ?>
+                        <?php endif; ?>
+                    </table>
+                </div>
+
             <?php endif; ?>
         </div>
     </main>
@@ -187,5 +358,11 @@
 
 <!-- Noti Js -->
 <script src="/assets/js/noti-uti.js"></script>
+
+<!-- Sweetalert 2 Js -->
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+<!-- Sweetalert Confirm Delete -->
+<script src="/assets/js/sweet-alert-utilities.js"></script>
 
 </html>

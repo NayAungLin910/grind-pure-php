@@ -35,12 +35,18 @@ class Answer
     #[Column(type: 'datetime')]
     private DateTime $created_at;
 
-    #[Column(type: 'datetime', nullable: true)] 
+    #[Column(type: 'datetime', nullable: true)]
     private DateTime $updated_at;
 
     #[ManyToOne(targetEntity: Question::class, inversedBy: 'answers')]
-    #[JoinColumn(name: 'answer_id', referencedColumnName: 'id')]
+    #[JoinColumn(name: 'question_id', referencedColumnName: 'id')]
     private Question|null $question;
+
+    public function __construct()
+    {
+        $this->created_at = new DateTime();
+        $this->correct = false;
+    }
 
     // Getters and Setters
     public function getId(): int
@@ -78,7 +84,7 @@ class Answer
         $this->explanation = $explanation;
     }
 
-    public function isCorrect(): bool
+    public function getCorrect(): bool
     {
         return $this->correct;
     }

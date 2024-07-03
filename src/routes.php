@@ -1,9 +1,11 @@
 <?php
 
+use Src\Controllers\AnswerController;
 use Src\Controllers\AuthController;
 use Src\Controllers\CourseController;
 use Src\Controllers\TagController;
 use Src\Controllers\Bin\TagController as BinTagController;
+use Src\Controllers\Bin\CourseController as BinCourseController;
 use Src\Controllers\QuestionController;
 use Src\Controllers\SectionController;
 use Src\Controllers\StepController;
@@ -44,6 +46,7 @@ $router->addPostRoute('/admin/course/create', CourseController::class, 'postCour
 $router->addGetRoute('/admin/course/single', CourseController::class, "showSingleCourse")->addMiddleware(AdminAuthMiddleware::class)->addRouteName('show-single-course');
 $router->addGetRoute('/admin/course/edit', CourseController::class, "showCourseEdit")->addMiddleware(AdminAuthMiddleware::class)->addRouteName('show-course-edit');
 $router->addPostRoute('/admin/course/edit', CourseController::class, "postCourseEdit")->addMiddleware(AdminAuthMiddleware::class)->addRouteName('post-course-edit');
+$router->addPostRoute('/admin/course/bin', CourseController::class, "postCourseBin")->addMiddleware(AdminAuthMiddleware::class)->addRouteName('post-course-bin');
 
 //-------- Section Routes -----//
 $router->addPostRoute('/admin/section/create', SectionController::class, "postSectionCreate")->addMiddleware(AdminAuthMiddleware::class)->addRouteName('post-section-create');
@@ -54,15 +57,27 @@ $router->addPostRoute('/admin/section/delete', SectionController::class, "postSe
 $router->addGetRoute('/admin/step/create-get', StepController::class, "showStepCreate")->addMiddleware(AdminAuthMiddleware::class)->addRouteName("show-step-create");
 $router->addPostRoute('/admin/step/create', StepController::class, "postStepCreate")->addMiddleware(AdminAuthMiddleware::class)->addRouteName("post-step-create");
 $router->addPostRoute('/admin/step/delete', StepController::class, "postStepDelete")->addMiddleware(AdminAuthMiddleware::class)->addRouteName('post-step-delete');
-$router->addGetRoute('/admin/step/edit', StepController::class, "showStepEdit")->addMiddleware(AdminAuthMiddleware::class)->addRouteName('show-step-edit');
+$router->addGetRoute('/admin/step/edit-get', StepController::class, "showStepEdit")->addMiddleware(AdminAuthMiddleware::class)->addRouteName('show-step-edit');
 $router->addPostRoute('/admin/step/edit', StepController::class, "postStepEdit")->addMiddleware(AdminAuthMiddleware::class)->addRouteName('post-step-edit');
 
 //-------- Question -------------// 
 $router->addPostRoute('/admin/question/create', QuestionController::class, "postQuestionCreate")->addMiddleware(AdminAuthMiddleware::class)->addRouteName('post-question-create');
 $router->addPostRoute('/admin/question/create-edit', QuestionController::class, "postQuestionEdit")->addMiddleware(AdminAuthMiddleware::class)->addRouteName('post-question-edit');
+$router->addPostRoute('/admin/question/delete', QuestionController::class, 'postQuestionDelete')->addMiddleware(AdminAuthMiddleware::class)->addRouteName('post-question-delete');
+
+//--------- Answer --------------//
+$router->addPostRoute('/admin/answer/create', AnswerController::class, "postAnswerCreate")->addMiddleware(AdminAuthMiddleware::class)->addRouteName('post-answer-create');
+$router->addPostRoute('/admin/answer/edit', AnswerController::class, "postAnswerEdit")->addMiddleware(AdminAuthMiddleware::class)->addRouteName('post-answer-edit');
+$router->addPostRoute('/admin/answer/delete', AnswerController::class, "postAnswerDelete")->addMiddleware(AdminAuthMiddleware::class)->addRouteName('post-answer-delete');
 
 //------------------------ Bin Routes --------------------//
+
 //----------- Tag Routes ---------//
 $router->addGetRoute('/admin/bin/tag', BinTagController::class, "showBinTag")->addMiddleware(AdminAuthMiddleware::class)->addRouteName('show-bin-tag');
 $router->addPostRoute('/admin/bin/tag', BinTagController::class, "postDeleteBinTag")->addMiddleware(AdminAuthMiddleware::class)->addRouteName('post-bin-tag-delete');
 $router->addPostRoute('/admin/bin/tag/recover', BinTagController::class, "postBinTagRecover")->addMiddleware(AdminAuthMiddleware::class)->addRouteName('post-bin-tag-recover');
+
+//----------- Courses------------//
+$router->addGetRoute('/admin/bin/course', BinCourseController::class, "showBinCourse")->addMiddleware(AdminAuthMiddleware::class)->addRouteName('show-bin-course');
+$router->addPostRoute('/admin/bin/course/recover', BinCourseController::class, "postBinCourseRecover")->addMiddleware(AdminAuthMiddleware::class)->addRouteName('post-bin-course-recover');
+$router->addPostRoute('/admin/bin/course/delete', BinCourseController::class, "postBinCourseDelete")->addMiddleware(AdminAuthMiddleware::class)->addRouteName('post-bin-course-delete');

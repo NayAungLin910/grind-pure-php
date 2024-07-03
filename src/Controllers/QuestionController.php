@@ -63,8 +63,10 @@ class QuestionController extends Controller
         $question->setDescription($description);
         $entityManager->flush();
 
+        $questionValidator->resetOldRequestData();
+
         $this->router->notificationSessionFlash('noti-success', 'Question updated successfully!');
-        $route = $this->router->getRouteUsingRouteName('show-step-edit') . "?edi-id=" . $step->getId();
+        $route = $this->router->getRouteUsingRouteName('show-step-edit') . "?edit-id=" . $step->getId();
         $this->router->redirectTo($route);
     }
 
@@ -78,7 +80,7 @@ class QuestionController extends Controller
         $stepId = $_POST['step-id'];
         $question = $_POST['question'];
 
-        $questionValidator->descriptionValidate($question, 'description');
+        $questionValidator->descriptionValidate($question, 'question');
         $questionValidator->stepIdValidate($stepId, 'step-id');
 
         $questionValidator->flashOldRequestData([
@@ -107,8 +109,58 @@ class QuestionController extends Controller
         $entityManager->persist($newQuestion);
         $entityManager->flush();
 
+        $questionValidator->resetOldRequestData();
+
         $this->router->notificationSessionFlash('noti-success', 'Question created successfully!');
-        $route = $this->router->getRouteUsingRouteName('show-step-edit') . "?edi-id=" . $step->getId();
+        $route = $this->router->getRouteUsingRouteName('show-step-edit') . "?edit-id=" . $step->getId();
+        $this->router->redirectTo($route);
+    }
+
+    /**
+     * Handles post request to delete question
+     */
+    public function postQuestionDelete(): void
+    {
+        $questionValidator = new QuestionValidator();
+        $questionValidator->checkRequestFields(['question-delete-id']);
+
+        $questionId = $_POST['question-delete-id'];
+
+        $questionValidator->checkInteger($questionId, 'question-delete-id');
+
+        $questionValidator->flashErrors();
+
+        require "../config/bootstrap.php";
+
+        $question = $entityManager->createQueryBuilder()
+            ->select('q')
+            ->from(Question::class, 'q')
+            ->leftJoin('q.answers', 'a')
+            ->leftJoin('q.step', 's')
+            ->where('q.id = :q_id')->setParameter('q_id', $questionId)
+            ->getQuery()
+            ->getOneOrNullResult();
+
+        if (!$question) {
+            $this->router->notificationSessionFlash('noti-danger', 'Question not found!');
+            $this->router->redirectUsingRouteName('show-course');
+        }
+
+        // delete each answer of the question
+        if ($question->getAnswers() && count($question->getAnswers()) > 0) {
+            foreach ($question->getAnswers() as $answer) {
+                $question->getAnswers()->removeElement($answer);
+                $entityManager->remove($answer);
+            }
+        }
+
+        $stepId = $question->getStep()->getId();
+
+        $entityManager->remove($question);
+        $entityManager->flush();
+
+        $this->router->notificationSessionFlash('noti-success', 'Answer deleted successfully!');
+        $route = $this->router->getRouteUsingRouteName('show-step-edit') . "?edit-id=" . $stepId;
         $this->router->redirectTo($route);
     }
 }

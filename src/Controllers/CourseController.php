@@ -250,7 +250,7 @@ class CourseController extends Controller
             $formService->deleteFile($course->getImage());
             $imageDir = $formService->uploadFiles($image, "/images", 'image');
         }
-        
+
         $course->setTitle($title);
         $course->setDescription($description);
         $course->setImage($imageDir);
@@ -323,5 +323,39 @@ class CourseController extends Controller
         }
 
         $this->render('/admin/course/single', compact('course', 'section'));
+    }
+
+    /**
+     * Moves course into bin
+     */
+    public function postCourseBin(): void
+    {
+        if (!isset($_POST['course-id'])) {
+            $this->router->notificationSessionFlash('noti-danger', 'Course Id not found!');
+            $this->router->redirectUsingRouteName('show-course');
+        }
+
+        require "../config/bootstrap.php";
+
+        $courseId = $_POST['course-id'];
+
+        $course = $entityManager->createQueryBuilder()
+            ->select('c')
+            ->from(Course::class, 'c')
+            ->where('c.id = :c_id')->setParameter('c_id', $courseId)
+            ->getQuery()
+            ->getOneOrNullResult();
+
+        if (!$course) {
+            $this->router->notificationSessionFlash('noti-danger', 'Course not found!');
+            $this->router->redirectUsingRouteName('show-course');
+        }
+
+        $course->setDeleted(true);
+
+        $entityManager->flush();
+
+        $this->router->notificationSessionFlash('noti-success', "Course moved to bin successfully!");
+        $this->router->redirectUsingRouteName('show-course');
     }
 }

@@ -4,6 +4,7 @@ namespace Src\Controllers;
 
 use Doctrine\ORM\NoResultException;
 use Src\Controller;
+use Src\Models\Answer;
 use Src\Models\Question;
 use Src\Models\Section;
 use Src\Models\Step;
@@ -155,6 +156,8 @@ class StepController extends Controller
         $step = $entityManager->createQueryBuilder()
             ->select('s')
             ->from(Step::class, 's')
+            ->leftJoin('s.questions', 'q')
+            ->leftJoin('q.answers', 'a')
             ->where('s.id = :step_id')->setParameter('step_id', $deleteId)
             ->getQuery()
             ->getOneOrNullResult();
@@ -167,6 +170,25 @@ class StepController extends Controller
         if ($step->getType() == 'video') {
             $formService = new FormService();
             $formService->deleteFile($step->getVideo());
+        }
+
+
+        if ($step->getType() == 'quiz' && $step->getQuestions() && count($step->getQuestions()) > 0) {
+
+            // delete questions
+            foreach ($step->getQuestions() as $question) {
+                
+                // delete answers
+                if ($question->getAnswers() && count($question->getAnswers()) > 0) {
+                    foreach ($question->getAnswers() as $answer) {
+                        $question->getAnswers()->removeElement($answer);
+                        $entityManager->remove($answer);
+                    }
+                }
+
+                $step->getQuestions()->removeElement($question);
+                $entityManager->remove($question);
+            }
         }
 
         $entityManager->remove($step);
@@ -186,6 +208,8 @@ class StepController extends Controller
 
         $stepId = $_GET['edit-id'];
         $questionEditId = isset($_GET['question-edit']) ? $_GET['question-edit'] : '';
+        $questionAnswerId = isset($_GET['question-add-answer']) ? $_GET['question-add-answer'] : '';
+        $answerEditId = isset($_GET['answer-edit-id']) ? $_GET['answer-edit-id'] : '';
 
         require '../config/bootstrap.php';
 
@@ -195,6 +219,7 @@ class StepController extends Controller
             ->leftJoin('s.section', 'se')
             ->leftJoin('se.course', 'c')
             ->leftJoin('s.questions', 'q')
+            ->leftJoin('q.answers', 'a')
             ->where('s.id = :step_id')->setParameter('step_id', $stepId)
             ->getQuery()
             ->getOneOrNullResult();
@@ -220,7 +245,40 @@ class StepController extends Controller
             }
         }
 
-        $this->render('/admin/step/edit', compact('step', 'questionEdit'));
+        $questionAnswer = null;
+
+        if ($questionAnswerId) {
+            $questionAnswer = $entityManager->createQueryBuilder()
+                ->select('q')
+                ->from(Question::class, 'q')
+                ->where('q.id = :q_id')->setParameter('q_id', $questionAnswerId)
+                ->getQuery()
+                ->getOneOrNullResult();
+
+            if (!$questionAnswer) {
+                $this->router->notificationSessionFlash('noti-danger', 'Question not found!');
+                $this->router->redirectUsingRouteName('show-course');
+            }
+        }
+
+        $answerEdit = null;
+
+        if ($answerEditId) {
+            $answerEdit = $entityManager->createQueryBuilder()
+                ->select('a')
+                ->from(Answer::class, 'a')
+                ->leftJoin('a.question', 'q')
+                ->where('a.id = :answer_id')->setParameter('answer_id', $answerEditId)
+                ->getQuery()
+                ->getOneOrNullResult();
+
+            if (!$answerEdit) {
+                $this->router->notificationSessionFlash('noti-danger', 'Answer not found!');
+                $this->router->redirectUsingRouteName('show-course');
+            }
+        }
+
+        $this->render('/admin/step/edit', compact('step', 'questionEdit', 'questionAnswer', 'answerEdit'));
     }
 
     /**

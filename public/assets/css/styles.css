@@ -15,6 +15,7 @@
     --body-offset-sidebar: 230px;
     --card-max-width: 650px;
     --input-max-width: 500px;
+    --text-normal: 15px;
 }
 
 * {
@@ -33,8 +34,6 @@ body {
     margin-top: var(--body-offset-navbar);
 }
 
-
-
 .nav {
     display: flex;
     position: fixed;
@@ -52,9 +51,28 @@ body {
     z-index: 10;
 }
 
+.text-normal {
+    font-size: var(--text-normal);
+}
+
+.pill-success {
+    border-radius: 10px;
+    background-color: var(--success);
+    padding: 5px;
+    color: white;
+}
+
+.table-image {
+    width: 100px;
+}
+
 .nav-slogan {
     border-radius: 10px;
     width: var(--nav-slogan-width);
+}
+
+.mid-content {
+    text-align: center;
 }
 
 .input {
@@ -576,6 +594,10 @@ body {
     border-collapse: collapse;
     border: 1px solid white;
     background-color: var(--pri-blue-heavy);
+}
+
+.width-auto {
+    width: auto;
 }
 
 .table tr td,
