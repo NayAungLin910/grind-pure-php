@@ -9,3 +9,9 @@ function navToggle() {
 
   nav.style.height = nav.style.height == "100vh" ? "64px" : "100vh";
 }
+
+function dropToggleNav(id) {
+  let subMenuNav = document.getElementById(`sub-menu-${id}`);
+  
+  subMenuNav.classList.toggle("active");
+}

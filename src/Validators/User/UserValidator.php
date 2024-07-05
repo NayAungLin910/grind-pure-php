@@ -30,7 +30,25 @@ class UserValidator extends FormValidator
     /**
      * Validates email
      */
-    public function emailValidate(string $email, string $errorKey): UserValidator
+    public function emailValidate(string $email, string $errorKey, int $except = 0): UserValidator
+    {
+        $this->checkIfString($email, $errorKey);
+
+        $this->checkStringExists($email, $errorKey);
+
+        $this->checkWhiteSpaceExits($email, $errorKey);
+
+        $this->checkEmailFormat($email, $errorKey);
+
+        $this->checkPreExistsModel($email, $errorKey, 'email', User::class, $except);
+
+        return $this;
+    }
+
+    /**
+     * Validates email
+     */
+    public function loginEmailValidate(string $email, string $errorKey, int $except = 0): UserValidator
     {
         $this->checkIfString($email, $errorKey);
 

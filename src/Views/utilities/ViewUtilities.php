@@ -153,8 +153,6 @@ function checkIdInCollection(Collection $collection, int $id): bool
 
 //------------------------------- If condition boolean variables  ------------------------------------
 
-$cookieService = new CookieService();
-
 $ifAuth = isset($_SESSION["auth"]);
 
 $ifAuthUser = $ifAuth && $_SESSION["auth"]["role"] == "user"; // if auth user

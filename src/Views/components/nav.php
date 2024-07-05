@@ -26,8 +26,32 @@
 
             <!-- If Auth -->
             <?php if ($ifAuth) : ?>
-                <div class="nav-inner-link">
-                    <a class="btn link-plain" href="">Profile</a>
+
+                <div class="relative">
+                    <a class="nav-inner-link flex aic" onclick="dropToggleNav('nav-profile')">
+                        <img src="<?= $_SESSION['auth']['profile_image'] ?>" class="profile-img" alt="">
+                    </a>
+
+                    <div id="sub-menu-nav-profile" class="absolute sub-menu-nav">
+                        <ul class="sub-menu-nav-ul">
+
+                            <!-- Profile -->
+                            <a class="link-plain text-white" href="<?= getRouteUsingRouteName('profile') ?>">
+                                <li class="flex g-mid">
+                                    <i class="bi bi-person-circle"></i> Profile
+                                </li>
+                            </a>
+
+                            <!-- Logout -->
+                            <form action="<?php echo getRouteUsingRouteName("logout") ?>" method="POST">
+                                <button type="submit" class="btn-plain">
+                                    <li class="flex g-mid">
+                                        <i class="bi bi-box-arrow-left"></i> Logout
+                                    </li>
+                                </button>
+                            </form>
+                        </ul>
+                    </div>
                 </div>
             <?php endif; ?>
 

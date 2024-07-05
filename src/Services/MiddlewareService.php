@@ -32,7 +32,9 @@ class MiddlewareService
         $_SESSION['auth'] = [ // reset the session
             "id" => $user->getId(),
             "name" => $user->getName(),
+            "email" => $user->getEmail(),
             "role" => $user->getRole(),
+            "profile_image" => $user->getProfileImage()
         ];
     }
 }

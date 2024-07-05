@@ -273,6 +273,19 @@ body {
     box-shadow: 1px 1px 2px 1px var(--box-shadow-grey);
 }
 
+.profile-card {
+    border-radius: 15px;
+    width: 100%;
+    padding: 20px;
+    background-color: var(--pri-blue);
+    color: white;
+    box-shadow: 1px 1px 2px 1px var(--box-shadow-grey);
+}
+
+.no-appearance {
+    appearance: none;
+}
+
 .login-card {
     width: 80%;
     max-width: var(--card-max-width);
@@ -488,7 +501,19 @@ body {
     font-size: 14px;
 }
 
+.sub-menu-nav {
+    display: none;
+}
+
+.sub-menu-nav:hover{
+    cursor: pointer;
+}
+
 .sub-menu.active {
+    display: block;
+}
+
+.sub-menu-nav.active {
     display: block;
 }
 
@@ -600,6 +625,40 @@ body {
     width: auto;
 }
 
+.profile-img {
+    width: 40px;
+    height: 35px;
+    border-radius: 50%;
+    cursor: pointer;
+    box-shadow: 0 0 0 5px var(--pri-blue-heavier);
+}
+
+.profile-img-lg {
+    width: 105px;
+    height: 100px;
+    border-radius: 50%;
+    margin: 0 auto;
+    box-shadow: 0 0 0 5px var(--pri-blue-heavier);
+}
+
+.sub-menu-nav ul {
+    margin-top: 5px;
+    list-style-type: none;
+    border-radius: 10px;
+    padding: 10px;
+    color: white;
+    background-color: var(--pri-blue-heavy);   
+}
+
+.sub-menu-nav ul li  {
+    padding: 10px;
+    border-radius: 10px;
+}
+
+.sub-menu-nav ul li:hover {
+    background-color: var(--pri-blue-heavier);
+}
+
 .table tr td,
 .table tr th {
     padding: 10px;
@@ -628,6 +687,14 @@ body {
 
 .btn-small {
     font-size: 13px;
+}
+
+.btn-plain {
+    background-color: transparent;
+    color: white;
+    border: none;
+    cursor: pointer;
+    width: 100%;
 }
 
 .btn-small {
@@ -899,6 +966,14 @@ body {
 .question-row {
     margin: 10px 0;
     font-size: 17px;
+}
+
+.relative {
+    position: relative;
+}
+
+.absolute {
+    position: absolute;
 }
 
 @media (max-width: 1024px) {

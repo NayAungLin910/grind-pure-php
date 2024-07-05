@@ -6,6 +6,7 @@ use Src\Controllers\CourseController;
 use Src\Controllers\TagController;
 use Src\Controllers\Bin\TagController as BinTagController;
 use Src\Controllers\Bin\CourseController as BinCourseController;
+use Src\Controllers\ProfileController;
 use Src\Controllers\QuestionController;
 use Src\Controllers\SectionController;
 use Src\Controllers\StepController;
@@ -29,6 +30,10 @@ $router->addGetRoute('/', UserController::class, 'index')->addMiddleware(AuthMid
 
 //--------------------------------------- Authenticated Routes ---------------------------------------//
 $router->addPostRoute('/logout', AuthController::class, "logout")->addMiddleware(AuthMiddleware::class)->addRouteName("logout"); // logout 
+
+//----------------- Profile ----------//
+$router->addGetRoute('/profile', ProfileController::class, "showProfile")->addRouteName('profile');
+$router->addPostRoute('/profile/save', ProfileController::class, "postProfile")->addMiddleware(AuthMiddleware::class)->addRouteName('post-profile');
 
 //--------------------------------------- Admin Routes -----------------------------//
 //---------------- Tags -------------//

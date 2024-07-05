@@ -39,7 +39,9 @@ class AuthService
             $_SESSION['auth'] = [
                 "id" => $user->getId(),
                 "name" => $user->getName(),
+                "email" => $user->getEmail(),
                 "role" => $user->getRole(),
+                "profile_image" => $user->getProfileImage()
             ];
 
             if (isset($credentials["remember"])) {
@@ -82,9 +84,9 @@ class AuthService
 
         $expiryDate = time() + (10 * 24 * 60 * 60); // 10 days ahead of current time
 
-        setcookie("rand_token", $randToken, $expiryDate);
-        setcookie("rand_selector_token", $randSelectorToken, $expiryDate);
-        setcookie("email", $email, $expiryDate);
+        setcookie("rand_token", $randToken, $expiryDate, "/");
+        setcookie("rand_selector_token", $randSelectorToken, $expiryDate, "/");
+        setcookie("email", $email, $expiryDate, "/");
 
         $this->renewToken($email, $randTokenHashed, $randSelectorTokenHashed);
     }
@@ -106,6 +108,8 @@ class AuthService
         $statment->bind_param("sss", $email, $randTokenHashed, $randTokenSelectorHashed);
         $statment->execute();
     }
+
+
 
     /**
      * Get token using email
@@ -141,15 +145,29 @@ class AuthService
     }
 
     /**
+     * Delete token
+     */
+    public function deleteTokenEmail(string $email): void
+    {
+        $query = "DELETE FROM login_tokens WHERE email = ?";
+
+        $con = DbConnection::getMySQLConnection(); // get connection
+
+        $statment = $con->prepare($query);
+        $statment->bind_param("s", $email);
+        $statment->execute();
+    }
+
+    /**
      * Clear remember user cookies
      */
     public  function clearCookies(): void
     {
         $oneDayPast = time() - 3600 * 24;
 
-        setcookie("rand_token", "", $oneDayPast);
-        setcookie("rand_selector_token", "", $oneDayPast);
-        setcookie("email", "", $oneDayPast);
+        setcookie("rand_token", "", $oneDayPast, "/");
+        setcookie("rand_selector_token", "", $oneDayPast, "/");
+        setcookie("email", "", $oneDayPast, "/");
     }
 
     /**

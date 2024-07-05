@@ -85,7 +85,7 @@ class AuthController extends Controller
         $password = $_POST['password'];
         $remember = $_POST['remember'] ?? null;
 
-        $userValidator->emailValidate($email, "email");
+        $userValidator->loginEmailValidate($email, "email");
         $userValidator->loginPasswordValidate($password, "password");
 
         $userValidator->flashOldRequestData(["email" => $email]);
