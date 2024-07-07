@@ -97,7 +97,7 @@
                             </a>
                             <div class="card-description bg-pri-heavy-2 half-bottom-round-mid point-normal">
                                 <?php foreach ($course->getUndeletedTags() as $tag) : ?>
-                                    <a href="" class="btn link-plain text-white btn-tag-small"><?= htmlspecialchars($tag->getName()) ?></a>
+                                    <a href="<?= getRouteUsingRouteName('show-public-course') . "?title=" . $course->getTitle() . "&tags%5B%5D=" . $tag->getId() ?>" class="btn link-plain text-white btn-tag-small"><?= htmlspecialchars($tag->getName()) ?></a>
                                 <?php endforeach; ?>
                             </div>
                         </div>
@@ -130,7 +130,7 @@
 <!-- Noti Js -->
 <script src="/assets/js/noti-uti.js"></script>
 
-<!-- Multiple Select with Select 2 -->
+<!-- Multiple Select with   Select 2 -->
 <script>
     $(document).ready(function() {
         $('.select2-multiple').select2({});

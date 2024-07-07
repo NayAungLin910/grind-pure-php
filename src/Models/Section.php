@@ -129,7 +129,7 @@ class Section
     public function setPriority(int $priority): void
     {
         $this->priority = $priority;
-    }   
+    }
 
     public function getSteps(): Collection
     {
@@ -139,5 +139,14 @@ class Section
     public function setSteps(Collection $steps): void
     {
         $this->steps = $steps;
+    }
+
+    public function checkContainsStep(int $stepId): bool
+    {
+        foreach ($this->getSteps() as $st) {
+            if ($st->getId() === $stepId) return true;
+        }
+
+        return false;
     }
 }

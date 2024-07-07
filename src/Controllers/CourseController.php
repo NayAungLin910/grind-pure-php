@@ -1,13 +1,12 @@
 <?php
 
 namespace Src\Controllers;
-
-use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\NoResultException;
 use Doctrine\ORM\Tools\Pagination\Paginator;
 use Src\Controller;
 use Src\Models\Course;
 use Src\Models\Section;
+use Src\Models\Step;
 use Src\Models\Tag;
 use Src\Models\User;
 use Src\Router;
@@ -358,4 +357,194 @@ class CourseController extends Controller
         $this->router->notificationSessionFlash('noti-success', "Course moved to bin successfully!");
         $this->router->redirectUsingRouteName('show-course');
     }
+
+    /**
+     * Show public courses
+     */
+    public function showPublicCourse(): void
+    {
+        $title = isset($_GET['title']) ? $_GET['title'] : "";
+        $pageSize = isset($_GET['page-size']) && $_GET['page-size'] > 0 ? $_GET['page-size'] : 10;
+        $page =  isset($_GET['page']) && $_GET['page'] > 0 ? $_GET['page'] : 1;
+        $sortByOldest = isset($_GET['oldest']) ? $_GET['oldest'] : null;
+        $tagSelected = isset($_GET['tags']) ? $_GET['tags'] : null;
+
+        require "../config/bootstrap.php";
+
+        $paginationDql = $entityManager->createQueryBuilder()
+            ->select('c')
+            ->from(Course::class, 'c')
+            ->join('c.user', 'u')
+            ->leftJoin('c.tags', 't')
+            ->andWhere('c.id > 0');
+
+        if ($title !== "") $paginationDql->andWhere('c.title LIKE :title')->setParameter('title', "%$title%");
+
+        if ($sortByOldest) {
+            $paginationDql = $paginationDql->orderBy('c.id', 'ASC');
+        } else {
+            $paginationDql = $paginationDql->orderBy('c.id', 'DESC');
+        }
+
+        if ($tagSelected) {
+            $paginationDql->andWhere('t.id IN (:tags)')->setParameter('tags', ['tags' => $tagSelected]);
+        }
+
+        $paginationDql->andWhere('c.deleted = false');
+        $paginationDql->setFirstResult(($page - 1) * $pageSize);
+        $paginationDql->setMaxResults($pageSize);
+
+        $tags = $entityManager->createQueryBuilder()
+            ->select('t')
+            ->from(Tag::class, 't')
+            ->andWhere('t.deleted = false')
+            ->getQuery()
+            ->getResult();
+
+        $paginator = new Paginator($paginationDql);
+
+        $courses = [];
+
+        foreach ($paginator as $course) {
+            $courses[] = $course;
+        }
+
+        $totalItems = count($paginator); // all the rows of the table filtered from paginationQuery
+        $totalPages = ceil($totalItems / $pageSize);
+
+        if (is_array($tagSelected)) $tagSelected = array_map('intval', $tagSelected);
+
+        $formValidator = new FormValidator();
+        $formValidator->flashOldRequestData(compact('title', 'created_by_me', 'sortByOldest', 'tagSelected'));
+
+        $this->render("public/course", compact('courses', 'pageSize', 'page', 'totalItems', 'totalPages', 'tags'));
+    }
+
+    /**
+     * Show public specific course
+     */
+    public function showPublicSpecCourse(): void
+    {
+        if (!isset($_GET['title'])) {
+            $this->router->notificationSessionFlash('noti-danger', 'Id not found!');
+            $this->router->redirectUsingRouteName('show-public-course');
+        }
+
+        $title = $_GET['title'];
+
+        $currentStepId = isset($_GET['current-step']) ? $_GET['current-step'] : null;
+
+        require "../config/bootstrap.php";
+
+        try {
+            $course = $entityManager->createQueryBuilder()
+                ->select('c')
+                ->from(Course::class, 'c')
+                ->leftJoin('c.tags', 't')
+                ->leftJoin('c.user', 'u')
+                ->leftJoin('c.sections', 's')
+                ->leftJoin('s.steps', 'st')
+                ->leftJoin('c.enrollments', 'e')
+                ->where('c.title = :title')->setParameter('title', $title)
+                ->getQuery()
+                ->getSingleResult();
+        } catch (NoResultException $e) { // if no result 
+            $this->router->notificationSessionFlash('noti-danger', 'Course not found!');
+            $this->router->redirectUsingRouteName('show-public-course');
+        }
+
+        $currentStep = null;
+
+        if ($currentStepId) {
+            $currentStep = $entityManager->createQueryBuilder()
+                ->select('s')
+                ->from(Step::class, 's')
+                ->leftJoin('s.users', 'u')
+                ->where('s.id = :s_id')->setParameter('s_id', $currentStepId)
+                ->getQuery()
+                ->getOneOrNullResult();
+
+            if (!$currentStep) {
+                $this->router->notificationSessionFlash('noti-danger', 'Step not found!');
+                $this->router->redirectUsingRouteName('show-public-course');
+            }
+        } else {
+            try {
+                $currentStep = $entityManager->createQueryBuilder()
+                    ->select('s')
+                    ->from(Step::class, 's')
+                    ->leftJoin('s.users', 'u')
+                    ->orderBy('s.priority', 'ASC')
+                    ->setMaxResults(1)
+                    ->getQuery()
+                    ->getSingleResult();
+            } catch (NoResultException $e) {
+                $this->router->notificationSessionFlash('noti-danger', 'Step not found!');
+                $this->router->redirectUsingRouteName('show-public-course');
+            }
+        }
+
+        $this->render("public/spec-course", compact('course', 'section', 'currentStep'));
+    }
+
+    /**
+     * Post enroll course
+     */
+    public function postEnrollCourse(): void
+    {
+        $courseValidator = new CourseValidator();
+
+        $courseValidator->checkRequestFields(['course-id']);
+
+        $courseId = $_POST['course-id'];
+
+        $courseValidator->checkInteger($courseId, 'course-id');
+        $courseValidator->flashErrors();
+
+        require "../config/bootstrap.php";
+
+        $course = $entityManager->createQueryBuilder()
+            ->select('c')
+            ->from(Course::class, "c")
+            ->leftJoin('c.users', 'u')
+            ->where('c.id = :c_id')->setParameter('c_id', $courseId)
+            ->getQuery()
+            ->getOneOrNullResult();
+
+        if (!$course) {
+            $this->router->notificationSessionFlash('noti-danger', 'Course not found!');
+            $this->router->redirectUsingRouteName('show-public-course');
+        }
+
+        if (!isset($_SESSION['auth']['id'])) {
+            $this->router->notificationSessionFlash('noti-danger', 'User not found!');
+            $this->router->redirectUsingRouteName('show-login');
+        }
+
+        $user = $entityManager->createQueryBuilder()
+            ->select('u')
+            ->from(User::class, "u")
+            ->leftJoin('u.enrolledCourses', 'ec')
+            ->where('u.id = :u_id')->setParameter('u_id', $_SESSION['auth']['id'])
+            ->getQuery()
+            ->getOneOrNullResult();
+
+        if (!$user) {
+            $authService = new AuthService();
+            $authService->logout();
+
+            $this->router->notificationSessionFlash('noti-danger', 'User not found!');
+            $this->router->redirectUsingRouteName('show-login');
+        }
+
+        $user->getEnrolledCourses()->add($course);
+        $course->getUsers()->add($user);
+
+        $entityManager->flush();
+
+        $this->router->notificationSessionFlash('noti-success', 'Enrolled successfully!');
+        $route = $this->router->getRouteUsingRouteName('show-public-spec-course') . "?title=" . $course->getTitle();
+        $this->router->redirectTo($route);
+    }
+
 }

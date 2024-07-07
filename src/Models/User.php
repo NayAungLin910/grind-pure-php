@@ -54,6 +54,9 @@ class User
     #[OneToMany(targetEntity: Course::class, mappedBy: 'user')]
     private Collection $courses;
 
+    #[OneToMany(targetEntity: Enrollment::class, mappedBy: 'user')]
+    private Collection $enrollments;
+
     #[ManyToMany(targetEntity: Certificate::class, mappedBy: 'users')]
     private Collection $certificates;
 
@@ -200,5 +203,15 @@ class User
     public function setCompletedSteps(Collection $completedSteps): void
     {
         $this->completedSteps = $completedSteps;
+    }
+
+    public function getEnrollments(): Collection
+    {
+        return $this->enrollments;
+    }
+
+    public function setEnrollments(Collection $enrollments): void
+    {
+        $this->enrollments = $enrollments;
     }
 }

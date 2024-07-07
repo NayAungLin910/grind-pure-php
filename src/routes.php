@@ -18,7 +18,11 @@ use Src\Router;
 
 $router = new Router();
 
-//--------------------------------------- Unathenticated Routes ---------------------------------------//
+//--------------- Courses ---------------//
+$router->addGetRoute('/courses', CourseController::class, "showPublicCourse")->addRouteName('show-public-course');
+$router->addGetRoute('/course/specific', CourseController::class, "showPublicSpecCourse")->addRouteName('show-public-spec-course');
+
+//--------------------------------------- Unathenticated Only  Routes ---------------------------------------//
 //---------------- Register -------------//
 $router->addGetRoute('/register', AuthController::class, 'showRegister')->addMiddleware(NotAuthMiddleware::class)->addRouteName("show-register");
 $router->addPostRoute('/register', AuthController::class, 'postRegister')->addMiddleware(NotAuthMiddleware::class);
@@ -29,11 +33,20 @@ $router->addPostRoute('/login', AuthController::class, 'postLogin')->addMiddlewa
 $router->addGetRoute('/', UserController::class, 'index')->addMiddleware(AuthMiddleware::class)->addRouteName("welcome"); // homepage
 
 //--------------------------------------- Authenticated Routes ---------------------------------------//
-$router->addPostRoute('/logout', AuthController::class, "logout")->addMiddleware(AuthMiddleware::class)->addRouteName("logout"); // logout 
+$router->addPostRoute('/logout', AuthController::class, "logout")->addRouteName("logout"); // logout 
 
-//----------------- Profile ----------//
+// ---------- Course ----------------//
+$router->addPostRoute('/course/specific/enroll', CourseController::class, "postEnrollCourse")->addRouteName('post-course-enroll');
+
+//----------- Step ----------------//
+$router->addPostRoute('/course/step/complete', StepController::class, "postStepComplete")->addMiddleware(AuthMiddleware::class)->addRouteName('post-step-complete');
+
+//---------- Profile -------------//
 $router->addGetRoute('/profile', ProfileController::class, "showProfile")->addRouteName('profile');
 $router->addPostRoute('/profile/save', ProfileController::class, "postProfile")->addMiddleware(AuthMiddleware::class)->addRouteName('post-profile');
+
+//-------------- Change Password ------//
+$router->addPostRoute('/profile/password-change', ProfileController::class, "postPasswordChange")->addMiddleware(AuthMiddleware::class)->addRouteName('post-password-change');
 
 //--------------------------------------- Admin Routes -----------------------------//
 //---------------- Tags -------------//

@@ -31,7 +31,7 @@ class FormValidator
     /**
      * Check if string is not an empty string
      */
-    protected function checkStringExists(string $value, string $errorKey): void
+    public function checkStringExists(string $value, string $errorKey): void
     {
         if (!is_string($value)) {
             $this->errors[$errorKey][] = "The $errorKey must be of string type.";

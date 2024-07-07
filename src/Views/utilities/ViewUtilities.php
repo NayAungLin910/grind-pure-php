@@ -6,6 +6,9 @@
 //------------------------------- Functions ------------------------------------
 
 use Doctrine\Common\Collections\Collection;
+use Src\Models\Course;
+use Src\Models\Step;
+use Src\Models\User;
 use Src\Services\CookieService;
 
 /**
@@ -147,6 +150,59 @@ function checkIdInCollection(Collection $collection, int $id): bool
     foreach ($collection as $c) {
         if ($c->getId() === $id) return true;
     }
+
+    return false;
+}
+
+/**
+ * Get authenticated user
+ */
+function getAuthUser(): User|null
+{
+    require "../config/bootstrap.php";
+
+    if (!isset($_SESSION['auth']['id'])) return null;
+
+    $user = $entityManager->createQueryBuilder()
+        ->select('u')
+        ->from(User::class, "u")
+        ->where('u.id = :u_id')->setParameter('u_id', $_SESSION['auth']['id'])
+        ->getQuery()
+        ->getOneOrNullResult();
+
+    if (!$user) return null;
+
+    return $user;
+}
+
+/**
+ * Check if course is completed
+ */
+function checkCourseCompleted(Course $course): bool
+{
+    require "../config/bootstrap.php";
+
+    $allStepsCount = $entityManager->createQueryBuilder()
+        ->select('count(s.id)')
+        ->from(Step::class, 's')
+        ->leftJoin('s.section', 'se')
+        ->leftJoin('se.course', 'c')
+        ->where('c.id = :c_id')->setParameter('c_id', $course->getId())
+        ->getQuery()
+        ->getSingleScalarResult();
+
+    $allCompletedStepsByUser = $entityManager->createQueryBuilder()
+        ->select('count(s.id)')
+        ->from(Step::class, 's')
+        ->leftJoin('s.section', 'se')
+        ->leftJoin('se.course', 'c')
+        ->leftJoin('s.users', 'u')
+        ->where('c.id = :c_id')->setParameter('c_id', $course->getId())
+        ->andWhere('u.id = :u_id')->setParameter('u_id', $_SESSION['auth']['id'])
+        ->getQuery()
+        ->getSingleScalarResult();
+
+    if ($allStepsCount == $allCompletedStepsByUser) return true;
 
     return false;
 }

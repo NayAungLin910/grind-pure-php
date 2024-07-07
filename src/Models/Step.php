@@ -227,4 +227,15 @@ class Step
     {
         $this->questions = $questions;
     }
+
+    public function checkCompleted(int $userId): bool
+    {
+        if($this->getUsers() && count($this->getUsers()) > 0) {
+            foreach($this->getUsers() as $user) {
+                if($user->getId() == $userId) return true;
+            }
+        }
+
+        return false;
+    }
 }

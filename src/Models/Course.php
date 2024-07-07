@@ -54,6 +54,9 @@ class Course
     #[OneToMany(targetEntity: Certificate::class, mappedBy: 'course')]
     private Collection $certificates;
 
+    #[OneToMany(targetEntity: Enrollment::class, mappedBy: 'course')]
+    private Collection $enrollments;
+
     #[ManyToMany(targetEntity: User::class, inversedBy: 'enrolledCourses')]
     #[JoinTable(name: 'users_courses')]
     private Collection $users;
@@ -201,5 +204,24 @@ class Course
     public function setSections(Collection $sections): void
     {
         $this->sections = $sections;
+    }
+
+    public function checkEnrolled(User $user): bool
+    {
+        foreach ($this->getUsers() as $u) {
+            if ($u->getId() === $user->getId()) return true;
+        }
+
+        return false;
+    }
+
+    public function getEnrollments(): Collection
+    {
+        return $this->enrollments;
+    }
+
+    public function setEnrollments(Collection $enrollments): void
+    {
+        $this->enrollments = $enrollments;
     }
 }

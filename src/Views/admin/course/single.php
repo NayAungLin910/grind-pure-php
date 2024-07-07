@@ -166,7 +166,7 @@
 
                                 <!-- Tags -->
                                 <?php foreach ($course->getUndeletedTags() as $tag) : ?>
-                                    <a href="" class="btn link-plain text-white btn-tag-small"><?= htmlspecialchars($tag->getName()) ?></a>
+                                    <a href="<?= getRouteUsingRouteName('show-public-course') . "?title=" . $course->getTitle() . "&tags%5B%5D=" . $tag->getId() ?>" class="btn link-plain text-white btn-tag-small"><?= htmlspecialchars($tag->getName()) ?></a>
                                 <?php endforeach; ?>
                             </div>
                         <?php endif; ?>

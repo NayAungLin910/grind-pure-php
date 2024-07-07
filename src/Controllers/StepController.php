@@ -5,10 +5,13 @@ namespace Src\Controllers;
 use Doctrine\ORM\NoResultException;
 use Src\Controller;
 use Src\Models\Answer;
+use Src\Models\Enrollment;
 use Src\Models\Question;
 use Src\Models\Section;
 use Src\Models\Step;
+use Src\Models\User;
 use Src\Router;
+use Src\Services\CourseService;
 use Src\Services\FormService;
 use Src\Validators\Step\StepValidator;
 
@@ -177,7 +180,7 @@ class StepController extends Controller
 
             // delete questions
             foreach ($step->getQuestions() as $question) {
-                
+
                 // delete answers
                 if ($question->getAnswers() && count($question->getAnswers()) > 0) {
                     foreach ($question->getAnswers() as $answer) {
@@ -392,5 +395,95 @@ class StepController extends Controller
 
         $this->router->notificationSessionFlash('noti-success', 'Step updated successfully!');
         $this->router->redirectBack();
+    }
+
+    /**
+     * Handles post request to complete a step
+     */
+    public function postStepComplete(): void
+    {
+        $stepValidator = new StepValidator();
+
+        $stepValidator->checkRequestFields(['current-step-id']);
+
+        $stepId = $_POST['current-step-id'];
+
+        require "../config/bootstrap.php";
+
+        $step = $entityManager->createQueryBuilder()
+            ->select('s')
+            ->from(Step::class, 's')
+            ->leftJoin('s.users', 'u')
+            ->leftJoin('s.section', 'se')
+            ->leftJoin('se.course', 'c')
+            ->where('s.id = :s_id')->setParameter('s_id', $stepId)
+            ->getQuery()
+            ->getOneOrNullResult();
+
+        if (!$step) {
+            $this->router->notificationSessionFlash('noti-danger', 'Step not found!');
+            $this->router->redirectUsingRouteName('show-public-course');
+        }
+
+        $user = $entityManager->createQueryBuilder()
+            ->select('u')
+            ->from(User::class, 'u')
+            ->leftJoin('u.completedSteps', 'st')
+            ->where('u.id = :u_id')->setParameter('u_id', $_SESSION['auth']['id'])
+            ->getQuery()
+            ->getOneOrNullResult();
+
+        if (!$user) {
+            $this->router->notificationSessionFlash('noti-danger', 'User not found!');
+            $this->router->redirectUsingRouteName('show-public-course');
+        }
+
+        $contains = false;
+
+        if ($user->getCompletedSteps() && count($user->getCompletedSteps()) > 0) {
+            foreach ($user->getCompletedSteps() as $st) {
+                if ($st->getId() === $step->getId()) {
+                    $contains = true;
+                }
+            }
+        }
+
+        if (!$contains) {
+            $user->getCompletedSteps()->add($step);
+            $step->getUsers()->add($user);
+        }
+
+        $entityManager->flush();
+
+        $courseService = new CourseService();
+        $courseCompleted = $courseService->checkCourseCompleted($step->getSection()->getCourse());
+
+        if ($courseCompleted) {
+            $enrollment = $entityManager->createQueryBuilder()
+                ->select('e')
+                ->from(Enrollment::class, 'e')
+                ->leftJoin('e.course', 'c')
+                ->leftJoin('e.user', 'u')
+                ->where("c.id = :course_id")->setParameter('course_id', $step->getSection()->getCourse()->getId())
+                ->andWhere('u.id = :user_id')->setParameter('user_id', $_SESSION['auth']['id'])
+                ->getQuery()
+                ->getOneOrNullResult();
+
+            if (!$enrollment) {
+                $this->router->notificationSessionFlash('noti-danger', 'Enrollment not found!');
+                $this->router->redirectUsingRouteName('show-public-course');
+            }
+
+            $enrollment->setStatus('completed');
+            $entityManager->flush();
+        }
+
+        if (!$contains) {
+            $this->router->notificationSessionFlash('noti-success', 'Step completed!');
+        } else {
+            $this->router->notificationSessionFlash('noti-success', 'Step already completed!');
+        }
+        $route = $this->router->getRouteUsingRouteName('show-public-spec-course') . "?title=" . $step->getSection()->getCourse()->getTitle() . "&current-step=" . $step->getId();
+        $this->router->redirectTo($route);
     }
 }

@@ -11,7 +11,7 @@
 
     <!-- Main Body -->
     <div class="main">
-        <div class="flex jcc g-mid p-mid">
+        <div class="flex jcc g-mid p-mid sm-f-column">
 
             <!-- Profile -->
             <div class="profile-card">
@@ -22,7 +22,6 @@
                 </div>
 
                 <form method="POST" action="<?= getRouteUsingRouteName('post-profile') ?>" enctype="multipart/form-data">
-
                     <!-- Name -->
                     <div class="form-group">
                         <label class="form-label text-white" for="name">Name</label>
@@ -60,17 +59,50 @@
                     </div>
                 </form>
 
+                <form method="POST" action="<?= getRouteUsingRouteName('post-password-change') ?>" enctype="multipart/form-data">
+
+                <h3 class="mtb-mid">Change Password</h3>
+
+                    <!-- Password -->
+                    <div class="form-group">
+                        <label class="form-label text-white" for="current-password">Current-password</label>
+                        <input class="input form-input" id="current-password" name="current-password" type="password">
+                        <?php displayErrorMessage("current-password") ?>
+                    </div>
+
+                    <!-- New Password -->
+                    <div class="form-group">
+                        <label class="form-label text-white" for="new-password">New Password</label>
+                        <input class="input form-input" id="new-password" name="new-password" type="password">
+                        <?php displayErrorMessage("new-password") ?>
+                    </div>
+
+                    <!-- Confirm Password -->
+                    <div class="form-group">
+                        <label class="form-label text-white" for="confirm-password">Confirm Password</label>
+                        <input class="input form-input" id="confirm-password" name="confirm-password" type="password">
+                        <?php displayErrorMessage("confirm-password") ?>
+                    </div>
+
+                    <!--Register Button -->
+                    <div class="flex jcc">
+                        <button class="btn" type="submit">Change</button>
+                    </div>
+                </form>
             </div>
 
             <!-- Nahhh I' woudld adapt -->
             <div>
                 Lorem ipsum dolor sit amet, consectetur adipisicing elit. Blanditiis, architecto? Laboriosam ratione perferendis sunt quia vitae minus, et illo cumque ullam expedita. Totam ducimus cum autem expedita fugit doloremque sunt.
             </div>
+
+            <!--Change Password -->
+
         </div>
     </div>
 
-     <!-- Notification -->
-     <?php require_once("../src/Views/components/notification.php") ?>
+    <!-- Notification -->
+    <?php require_once("../src/Views/components/notification.php") ?>
 </body>
 
 <!-- Nav Toggle -->

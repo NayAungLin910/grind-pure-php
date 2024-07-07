@@ -8,17 +8,19 @@
                 <i class="bi bi-list nav-toggle-icon" onclick="navToggle()"></i>
             </div>
         </div>
-        <div class="nav-search">
-            <input class="input search-input" type="text">
-            <div class="nav-icon-div">
-                <i class="bi bi-search nav-icon"></i>
+        <form action="<?= getRouteUsingRouteName('show-public-course') ?>" method="get">
+            <div class="nav-search">
+                <input class="input search-input" name="title" type="text">
+                <button class="nav-icon-div" style="border: none;">
+                    <i class="bi bi-search nav-icon"></i>
+                </button>
             </div>
-        </div>
+        </form>
     </div>
     <div class="nav-link">
         <div class="nav-inner-links">
             <div class="nav-inner-link">
-                <a class="btn link-plain" href="">Courses</a>
+                <a class="btn link-plain <?= echoClassCurrentRouteSame('show-public-course', 'active-nav') ?>" href="<?= getRouteUsingRouteName('show-public-course') ?>">Courses</a>
             </div>
             <div class="nav-inner-link">
                 <a class="btn link-plain" href="">Explore</a>
@@ -33,7 +35,7 @@
                     </a>
 
                     <div id="sub-menu-nav-profile" class="absolute sub-menu-nav">
-                        <ul class="sub-menu-nav-ul">
+                        <ul class="sub-menu-nav-ul shadow">
 
                             <!-- Profile -->
                             <a class="link-plain text-white" href="<?= getRouteUsingRouteName('profile') ?>">
@@ -62,15 +64,6 @@
                         <a class="btn half-left-round link-plain" href="<?php echo getRouteUsingRouteName("show-login") ?>">Login</a>
                         <a class="btn half-right-round link-plain" href="<?php echo getRouteUsingRouteName("show-register") ?>">Register</a>
                     </div>
-                </div>
-            <?php endif; ?>
-
-            <!-- Auth -->
-            <?php if ($ifAuth) : ?>
-                <div class="nav-inner-link">
-                    <form action="<?php echo getRouteUsingRouteName("logout") ?>" method="POST">
-                        <input type="submit" class="btn link-plain" value="Logout">
-                    </form>
                 </div>
             <?php endif; ?>
 

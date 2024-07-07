@@ -58,6 +58,7 @@ class ProfileController extends Controller
         if (!$user) { // if no user found, logout
             $authService = new AuthService();
             $authService->logout();
+            $this->router->redirectTo('show-login');
         }
 
         $profileImage = $user->getProfileImage();
@@ -89,11 +90,65 @@ class ProfileController extends Controller
         $authService = new AuthService();
         $authService->deleteTokenEmail($oldEmail);
         $authService->clearCookies();
-        
+
         // set cookie and token for new email
         $authService->setCookieAndToken($email);
 
         $this->router->notificationSessionFlash('noti-success', 'Profile saved successfully!');
+        $this->router->redirectUsingRouteName('profile');
+    }
+
+    /**
+     * Change Password
+     */
+    public function postPasswordChange(): void
+    {
+        $userValidator = new UserValidator();
+
+        $userValidator->checkRequestFields(['confirm-password', 'new-password', 'current-password']);
+
+        $confirmPassword = $_POST['confirm-password'];
+        $newPassword = $_POST['new-password'];
+        $currentPassword = $_POST['current-password'];
+
+        if ($newPassword !== $confirmPassword) {
+            $userValidator->addError('confirm-password', 'Confirm password must be the same with the new password!');
+            $userValidator->flashErrors();
+        }
+
+        $userValidator->checkStringExists($confirmPassword, 'confirm-password');
+        $userValidator->checkStringExists($currentPassword, 'current-password');
+        $userValidator->passwordValidate($newPassword, 'new-password');
+        $userValidator->flashErrors();
+
+        require "../config/bootstrap.php";
+
+        $user = $entityManager->createQueryBuilder()
+            ->select('u')
+            ->from(User::class, 'u')
+            ->where('u.id = :u_id')->setParameter('u_id', $_SESSION['auth']['id'])
+            ->getQuery()
+            ->getOneOrNullResult();
+
+        if (!$user) { // if no user found, logout
+            $authService = new AuthService();
+            $authService->logout();
+            $this->router->redirectTo('show-login');
+        }
+
+        $result = password_verify($currentPassword, $user->getPassword());
+
+        if (!$result) {
+            $userValidator->addError('current-password', 'Wrong current password!');
+            $userValidator->flashErrors();
+        }
+
+        $hashedPassword = password_hash($newPassword, PASSWORD_DEFAULT);
+
+        $user->setPassword($hashedPassword);
+        $entityManager->flush();
+
+        $this->router->notificationSessionFlash('noti-success', 'Password changed successfully!');
         $this->router->redirectUsingRouteName('profile');
     }
 }
