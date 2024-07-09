@@ -2,11 +2,15 @@
 
 namespace Src\Controllers;
 
+use Doctrine\ORM\Tools\Pagination\Paginator;
 use Src\Controller;
+use Src\Models\Course;
+use Src\Models\Tag;
 use Src\Models\User;
 use Src\Router;
 use Src\Services\AuthService;
 use Src\Services\FormService;
+use Src\Validators\FormValidator;
 use Src\Validators\User\UserValidator;
 
 class ProfileController extends Controller
@@ -20,7 +24,67 @@ class ProfileController extends Controller
      */
     public function showProfile(): void
     {
-        $this->render("auth/profile");
+        $title = isset($_GET['title']) ? $_GET['title'] : "";
+        $pageSize = isset($_GET['page-size']) && $_GET['page-size'] > 0 ? $_GET['page-size'] : 10;
+        $page =  isset($_GET['page']) && $_GET['page'] > 0 ? $_GET['page'] : 1;
+        $sortByOldest = isset($_GET['oldest']) ? $_GET['oldest'] : null;
+        $completed = isset($_GET['completed']) ? $_GET['completed'] : null;
+        $tagSelected = isset($_GET['tags']) ? $_GET['tags'] : null;
+
+        require "../config/bootstrap.php";
+
+        $paginationDql = $entityManager->createQueryBuilder()
+            ->select('c')
+            ->from(Course::class, 'c')
+            ->innerJoin('c.users', 'us')
+            ->leftJoin('c.tags', 't')
+            ->leftJoin('c.enrollments', 'e')
+            ->leftJoin('e.user', 'u')
+            ->andWhere('e.user_id = :eu_id')->setParameter('eu_id', $_SESSION['auth']['id'])
+            ->andwhere('us.id = :u_id')->setParameter('u_id', $_SESSION['auth']['id']);  
+
+        if ($title !== "") $paginationDql->andWhere('c.title LIKE :title')->setParameter('title', "%$title%");
+
+        if ($completed) $paginationDql->andWhere("e.status = 'completed'");
+
+        if ($sortByOldest) {
+            $paginationDql = $paginationDql->orderBy('c.id', 'ASC');
+        } else {
+            $paginationDql = $paginationDql->orderBy('c.id', 'DESC');
+        }
+
+        if ($tagSelected) {
+            $paginationDql->andWhere('t.id IN (:tags)')->setParameter('tags', ['tags' => $tagSelected]);
+        }
+
+        $paginationDql->andWhere('c.deleted = false');
+        $paginationDql->setFirstResult(($page - 1) * $pageSize);
+        $paginationDql->setMaxResults($pageSize);
+
+        $tags = $entityManager->createQueryBuilder()
+            ->select('t')
+            ->from(Tag::class, 't')
+            ->andWhere('t.deleted = false')
+            ->getQuery()
+            ->getResult();
+
+        $paginator = new Paginator($paginationDql);
+
+        $courses = [];
+
+        foreach ($paginator as $course) {
+            $courses[] = $course;
+        }
+
+        $totalItems = count($paginator); // all the rows of the table filtered from paginationQuery
+        $totalPages = ceil($totalItems / $pageSize);
+
+        if (is_array($tagSelected)) $tagSelected = array_map('intval', $tagSelected);
+
+        $formValidator = new FormValidator();
+        $formValidator->flashOldRequestData(compact('title', 'created_by_me', 'sortByOldest', 'tagSelected', 'completed'));
+
+        $this->render("auth/profile", compact('courses', 'pageSize', 'page', 'totalItems', 'totalPages', 'tags'));
     }
 
     /**

@@ -1,6 +1,7 @@
 <?php
 
 namespace Src\Controllers;
+
 use Doctrine\ORM\NoResultException;
 use Doctrine\ORM\Tools\Pagination\Paginator;
 use Src\Controller;
@@ -375,6 +376,7 @@ class CourseController extends Controller
             ->select('c')
             ->from(Course::class, 'c')
             ->join('c.user', 'u')
+            ->leftJoin('c.enrollments', 'e')
             ->leftJoin('c.tags', 't')
             ->andWhere('c.id > 0');
 
@@ -388,7 +390,7 @@ class CourseController extends Controller
 
         if ($tagSelected) {
             $paginationDql->andWhere('t.id IN (:tags)')->setParameter('tags', ['tags' => $tagSelected]);
-        }
+        }   
 
         $paginationDql->andWhere('c.deleted = false');
         $paginationDql->setFirstResult(($page - 1) * $pageSize);
@@ -460,7 +462,12 @@ class CourseController extends Controller
                 ->select('s')
                 ->from(Step::class, 's')
                 ->leftJoin('s.users', 'u')
+                ->leftJoin('s.section', 'sec')
+                ->leftJoin('s.questions', 'q')
+                ->leftJoin('q.answers', 'a')
+                ->leftJoin('sec.course', 'c')
                 ->where('s.id = :s_id')->setParameter('s_id', $currentStepId)
+                ->andWhere('c.id = :c_id')->setParameter('c_id', $course->getId())
                 ->getQuery()
                 ->getOneOrNullResult();
 
@@ -474,6 +481,11 @@ class CourseController extends Controller
                     ->select('s')
                     ->from(Step::class, 's')
                     ->leftJoin('s.users', 'u')
+                    ->leftJoin('s.section', 'sec')
+                    ->leftJoin('s.questions', 'q')
+                    ->leftJoin('sec.course', 'c')
+                    ->leftJoin('q.answers', 'a')
+                    ->where('c.id = :c_id')->setParameter('c_id', $course->getId())
                     ->orderBy('s.priority', 'ASC')
                     ->setMaxResults(1)
                     ->getQuery()
@@ -546,5 +558,4 @@ class CourseController extends Controller
         $route = $this->router->getRouteUsingRouteName('show-public-spec-course') . "?title=" . $course->getTitle();
         $this->router->redirectTo($route);
     }
-
 }

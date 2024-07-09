@@ -23,6 +23,12 @@ class Enrollment
     #[ORM\Column(type: 'integer')]
     private int $id;
 
+    #[ORM\Column(type: 'integer')]
+    private int $user_id;
+
+    #[ORM\Column(type: 'integer')]
+    private int $course_id;
+
     #[ORM\ManyToOne(targetEntity: User::class, inversedBy: 'enrollments')]
     #[ORM\JoinColumn(name: 'user_id', referencedColumnName: 'id')]
     private ?User $user = null;
@@ -37,7 +43,8 @@ class Enrollment
     #[ORM\Column(type: 'datetime')]
     private DateTime $created_at;
 
-    public function __construct() {
+    public function __construct()
+    {
         $this->status = self::ENROLLMENT_UNCOMPLETE;
         $this->created_at = new DateTime();
     }
@@ -50,6 +57,26 @@ class Enrollment
     public function setId(int $id): void
     {
         $this->id = $id;
+    }
+
+    public function getUserId(): int
+    {
+        return $this->user_id;
+    }
+
+    public function setUserId(int $user_id): void
+    {
+        $this->user_id = $user_id;
+    }
+
+    public function getCourseId(): int
+    {
+        return $this->course_id;
+    }
+
+    public function setCourseId(int $course_id): void
+    {
+        $this->course_id = $course_id;
     }
 
     public function getUser(): ?User

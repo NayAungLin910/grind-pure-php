@@ -2,9 +2,10 @@
 
 namespace Src\Controllers;
 
-use Doctrine\ORM\NoResultException;
+use FPDF;
 use Src\Controller;
 use Src\Models\Answer;
+use Src\Models\Course;
 use Src\Models\Enrollment;
 use Src\Models\Question;
 use Src\Models\Section;
@@ -484,6 +485,181 @@ class StepController extends Controller
             $this->router->notificationSessionFlash('noti-success', 'Step already completed!');
         }
         $route = $this->router->getRouteUsingRouteName('show-public-spec-course') . "?title=" . $step->getSection()->getCourse()->getTitle() . "&current-step=" . $step->getId();
+        $this->router->redirectTo($route);
+    }
+
+    /**
+     * Handles post request to submit answers
+     */
+    public function postQuizAnswer(): void
+    {
+
+        $stepValidator = new StepValidator();
+        $stepValidator->checkRequestFields(['step-id']);
+        $stepId = $_POST['step-id'];
+
+        require "../config/bootstrap.php";
+
+        $step = $entityManager->createQueryBuilder()
+            ->select('s')
+            ->from(Step::class, 's')
+            ->leftJoin('s.questions', 'q')
+            ->leftJoin('s.section', 'sec')
+            ->leftJoin('sec.course', 'c')
+            ->leftJoin('s.users', 'u')
+            ->leftJoin('q.answers', 'a')
+            ->where('s.id = :s_id')->setParameter('s_id', $stepId)
+            ->getQuery()
+            ->getOneOrNullResult();
+
+        if (!$step) {
+            $this->router->notificationSessionFlash('noti-danger', 'Step not found!');
+            $this->router->redirectUsingRouteName('show-public-course');
+        }
+
+        $user = $entityManager->createQueryBuilder()
+            ->select('u')
+            ->from(User::class, 'u')
+            ->leftJoin('u.completedSteps', 'st')
+            ->where('u.id = :u_id')->setParameter('u_id', $_SESSION['auth']['id'])
+            ->getQuery()
+            ->getOneOrNullResult();
+
+        if (!$user) {
+            $this->router->notificationSessionFlash('noti-danger', 'User not found!');
+            $this->router->redirectUsingRouteName('show-public-course');
+        }
+
+        $questionIds = [];
+
+        if ($step->getQuestions() && count($step->getQuestions()) > 0) {
+            foreach ($step->getQuestions() as $q) {
+                $questionIds[] = $q->getId();
+            }
+        }
+
+        $correctAnswerCount = 0;
+
+        foreach ($questionIds as $qId) {
+            if (isset($_POST["question-$qId"])) {
+                $answerChosen = $_POST["question-$qId"];
+
+                $answer = $entityManager->createQueryBuilder()
+                    ->select('a')
+                    ->from(Answer::class, 'a')
+                    ->where("a.id = :a_id")->setParameter('a_id', $answerChosen)
+                    ->andWhere('a.question_id = :q_id')->setParameter('q_id', $qId)
+                    ->getQuery()
+                    ->getOneOrNullResult();
+
+                if (!$answer) {
+                    $this->router->notificationSessionFlash('noti-danger', 'Invalid answer');
+                    $this->router->redirectUsingRouteName('show-public-course');
+                }
+
+                if ($answer->getCorrect()) { // if correct answer
+                    $correctAnswerCount++;
+                    $stepValidator->addError("question-$qId", $answer->getExplanation());
+                } else {
+                    $stepValidator->addError("question-$qId-error", $answer->getExplanation());
+                }
+            } else {
+                $stepValidator->addError("question-error-$qId", 'Please select an answer');
+            }
+        }
+
+        $correctPercentage = ($correctAnswerCount / count($step->getQuestions())) * 100;
+
+        if ($correctPercentage >= 80) {
+
+            $contains = false;
+
+            if ($user->getCompletedSteps() && count($user->getCompletedSteps()) > 0) {
+                foreach ($user->getCompletedSteps() as $st) {
+                    if ($st->getId() === $step->getId()) {
+                        $contains = true;
+                    }
+                }
+            }
+
+            if (!$contains) {
+                $user->getCompletedSteps()->add($step);
+                $step->getUsers()->add($user);
+            }
+
+            $entityManager->flush();
+
+            $courseService = new CourseService();
+            $courseCompleted = $courseService->checkCourseCompleted($step->getSection()->getCourse());
+
+            if ($courseCompleted) {
+                $enrollment = $entityManager->createQueryBuilder()
+                    ->select('e')
+                    ->from(Enrollment::class, 'e')
+                    ->leftJoin('e.course', 'c')
+                    ->leftJoin('e.user', 'u')
+                    ->where("c.id = :course_id")->setParameter('course_id', $step->getSection()->getCourse()->getId())
+                    ->andWhere('u.id = :user_id')->setParameter('user_id', $_SESSION['auth']['id'])
+                    ->getQuery()
+                    ->getOneOrNullResult();
+
+                if (!$enrollment) {
+                    $this->router->notificationSessionFlash('noti-danger', 'Enrollment not found!');
+                    $this->router->redirectUsingRouteName('show-public-course');
+                }
+
+                $enrollment->setStatus('completed');
+                $entityManager->flush();
+            }
+
+            $stepValidator->addError("result", "Congratulations! You have guessed the 80 percent of the answers correctly and passed the quiz.");
+        } else {
+            $stepValidator->addError("result-error", "You did not guess the 80 percent of the answers correctly, please try again!");
+        }
+
+        $stepValidator->flashErrors();
+    }
+
+    /**
+     * Let the user download the certificate
+     * of completed course
+     */
+    public function getDownloadCert(): void
+    {
+        $stepValidator = new StepValidator();
+        $stepValidator->checkRequestFields(['course-id']);
+
+        $courseId = $_GET['course-id'];
+
+        require "../config/bootstrap.php";
+
+        $course = $entityManager->createQueryBuilder()
+            ->select('c')
+            ->from(Course::class, 'c')
+            ->leftJoin('c.tags', 't')
+            ->leftJoin('c.enrollments', 'e')
+            ->leftJoin('e.user', 'u')
+            ->andWhere('e.user_id = :eu_id')->setParameter('eu_id', $_SESSION['auth']['id'])
+            ->andWhere('c.id = :c_id')->setParameter('c_id', $courseId)
+            ->andWhere("e.status = 'completed'")
+            ->getQuery()
+            ->getOneOrNullResult();
+
+        if (!$course) {
+            $this->router->notificationSessionFlash('noti-danger', 'Course not found!');
+            $this->router->redirectUsingRouteName('profile');
+        }
+
+        // produce a certificate 
+        $backgroundCert = imagecreatefromjpeg('./default/certificate/background_cert.jpg');
+        $font = "./default/font/GloriousChristmas-BLWWB.ttf";
+        $color = imagecolorallocate($backgroundCert, 19, 21, 22);
+        $imageName = uniqid() . ".jpg";
+        imagettftext($backgroundCert, 45, 0, 470, 800, $color, $font, $_SESSION['auth']['name'] . " has completed the course " . $course->getTitle());
+        imagejpeg($backgroundCert, "./images/certificates/" . $imageName);
+
+        $route = '/images/certificates/' . $imageName;
+
         $this->router->redirectTo($route);
     }
 }

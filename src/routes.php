@@ -40,6 +40,8 @@ $router->addPostRoute('/course/specific/enroll', CourseController::class, "postE
 
 //----------- Step ----------------//
 $router->addPostRoute('/course/step/complete', StepController::class, "postStepComplete")->addMiddleware(AuthMiddleware::class)->addRouteName('post-step-complete');
+$router->addPostRoute('/course/step/quiz-answer', StepController::class, "postQuizAnswer")->addMiddleware(AuthMiddleware::class)->addRouteName('post-quiz-answer');
+$router->addGetRoute('/course/course/certificate', StepController::class, 'getDownloadCert')->addMiddleware(AuthMiddleware::class)->addRouteName('get-cert-download');
 
 //---------- Profile -------------//
 $router->addGetRoute('/profile', ProfileController::class, "showProfile")->addRouteName('profile');

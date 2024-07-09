@@ -48,6 +48,18 @@ function displayErrorMessage(string $field): void
 }
 
 /**
+ * If error message(s) for a field, display message(s)
+ */
+function displaySuccessMessage(string $field): void
+{
+    if (isset($_SESSION["errors"][$field]) && count($_SESSION["errors"][$field]) > 0) {
+
+        echo '<span class="success-message">' . htmlspecialchars($_SESSION["errors"][$field][0]) . '</span>';
+        unset($_SESSION["errors"][$field]);
+    }
+}
+
+/**
  * Display all error message(s)
  */
 function displayAllErrorMessages(): void

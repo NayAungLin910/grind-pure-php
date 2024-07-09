@@ -20,61 +20,139 @@
         <div class="course-info">
 
             <!-- Course Details -->
-            <div class="course-info-form text-white card-round p-mid bg-pri-heavy ">
+            <div class="course-info-form">
+                <div class="text-white card-round p-mid bg-pri-heavy ">
 
-                <?php if (!$ifAuth || !$course->checkEnrolled(getAuthUser())) : ?>
-                    <div class="flex jcc">
-                        <div class="warning-text">
-                            <i class="bi bi-exclamation-diamond"></i> Please enroll the course to see the details.
-                        </div>
-                    </div>
-                    <div class="flex jcc">
-                        <form method="POST" action="<?= getRouteUsingRouteName('post-course-enroll') ?>">
-                            <input type="hidden" value="<?= $course->getId() ?>" name="course-id">
-                            <button type="submit" class="btn">Enroll</button>
-                        </form>
-                    </div>
-                <?php else : ?>
-
-                    <h3 class="text-center text-big mtb-sm text-bold"><?= $currentStep->getTitle() ?></h3>
-
-                    <!-- Video Step -->
-                    <?php if ($currentStep->getType() === 'video') : ?>
-                        <video id="my-video" class="video-js  vjs-16-9" controls preload="auto" data-setup="{}">
-                            <source src="/range-request-handler.php?path=<?= $currentStep->getVideo() ?>" type="video/mp4" />
-                            <!-- <source src="MY_VIDEO.webm" type="video/webm" /> -->
-                            <p class="vjs-no-js">
-                                To view this video please enable JavaScript, and consider upgrading to a
-                                web browser that
-                                <a href="https://videojs.com/html5-video-support/" target="_blank">supports HTML5 video</a>
-                            </p>
-                        </video>
-                    <?php endif; ?>
-
-                    <!-- Reading Content -->
-                    <?php if ($currentStep->getType() === 'reading') : ?>
-                        <p class="mtb-mid">
-                            <?= $currentStep->getReadingContent() ?>
-                        </p>
-                    <?php endif; ?>
-
-                    <p class="mtb-mid">
-                        <?= $currentStep->getDescription() ?>
-                    </p>
-
-                    <?php if (!$currentStep->checkCompleted($_SESSION['auth']['id'])) : ?>
-                        <form action="<?= getRouteUsingRouteName('post-step-complete') ?>" method="POST">
-                            <p class="flex jcc">
-                                <input type="hidden" name="current-step-id" value="<?= $currentStep->getId() ?>">
-                                <button type="submit" class="btn bg-pri-heavy-2">Compelete</button>
-                            </p>
-                        </form>
-                    <?php else : ?>
+                    <?php if (!$ifAuth || !$course->checkEnrolled(getAuthUser())) : ?>
                         <div class="flex jcc">
-                            <div class="badge-success">Completed</div>
+                            <div class="warning-text">
+                                <i class="bi bi-exclamation-diamond"></i> Please enroll the course to see the details.
+                            </div>
                         </div>
+                        <div class="flex jcc">
+                            <form method="POST" action="<?= getRouteUsingRouteName('post-course-enroll') ?>">
+                                <input type="hidden" value="<?= $course->getId() ?>" name="course-id">
+                                <button type="submit" class="btn">Enroll</button>
+                            </form>
+                        </div>
+                    <?php else : ?>
+
+                        <h3 class="text-center text-big mtb-sm text-bold"><?= $currentStep->getTitle() ?></h3>
+
+                        <!-- Video Step -->
+                        <?php if ($currentStep->getType() === 'video') : ?>
+                            <video id="my-video" class="video-js  vjs-16-9" controls preload="auto" data-setup="{}">
+                                <source src="/range-request-handler.php?path=<?= $currentStep->getVideo() ?>" type="video/mp4" />
+                                <!-- <source src="MY_VIDEO.webm" type="video/webm" /> -->
+                                <p class="vjs-no-js">
+                                    To view this video please enable JavaScript, and consider upgrading to a
+                                    web browser that
+                                    <a href="https://videojs.com/html5-video-support/" target="_blank">supports HTML5 video</a>
+                                </p>
+                            </video>
+                        <?php endif; ?>
+
+                        <!-- Reading Content -->
+                        <?php if ($currentStep->getType() === 'reading') : ?>
+                            <p class="mtb-mid">
+                                <?= htmlspecialchars($currentStep->getReadingContent()) ?>
+                            </p>
+                        <?php endif; ?>
+
+                        <p class="mtb-mid">
+                            <?= htmlspecialchars($currentStep->getDescription()) ?>
+                        </p>
+
+                        <!-- Quiz Step -->
+                        <?php if ($currentStep->getType() === 'quiz') : ?>
+                            <?php if ($currentStep->getQuestions() && count($currentStep->getQuestions()) > 0) : ?>
+                                <div class="res-table">
+                                    <form action="<?= getRouteUsingRouteName('post-quiz-answer') ?>" id="quiz-submit-form" method="post">
+                                        <input type="hidden" name="step-id" value="<?= $currentStep->getId() ?>">
+                                        <table class="width-auto table-no-border">
+                                            <?php foreach ($currentStep->getQuestions() as $question) : ?>
+                                                <tr>
+                                                    <td><?= htmlspecialchars($currentStep->getQuestions()->indexOf($question) + 1) ?>.</td>
+                                                    <td>
+                                                        <div class="question-row"><?= htmlspecialchars($question->getDescription()) ?></div>
+                                                    </td>
+                                                    <td>
+                                                    </td>
+                                                    <td></td>
+                                                </tr>
+
+                                                <!-- Answers -->
+                                                <?php if ($question->getAnswers() || count($question->getAnswers()) > 0) : ?>
+                                                    <tr>
+                                                        <td></td>
+                                                        <td colspan="2">
+                                                            <table class="width-auto text-normal table-no-border">
+                                                                <?php foreach ($question->getAnswers() as $answer) : ?>
+                                                                    <tr>
+                                                                        <td>
+                                                                            <?= htmlspecialchars($question->getAnswers()->indexOf($answer) + 1 . ".") ?>
+                                                                        </td>
+                                                                        <td>
+                                                                            <?= htmlspecialchars($answer->getDescription()) ?>
+                                                                        </td>
+                                                                        <td>
+                                                                            <input type="radio" name="question-<?= $question->getId() ?>" value="<?= $answer->getId() ?>">
+                                                                        </td>
+                                                                    </tr>
+                                                                    <tr>
+                                                                        <td colspan="3">
+                                                                            <?php displaySuccessMessage("question-" . $question->getId()) ?>
+                                                                            <?php displayErrorMessage("question-" . $question->getId() . "-error") ?>
+                                                                        </td>
+                                                                    </tr>
+                                                                <?php endforeach; ?>
+
+                                                            </table>
+                                                        </td>
+                                                    </tr>
+                                                <?php endif; ?>
+                                                <tr>
+                                                    <td colspan="3">
+                                                        <?php displayErrorMessage("question-error-" . $question->getId()) ?>
+                                                    </td>
+                                                </tr>
+                                            <?php endforeach; ?>
+                                            <tr>
+                                                <td colspan="3">
+                                                    <?php displaySuccessMessage('result') ?>
+                                                    <?php displayErrorMessage("result-error") ?>
+                                                </td>
+                                            </tr>
+                                        </table>
+                                    </form>
+                                </div>
+                            <?php endif; ?>
+                        <?php endif; ?>
+
+                        <?php if ($currentStep->getType() === 'reading' || $currentStep->getType() === 'video') : ?>
+                            <?php if (!$currentStep->checkCompleted($_SESSION['auth']['id'])) : ?>
+                                <!-- Complete Button -->
+                                <form action="<?= getRouteUsingRouteName('post-step-complete') ?>" method="POST">
+                                    <p class="flex jcc">
+                                        <input type="hidden" name="current-step-id" value="<?= $currentStep->getId() ?>">
+                                        <button type="submit" class="btn bg-pri-heavy-2">Compelete</button>
+                                    </p>
+                                </form>
+                            <?php else : ?>
+                                <div class="flex jcc">
+                                    <div class="badge-success">Completed</div>
+                                </div>
+                            <?php endif; ?>
+                        <?php endif; ?>
+
+                        <?php if ($currentStep->getType() === 'quiz') : ?>
+                            <div class="flex jcc">
+                                <!-- Submit Button -->
+                                <button type="submit" form="quiz-submit-form" class="btn bg-pri-heavy-2">Submit</button>
+                            </div>
+                        <?php endif; ?>
                     <?php endif; ?>
-                <?php endif; ?>
+                </div>
             </div>
 
             <!-- Course Info -->
@@ -180,12 +258,14 @@
 <script src="/assets/js/sweet-alert-utilities.js"></script>
 
 <!-- Video Js  -->
-<script>
-    let player = videojs('my-video', {
-        // autoplay: true,
-        controls: true,
-        fluid: true
-    });
-</script>
+<?php if ($currentStep->getType() === 'video') : ?>
+    <script>
+        let player = videojs('my-video', {
+            // autoplay: true,
+            controls: true,
+            fluid: true
+        });
+    </script>
+<?php endif; ?>
 
 </html>

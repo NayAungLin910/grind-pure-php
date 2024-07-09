@@ -27,9 +27,6 @@ class Assignment
     private int $step_id;
 
     #[Column(type: 'datetime')]
-    private DateTime $start_time;
-
-    #[Column(type: 'datetime')]
     private DateTime $created_at;
 
     #[Column(type: 'datetime', nullable: true)]
@@ -45,6 +42,7 @@ class Assignment
     public function __construct()
     {
         $this->choices = new ArrayCollection();
+        $this->created_at = new DateTime();
     }
 
     // Getters and Setters
@@ -61,16 +59,6 @@ class Assignment
     public function setStepId(int $step_id): void
     {
         $this->step_id = $step_id;
-    }
-
-    public function getStartTime(): DateTime
-    {
-        return $this->start_time;
-    }
-
-    public function setStartTime(DateTime $start_time): void
-    {
-        $this->start_time = $start_time;
     }
 
     public function getCreatedAt(): DateTime

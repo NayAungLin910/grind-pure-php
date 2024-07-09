@@ -8,6 +8,7 @@
     --pri-blue-heavier2: #101941;
     --pri-blue-light: #889cf7;
     --success: #127e12;
+    --warning: #ecd60f;
     --success-light: #1bbd1b;
     --success-heavy: #0f4d0f;
     --danger: #c50808;
@@ -210,6 +211,21 @@ body {
     gap: var(--nav-link-gap);
 }
 
+.table-no-border {
+    width: 100%;
+    min-width: 500px;
+    text-wrap: nowrap;
+    border-collapse: collapse;
+    border: 1px solid white;
+    background-color: var(--pri-blue-heavy);
+}
+
+.table-no-border tr td,
+.table-no-border tr th {
+    padding: 10px;
+    font-weight: bold;
+}
+
 .nav-link {
     display: flex;
     justify-content: center;
@@ -281,7 +297,8 @@ body {
 
 .profile-card {
     border-radius: 15px;
-    width: 100%;
+    width: 70%;
+    margin: 0 auto;
     padding: 20px;
     background-color: var(--pri-blue);
     color: white;
@@ -434,6 +451,16 @@ body {
     margin-top: 10px;
 }
 
+.success-message {
+    display: inline-block;
+    background-color: white;
+    color: var(--success);
+    width: auto;
+    border-radius: 10px;
+    padding: 5px;
+    margin-top: 10px;
+}
+
 .test-class {
     color: red;
 }
@@ -523,7 +550,7 @@ body {
     display: none;
 }
 
-.sub-menu-nav:hover{
+.sub-menu-nav:hover {
     cursor: pointer;
 }
 
@@ -669,10 +696,10 @@ body {
     border-radius: 10px;
     padding: 10px;
     color: white;
-    background-color: var(--pri-blue-heavy);   
+    background-color: var(--pri-blue-heavy);
 }
 
-.sub-menu-nav ul li  {
+.sub-menu-nav ul li {
     padding: 10px;
     border-radius: 10px;
 }
@@ -701,6 +728,10 @@ body {
     gap: 30px;
     justify-content: center;
     align-items: center;
+}
+
+.table-no-border {
+    border: none;
 }
 
 .square {
@@ -945,6 +976,20 @@ body {
     background-color: var(--success);
 }
 
+.badge-warning {
+    display: inline-block;
+    width: auto;
+    padding: 5px;
+    color: black;
+    border-radius: 20px;
+    background-color: var(--warning);
+    cursor: pointer;
+}
+
+.badge-warning:focus {
+    box-shadow: 0 0 0 2px lightblue;
+}
+
 
 .bg-pri-heavy-2 {
     background-color: var(--pri-blue-heavier2);
@@ -1055,6 +1100,10 @@ body {
 
     .nav-link {
         margin-top: 10px;
+    }
+
+    .profile-card {
+        width: 100%;
     }
 
     .nav-inner-links {

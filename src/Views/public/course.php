@@ -73,7 +73,7 @@
                 <?php if (count($courses) > 0) : ?>
                     <?php foreach ($courses as $course) : ?>
 
-                        <div class="card-item text-white">
+                        <div class="card-item text-white relative">
                             <a href="<?= getRouteUsingRouteName('show-public-spec-course') . "?title=" . htmlspecialchars($course->getTitle()) ?>" class="link-plain text-white">
                                 <img src="<?= htmlspecialchars($course->getImage()) ?>" alt="Card Image" class="card-image">
                                 <div class="card-title">
@@ -81,6 +81,17 @@
                                 </div>
                                 <div class="card-description">
                                     <?= htmlspecialchars($course->getDescription()) ?>
+                                </div>
+                                <div class="mtb-sm">
+                                    <?php if ($course->getEnrollments() && count($course->getEnrollments()) > 0) : ?>
+                                        <?php foreach ($course->getEnrollments() as $enrollment) : ?>
+                                            <?php if ($enrollment->getUserId() === $_SESSION['auth']['id'] && $enrollment->getStatus() === 'completed') : ?>
+                                                <div class="flex mtb-sm jcc">
+                                                    <div class="badge-success">Completed</div>
+                                                </div>
+                                            <?php endif; ?>
+                                        <?php endforeach; ?>
+                                    <?php endif; ?>
                                 </div>
                             </a>
                             <div class="card-description bg-pri-heavy-2 half-bottom-round-mid point-normal">
