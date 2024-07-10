@@ -986,10 +986,13 @@ body {
     cursor: pointer;
 }
 
+div.swiper-next-btn, div.swiper-back-btn {
+    top: 50%;
+}
+
 .badge-warning:focus {
     box-shadow: 0 0 0 2px lightblue;
 }
-
 
 .bg-pri-heavy-2 {
     background-color: var(--pri-blue-heavier2);
@@ -1076,6 +1079,40 @@ body {
 
 .absolute {
     position: absolute;
+}
+
+.swiper {
+   width: 100%;
+}
+
+.swiper-slide {
+    display: flex !important;
+    align-items: center;
+    justify-content: center;
+}
+
+.swiper-course {
+    box-shadow: 1px 1px 2px 1px var(--box-shadow-grey);
+    border-radius: 10px;
+    background-color: var(--pri-blue-heavy);
+    display: flex;
+    flex-direction: column;
+}
+
+.swiper-course-des {
+    padding: 10px;
+    font-size: 20px;
+}
+
+.swiper-course-image {
+    width: 100%;
+    border-radius: 10px 10px 0 0;
+}
+
+.course-section {
+    background-color: var(--pri-blue-heavier);
+    padding: 10px;
+    border-radius: 10px;
 }
 
 @media (max-width: 1024px) {

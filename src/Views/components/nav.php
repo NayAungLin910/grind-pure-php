@@ -19,11 +19,13 @@
     </div>
     <div class="nav-link">
         <div class="nav-inner-links">
+
+            <div class="nav-inner-link">
+                <a class="btn link-plain <?= echoClassCurrentRouteSame('welcome', 'active-nav') ?>" href="<?= getRouteUsingRouteName('welcome') ?>">Home</a>
+            </div>
+
             <div class="nav-inner-link">
                 <a class="btn link-plain <?= echoClassCurrentRouteSame('show-public-course', 'active-nav') ?>" href="<?= getRouteUsingRouteName('show-public-course') ?>">Courses</a>
-            </div>
-            <div class="nav-inner-link">
-                <a class="btn link-plain" href="">Explore</a>
             </div>
 
             <!-- If Auth -->

@@ -115,6 +115,7 @@
             require_once("../src/Views/components/pagi-nav.php")
             ?>
         </div>
+    </div>
 </body>
 <!-- nav toggle -->
 <script src="/assets/js/nav-toggle.js"></script>
